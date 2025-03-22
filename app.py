@@ -13,10 +13,11 @@ def main():
     st.markdown("<p></p><br>", unsafe_allow_html=True)
 
     # fetch FASTA sequences
-    st.markdown("<p style='color: black;'>Step 1: Fetch FASTA sequences from accession numbers</p><br>", unsafe_allow_html=True)
+    st.markdown("<p style='color: black;'>Step 1: Fetch FASTA sequences from accession numbers</p>", unsafe_allow_html=True)
     if st.button(label="Click to fetch FASTA sequences", type="primary"):
             st.write("Hello")
-    st.button("Reset", type="secondary")     
+    
+    st.button("Reset", type="secondary")    
                   
 
 if __name__ == "__main__":
