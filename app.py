@@ -1,5 +1,6 @@
 import os
 import streamlit as st
+import fetch_fasta_sequence as fs
 
 
 def main():
@@ -15,7 +16,7 @@ def main():
     # fetch FASTA sequences
     st.markdown("<p style='font-size: 24px; color: black;'>Step 2: Fetch FASTA sequences from accession numbers</p>", unsafe_allow_html=True)
     if st.button(label="Click to fetch FASTA sequences", type="primary"):
-            st.write("Hello")
+            fasta_file = fs.fetch_fasta_sequence(input_file)
 
     # reset
     st.markdown("<p></p><br>", unsafe_allow_html=True)
