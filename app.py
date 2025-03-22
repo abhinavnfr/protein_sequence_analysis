@@ -15,8 +15,12 @@ def main():
 
     # fetch FASTA sequences
     st.markdown("<p style='font-size: 24px; color: black;'>Step 2: Fetch FASTA sequences from accession numbers</p>", unsafe_allow_html=True)
-    if st.button(label="Click to fetch FASTA sequences", type="primary"):
+    if st.button(label="Click to generate FASTA sequences", type="primary"):
             fasta_file = fs.generate_fasta_file(input_file)
+    if fasta_file:
+            with open(fasta_file, "rb") as f:
+                    st.download_button(label="Download FASTA file having sequences", data=f, file_name='sequences.fasta', mime='text/plain')
+                
 
     # reset
     st.markdown("<p></p><br>", unsafe_allow_html=True)
