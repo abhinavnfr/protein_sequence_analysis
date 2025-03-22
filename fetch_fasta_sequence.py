@@ -22,6 +22,7 @@ def fetch_fasta_sequence(accession):
     except Exception as e:
         return f"Failed to retrieve {accession}: {str(e)}"
 
+
 def generate_fasta_file(input_file):
     """
     Generates a FASTA file from a list of accession numbers provided in an input file.
@@ -47,7 +48,7 @@ def generate_fasta_file(input_file):
         percentage_text = st.empty()  # Placeholder for percentage text
 
         for i, accession in enumerate(accessions):
-            results[accession] = retrieve_fasta(accession)
+            results[accession] = fetch_fasta_sequence(accession)
             progress_percentage = (i + 1) / total_accessions  # Calculate percentage
             progress_bar.progress(progress_percentage)  # Update the progress bar
             percentage_text.text(f"Progress: {int(progress_percentage * 100)}%")  # Update percentage text
