@@ -20,7 +20,8 @@ def main():
 
     # reset
     st.markdown("<p></p><br>", unsafe_allow_html=True)
-    st.button("Reset", type="secondary")
+    if st.button("Reset", type="secondary"):
+        st.rerun()
     
 
 if __name__ == "__main__":
