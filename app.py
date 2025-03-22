@@ -9,7 +9,7 @@ def main():
     # file uploader
     input_file = st.file_uploader(label="To get started, choose a text file containing accession numbers", type=["txt"], accept_multiple_files=False, label_visibility="visible")
 
-    st.markdown("<p style='color: black;'>Step 1: Fetch FASTA sequences from accession numbers</p><br>")
+    st.markdown("<p style='color: black;'>Step 1: Fetch FASTA sequences from accession numbers</p><br>", unsafe_allow_html=True)
     if st.button(label="Click to fetch FASTA sequences", type="primary"):
             st.write("Hello")
     st.button("Reset", type="secondary")             
