@@ -23,10 +23,15 @@ def main():
                     st.download_button(label="Download FASTA file having sequences", data=f, file_name='sequences.fasta', mime='text/plain')
                 
 
+    # perform BLAST on retrieved FASTA sequences to get top hits
+    st.markdown("<p style='font-size: 24px; color: black;'>Step 3: Perform BLAST on retrieved FASTA sequences to get top hits</p>", unsafe_allow_html=True)
+
+
     # reset
     st.markdown("<p></p><br>", unsafe_allow_html=True)
     st.markdown("<p style='font-size: 20px; color: black;'>Reset</p>", unsafe_allow_html=True)
     st.button("Click to reset and start again", type="secondary")
+    
     
 
 if __name__ == "__main__":
