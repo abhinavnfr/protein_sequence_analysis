@@ -19,8 +19,7 @@ def main():
     if st.button(label="Click to generate FASTA sequences", type="primary"):
             fasta_file, total_accessions = fs.generate_fasta_file(input_file)
     if fasta_file:
-            with open(fasta_file, "rb") as f:
-                    st.download_button(label="Download FASTA file having sequences", data=f, file_name='sequences.fasta', mime='text/plain')
+            st.download_button(label="Download FASTA file having sequences", data=f, file_name='sequences.fasta', mime='text/plain')
                 
 
     # perform BLAST on retrieved FASTA sequences to get top hits
