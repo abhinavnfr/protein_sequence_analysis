@@ -59,4 +59,4 @@ def generate_fasta_file(input_file):
             for accession, sequence in results.items():
                 file.write(sequence + '\n')
 
-        return output_file_path
+        return output_file_path, total_accessions
