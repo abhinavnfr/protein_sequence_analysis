@@ -104,9 +104,8 @@ def generate_blast_dataframe(fasta_file, num_seq, num_hits):
                                "Top_2nd_Percent_Identity", "Top_2nd_Scientific_Name", "Top_2nd_Accession",
                                "Top_3rd_Percent_Identity", "Top_3rd_Scientific_Name", "Top_3rd_Accession"]
                       )
-    st.write(df)
+
     for i in range(num_seq):
-        st.write(f"interation {i}")
         lst = blast_sequence(fasta_file, i, num_hits)
         df = pd.concat([df, pd.DataFrame([lst], columns=df.columns)], ignore_index=True)
     
