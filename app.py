@@ -16,7 +16,7 @@ def main():
     st.markdown("<br><p style='font-size: 24px; color: black;'>Step 2: Fetch FASTA sequences from accession numbers</p>", unsafe_allow_html=True)
     fasta_file = False
     if st.button(label="Click to generate FASTA sequences", type="primary"):
-            fasta_file = fs.generate_fasta_file(input_file)
+            fasta_file, total_accessions = fs.generate_fasta_file(input_file)
     if fasta_file:
             with open(fasta_file, "rb") as f:
                     st.download_button(label="Download FASTA file having sequences", data=f, file_name='sequences.fasta', mime='text/plain')
@@ -24,8 +24,12 @@ def main():
 
     # perform BLAST on retrieved FASTA sequences to get top hits
     st.markdown("<br><p style='font-size: 24px; color: black;'>Step 3: Perform BLAST on retrieved FASTA sequences to get top hits</p>", unsafe_allow_html=True)
-    num_seq = st.number_input(label="Enter the number of first n sequences required to BLAST", value=0, step=1)
+    option = st.selectbox("How many sequences from the generated FASTA file would you like to process?",["First n sequences", "All sequences"])
     st.markdown("<p style='color: black;'>(Note: The more sequences you select, the more time it will take to BLAST)</p><br>", unsafe_allow_html=True)
+    if option == "First n sequences":
+            num_seq = st.number_input(label="Enter the number of first n sequences required to BLAST", value=0, step=1)
+    else:
+            num_seq = total_accessions
     num_hits = st.number_input(label="Enter the number of top hits required for each sequence", value=0, step=1)
     # blast_file = bs.generate_blast_dataframe(fasta_file, num_seq, num_hits)
 
