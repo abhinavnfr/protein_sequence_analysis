@@ -12,10 +12,10 @@ def blast_sequence(fasta_file, idx, num_hits):
     Parameters:
         fasta_file (str): Path to the FASTA file containing protein sequences.
         idx (int): Index of the sequence in the FASTA file to be BLASTed.
+        num_hits (int): The number of top BLAST hits to return based on percentage identity. The function returns hits with unique percentage identities.
     
     Returns:
-        list: A list containing the queried sequence information along with details of the top 3 BLAST hits,
-              including percentage identity, scientific name, and accession number.
+        list: A list containing the queried sequence information along with details of the top 3 BLAST hits, including percentage identity, scientific name, and accession number.
     """
     # read the protein sequence from the fasta file
     with open(fasta_file, 'r') as file:
@@ -103,7 +103,7 @@ def generate_blast_dataframe(fasta_file, num_seq, num_hits):
                       )
 
     for i in range(num_seq):
-        lst = blast_sequence(fasta_file, i, n)
+        lst = blast_sequence(fasta_file, i, num_hits)
         df = pd.concat([df, pd.DataFrame([lst], columns=df.columns)], ignore_index=True)
 
     # save dataframe to an excel file
