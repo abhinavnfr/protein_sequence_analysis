@@ -5,16 +5,14 @@ import fetch_fasta_sequence as fs
 
 def main():
     st.markdown("<h1 style='color: black;'>Protein Sequence Analysis App</h1><br>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: right; color: #00BFFF;'>by Abhinav Rana</p><br>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align: right; color: #00BFFF;'>by Abhinav Rana</p>", unsafe_allow_html=True)
 
     # file uploader
-    st.markdown("<p style='font-size: 24px; color: black;'>Step 1: To get started, choose a text file containing accession numbers</p><br>", unsafe_allow_html=True)
+    st.markdown("<br><p style='font-size: 24px; color: black;'>Step 1: To get started, choose a text file containing accession numbers</p><br>", unsafe_allow_html=True)
     input_file = st.file_uploader(label="Upload file", type=["txt"], accept_multiple_files=False, label_visibility="visible")
 
-    st.markdown("<p></p><br>", unsafe_allow_html=True)
-
     # fetch FASTA sequences
-    st.markdown("<p style='font-size: 24px; color: black;'>Step 2: Fetch FASTA sequences from accession numbers</p>", unsafe_allow_html=True)
+    st.markdown("<br><p style='font-size: 24px; color: black;'>Step 2: Fetch FASTA sequences from accession numbers</p>", unsafe_allow_html=True)
     fasta_file = False
     if st.button(label="Click to generate FASTA sequences", type="primary"):
             fasta_file = fs.generate_fasta_file(input_file)
@@ -28,8 +26,7 @@ def main():
 
 
     # reset
-    st.markdown("<p></p><br>", unsafe_allow_html=True)
-    st.markdown("<p style='font-size: 20px; color: black;'>Reset</p>", unsafe_allow_html=True)
+    st.markdown("<br><p style='font-size: 20px; color: black;'>Reset</p>", unsafe_allow_html=True)
     st.button("Click to reset and start again", type="secondary")
     
     
