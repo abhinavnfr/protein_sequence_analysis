@@ -5,36 +5,19 @@ import blast_sequence as bs
 
 
 def reset_inputs():
-    st.session_state.input_file = None
-    st.session_state.option = None
-    st.session_state.num_seq = 0
-    st.session_state.num_hits = 0
-    st.session_state.reset_clicked = True  # track reset click
+    for key in ["input_file", "option", "num_seq", "num_hits"]:
+        if key in st.session_state:
+            del st.session_state[key]  # explicitly remove each key
+    st.rerun()  # force rerun to refresh UI
 
 
 def main():
     st.markdown("<h1 style='color: black;'>Protein Sequence Analysis App</h1><br>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: right; color: #FF4B4B;'>by Abhinav Rana</p>", unsafe_allow_html=True)
-
-    # initialize session state variables if they don't exist
-    if "reset_clicked" not in st.session_state:
-        st.session_state.reset_clicked = False
-    if "input_file" not in st.session_state or st.session_state.reset_clicked:
-        st.session_state.input_file = None
-    if "option" not in st.session_state or st.session_state.reset_clicked:
-        st.session_state.option = None
-    if "num_seq" not in st.session_state or st.session_state.reset_clicked:
-        st.session_state.num_seq = 0
-    if "num_hits" not in st.session_state or st.session_state.reset_clicked:
-        st.session_state.num_hits = 0
-
-    # Reset the flag after setting values
-    st.session_state.reset_clicked = False
-
     
     # file uploader
     st.markdown("<br><p style='font-size: 24px; color: black;'>Step 1: To get started, choose a text file containing accession numbers</p><br>", unsafe_allow_html=True)
-    input_file = st.file_uploader(label="Upload file", type=["txt"], accept_multiple_files=False, label_visibility="visible")
+    input_file = st.file_uploader(label="Upload file", type=["txt"])
 
     # fetch FASTA sequences
     st.markdown("<br><p style='font-size: 24px; color: black;'>Step 2: Fetch FASTA sequences from accession numbers</p>", unsafe_allow_html=True)
@@ -63,7 +46,6 @@ def main():
     st.markdown("<br><p style='font-size: 20px; color: black;'>Reset</p>", unsafe_allow_html=True)
     if st.button("Click to reset and start again", type="secondary"):
             reset_inputs()
-            st.rerun()
 
 
 if __name__ == "__main__":
