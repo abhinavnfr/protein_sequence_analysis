@@ -7,9 +7,6 @@ import blast_sequence as bs
 def main():
     st.markdown("<h1 style='color: black;'>Protein Sequence Analysis App</h1><br>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: right; color: #FF4B4B;'>by Abhinav Rana</p>", unsafe_allow_html=True)
-
-    a = "Hello"
-    st.write(f"I am {a}")
     
     # file uploader
     st.markdown("<br><p style='font-size: 24px; color: black;'>Step 1: To get started, choose a text file containing accession numbers</p><br>", unsafe_allow_html=True)
