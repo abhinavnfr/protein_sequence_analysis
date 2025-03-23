@@ -21,7 +21,7 @@ def main():
     if fasta_file:
             fasta_path = "sequences.fasta"  # path to save the file
             with open(fasta_path, "wb") as f_out:
-                f_out.write(fasta_file.getvalue())  # assuming fasta_file is a Streamlit uploaded file (BytesIO)
+                f_out.write(fasta_file.encode())  # assuming fasta_file is a Streamlit uploaded file (BytesIO)
             st.success("FASTA file generated and saved!")
             with open(fasta_file, "rb") as f:
                     st.download_button(label="Download FASTA file having sequences", data=f, file_name='sequences.fasta', mime='text/plain')
