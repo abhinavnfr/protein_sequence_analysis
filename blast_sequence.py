@@ -97,6 +97,7 @@ def generate_blast_dataframe(fasta_file, num_seq, num_hits):
     Returns:
         str: The filename of the generated Excel file containing BLAST results.
     """
+    st.write("Starting BLAST")
     df = pd.DataFrame(columns=["Complete_Input", "Input_Sequence_ID", "Input_Sequence_Description", "Input_Sequence",
                                "Top_1st_Percent_Identity", "Top_1st_Scientific_Name", "Top_1st_Accession",
                                "Top_2nd_Percent_Identity", "Top_2nd_Scientific_Name", "Top_2nd_Accession",
@@ -110,5 +111,4 @@ def generate_blast_dataframe(fasta_file, num_seq, num_hits):
     # save dataframe to an excel file
     excel_file = "blast_results.xlsx"
     df.to_excel(excel_file, index=False)
-
     return excel_file
