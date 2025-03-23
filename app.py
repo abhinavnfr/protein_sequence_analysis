@@ -26,20 +26,21 @@ def main():
     st.markdown("<br><p style='font-size: 24px; color: black;'>Step 3: Perform BLAST on retrieved FASTA sequences to get top hits</p>", unsafe_allow_html=True)
     option = st.selectbox("How many sequences from the generated FASTA file would you like to process?",["None", "First n sequences", "All sequences"], index=0, placeholder="Choose an option")
     st.markdown("<p style='color: #FF4B4B;'>(Note: The more sequences you select, the more time it will take to BLAST)</p><br>", unsafe_allow_html=True)
+    
     if option == "First n sequences":
-            num_seq = st.number_input(label="Enter the number of first n sequences required to BLAST", value=0, step=1)
+        num_seq = st.number_input(label="Enter the number of first n sequences required to BLAST", value=0, step=1)
     else:
-            num_seq = total_accessions
+        num_seq = total_accessions
+        
     num_hits = st.number_input(label="Enter the number of top hits required for each sequence", value=0, step=1)
-    blast_file = None # initialize blast_file
-    # if st.button(label="Click to BLAST the FASTA sequences", type="primary"):
-    #         fasta_path = "sequences.fasta"  # load the saved FASTA file from the disk path
-    #         if os.path.exists(fasta_path):
-    #                 df = bs.generate_blast_dataframe(fasta_path, num_seq, num_hits)
-    #                 st.write(df)
-    # if blast_file:
-    #         st.download_button(label="Download BLASTed sequences", data=blast_file, file_name="BLAST_result.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-
+    
+    blast_file = None  # initialize blast_file
+    if st.button(label="Click to BLAST the FASTA sequences", type="primary"):
+        if fasta_file:
+            df = bs.generate_blast_dataframe(fasta_file, num_seq, num_hits)
+            st.write(df)
+        else:
+            st.error("FASTA file not generated. Please generate the FASTA file first.")
 
     # reset
     st.markdown("<br><p style='font-size: 20px; color: black;'>Reset</p>", unsafe_allow_html=True)
