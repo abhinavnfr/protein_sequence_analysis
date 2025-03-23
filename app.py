@@ -19,6 +19,10 @@ def main():
     if st.button(label="Click to generate FASTA sequences", type="primary"):
             fasta_file, total_accessions = fs.generate_fasta_file(input_file)
     if fasta_file:
+            fasta_path = "sequences.fasta"  # path to save the file
+            with open(fasta_path, "wb") as f_out:
+                f_out.write(fasta_file.getvalue())  # assuming fasta_file is a Streamlit uploaded file (BytesIO)
+            st.success("FASTA file generated and saved!")
             with open(fasta_file, "rb") as f:
                     st.download_button(label="Download FASTA file having sequences", data=f, file_name='sequences.fasta', mime='text/plain')
                 
@@ -34,9 +38,9 @@ def main():
     num_hits = st.number_input(label="Enter the number of top hits required for each sequence", value=0, step=1)
     blast_file = False # initialize blast_file
     if st.button(label="Click to BLAST the FASTA sequences", type="primary"):
-            st.write(fasta_file)
-            if fasta_file:
-                    df = bs.generate_blast_dataframe(fasta_file, num_seq, num_hits)
+            fasta_path = "sequences.fasta"  # load the saved FASTA file from the disk path
+            if os.path.exists(fasta_path):
+                    df = bs.generate_blast_dataframe(fasta_path, num_seq, num_hits)
                     st.write(df)
     # if blast_file:
     #         st.download_button(label="Download BLASTed sequences", data=blast_file, file_name="BLAST_result.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
