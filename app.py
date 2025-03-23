@@ -24,7 +24,7 @@ def main():
                 
 
     # perform BLAST on retrieved FASTA sequences to get top hits
-    st.markdown("<p style='font-size: 24px; color: black;'>Step 3: Perform BLAST on retrieved FASTA sequences to get top hits</p>", unsafe_allow_html=True)
+    st.markdown("<br><p style='font-size: 24px; color: black;'>Step 3: Perform BLAST on retrieved FASTA sequences to get top hits</p>", unsafe_allow_html=True)
 
 
     # reset
