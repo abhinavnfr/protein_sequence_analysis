@@ -1,4 +1,5 @@
 import os
+import streamlit as st
 import pandas as pd
 import numpy as np
 from Bio.Blast import NCBIWWW, NCBIXML
@@ -22,10 +23,10 @@ def blast_sequence(fasta_file, idx, num_hits):
         seq_record = list(SeqIO.parse(file, "fasta"))
 
     if not seq_record:
-        print("No protein sequences found in the file.")
+        st.write("No protein sequences found in the file.")
         return
 
-    print(f"Running BLAST for the sequence: {seq_record[idx].id}")
+    st.write(f"Running BLAST for the sequence: {seq_record[idx].id}")
 
     # run BLAST against the NCBI database
     result_handle = NCBIWWW.qblast("blastp", "nr", str(seq_record[idx].seq))
@@ -73,14 +74,14 @@ def blast_sequence(fasta_file, idx, num_hits):
 
     lst = [">" + seq_record[idx].id + " " + seq_record[idx].description + "\n" + str(seq_record[idx].seq),
            seq_record[idx].id, seq_record[idx].description, str(seq_record[idx].seq)]
-    print(f"Top {n} Percentage Identities with Details:")
+    st.write(f"Top {n} Percentage Identities with Details:")
     for i, hit in enumerate(top_hits, start=1):
-        print(f"{i}: {hit['percent_identity']:.2f}% - Scientific Name: {hit['scientific_name']} - Accession: {hit['accession']}")
+        st.write(f"{i}: {hit['percent_identity']:.2f}% - Scientific Name: {hit['scientific_name']} - Accession: {hit['accession']}")
         lst.append(f"{hit['percent_identity']:.2f}%")
         lst.append(hit['scientific_name'])
         lst.append(hit['accession'])
 
-    print("="*100)
+    st.write("="*100)
 
     return lst
 
