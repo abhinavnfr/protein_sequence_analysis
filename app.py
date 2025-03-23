@@ -4,6 +4,13 @@ import fetch_fasta_sequence as fs
 import blast_sequence as bs
 
 
+def reset_inputs():
+    st.session_state.input_file = None
+    st.session_state.option = None
+    st.session_state.num_seq = 0
+    st.session_state.num_hits = 0
+
+
 def main():
     st.markdown("<h1 style='color: black;'>Protein Sequence Analysis App</h1><br>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: right; color: #FF4B4B;'>by Abhinav Rana</p>", unsafe_allow_html=True)
@@ -37,9 +44,10 @@ def main():
 
     # reset
     st.markdown("<br><p style='font-size: 20px; color: black;'>Reset</p>", unsafe_allow_html=True)
-    st.button("Click to reset and start again", type="secondary")
-    
-    
+    if st.button("Click to reset and start again", type="secondary"):
+            reset_inputs()
+            st.experimental_rerun()
+
 
 if __name__ == "__main__":
     main()
