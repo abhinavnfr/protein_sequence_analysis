@@ -31,7 +31,8 @@ def generate_fasta_file(input_file):
         input_file (file-like object): A file-like object containing accession numbers (one per line). The file should be in plain text format.
 
     Returns:
-        str: The path to the generated FASTA file containing the retrieved sequences. If an error occurs while reading the input file or retrieving sequences, returns None.
+        BytesIO: The file-like object (in-memory file) containing the retrieved sequences. 
+                 If an error occurs while reading the input file or retrieving sequences, returns None.
     """
     if input_file is not None:
         try:
@@ -53,10 +54,14 @@ def generate_fasta_file(input_file):
             progress_bar.progress(progress_percentage)  # Update the progress bar
             percentage_text.text(f"Progress: {int(progress_percentage * 100)}%")  # Update percentage text
 
-        # Save the retrieved sequences to a temporary file
-        output_file_path = 'sequences.fasta'
-        with open(output_file_path, 'w') as file:
-            for accession, sequence in results.items():
-                file.write(sequence + '\n')
+        # Create an in-memory file (BytesIO) to store the FASTA sequences
+        fasta_file = BytesIO()
 
-        return output_file_path, total_accessions
+        # Write the sequences to the in-memory file
+        for accession, sequence in results.items():
+            fasta_file.write(f">{accession}\n{sequence}\n".encode())
+
+        # Make sure to move the pointer to the beginning of the file
+        fasta_file.seek(0)
+
+        return fasta_file, total_accessions
