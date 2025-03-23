@@ -1,6 +1,7 @@
 import os
 import streamlit as st
 import fetch_fasta_sequence as fs
+import blast_sequence as bs
 
 
 def main():
@@ -23,6 +24,7 @@ def main():
 
     # perform BLAST on retrieved FASTA sequences to get top hits
     st.markdown("<br><p style='font-size: 24px; color: black;'>Step 3: Perform BLAST on retrieved FASTA sequences to get top hits</p>", unsafe_allow_html=True)
+    blast_file = bs.generate_blast_dataframe(fasta_file)
 
 
     # reset
