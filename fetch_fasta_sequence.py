@@ -56,9 +56,8 @@ def generate_fasta_file(input_file):
 
         # Save the retrieved sequences into a BytesIO object
         fasta_io = BytesIO()
-        with fasta_io as file:
-            for accession, sequence in results.items():
-                file.write(f">{accession}\n{sequence}\n".encode('utf-8'))
+        for accession, sequence in results.items():
+            fasta_io.write(f">{accession}\n{sequence}\n".encode('utf-8'))
 
-        fasta_io.seek(0)  # Reset the file pointer to the beginning
+        fasta_io.seek(0)  # Reset the file pointer to the beginning of the BytesIO object
         return fasta_io, total_accessions
