@@ -24,7 +24,10 @@ def main():
 
     # perform BLAST on retrieved FASTA sequences to get top hits
     st.markdown("<br><p style='font-size: 24px; color: black;'>Step 3: Perform BLAST on retrieved FASTA sequences to get top hits</p>", unsafe_allow_html=True)
-    blast_file = bs.generate_blast_dataframe(fasta_file)
+    st.number_input(label="Enter the number of first n sequences required to BLAST", step="int")
+    st.markdown("<p style='color: black;'>(Note: The more sequences you select, the more time it will take to BLAST)</p><br>", unsafe_allow_html=True)
+    st.number_input(label="Enter the number of top hits required for each sequence", step="int")
+    # blast_file = bs.generate_blast_dataframe(fasta_file, num_seq, num_hits)
 
 
     # reset
