@@ -55,7 +55,7 @@ def generate_fasta_file(input_file):
             percentage_text.text(f"Progress: {int(progress_percentage * 100)}%")  # Update percentage text
 
         # Save the retrieved sequences into a BytesIO object
-        fasta_io = io.BytesIO()
+        fasta_io = BytesIO()
         with fasta_io as file:
             for accession, sequence in results.items():
                 file.write(f">{accession}\n{sequence}\n".encode('utf-8'))
