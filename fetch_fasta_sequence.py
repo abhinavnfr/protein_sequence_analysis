@@ -24,7 +24,7 @@ def fetch_fasta_sequence(accession):
         return f"Failed to retrieve {accession}: {str(e)}"
 
 
-ef generate_fasta_file(input_file):
+def generate_fasta_file(input_file):
     """
     Generates a FASTA file from a list of accession numbers provided in an input file.
 
