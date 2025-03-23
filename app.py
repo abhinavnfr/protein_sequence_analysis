@@ -26,7 +26,7 @@ def main():
     # perform BLAST on retrieved FASTA sequences to get top hits
     st.markdown("<br><p style='font-size: 24px; color: black;'>Step 3: Perform BLAST on retrieved FASTA sequences to get top hits</p>", unsafe_allow_html=True)
     option = st.selectbox("How many sequences from the generated FASTA file would you like to process?",["First n sequences", "All sequences"], placeholder="Choose an option")
-    st.markdown("<p style='color: black;'>(Note: The more sequences you select, the more time it will take to BLAST)</p><br>", unsafe_allow_html=True)
+    st.markdown("<p style='color: #FF4B4B;'>(Note: The more sequences you select, the more time it will take to BLAST)</p><br>", unsafe_allow_html=True)
     if option == "First n sequences":
             num_seq = st.number_input(label="Enter the number of first n sequences required to BLAST", value=0, step=1)
     else:
