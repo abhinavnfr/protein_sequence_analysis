@@ -24,8 +24,8 @@ def main():
                 
 
     # reset
-    st.markdown("<p></p><br>")
-    st.markdown("<p style='font-size: 12px; color: black;'>Reset</p>", unsafe_allow_html=True)
+    st.markdown("<p></p><br>", unsafe_allow_html=True)
+    st.markdown("<p style='font-size: 20px; color: black;'>Reset</p>", unsafe_allow_html=True)
     st.button("Click to reset and start again", type="secondary")
     
 
