@@ -18,10 +18,11 @@ def blast_sequence(fasta_file, idx, num_hits):
     Returns:
         list: A list containing the queried sequence information along with details of the top 3 BLAST hits, including percentage identity, scientific name, and accession number.
     """
+    st.write("opening fasta file")
     # read the protein sequence from the fasta file
     with open(fasta_file, 'r') as file:
         seq_record = list(SeqIO.parse(file, "fasta"))
-
+    st.write("file parsed")
     if not seq_record:
         st.write("No protein sequences found in the file.")
         return
@@ -74,7 +75,7 @@ def blast_sequence(fasta_file, idx, num_hits):
 
     lst = [">" + seq_record[idx].id + " " + seq_record[idx].description + "\n" + str(seq_record[idx].seq),
            seq_record[idx].id, seq_record[idx].description, str(seq_record[idx].seq)]
-    st.write(f"Top {n} Percentage Identities with Details:")
+    st.write(f"Top {num_hits} Percentage Identities with Details:")
     for i, hit in enumerate(top_hits, start=1):
         st.write(f"{i}: {hit['percent_identity']:.2f}% - Scientific Name: {hit['scientific_name']} - Accession: {hit['accession']}")
         lst.append(f"{hit['percent_identity']:.2f}%")
@@ -103,8 +104,9 @@ def generate_blast_dataframe(fasta_file, num_seq, num_hits):
                                "Top_2nd_Percent_Identity", "Top_2nd_Scientific_Name", "Top_2nd_Accession",
                                "Top_3rd_Percent_Identity", "Top_3rd_Scientific_Name", "Top_3rd_Accession"]
                       )
-
+    st.write("starting for loop")
     for i in range(num_seq):
+        st.write(f"interation {i})
         lst = blast_sequence(fasta_file, i, num_hits)
         df = pd.concat([df, pd.DataFrame([lst], columns=df.columns)], ignore_index=True)
     
