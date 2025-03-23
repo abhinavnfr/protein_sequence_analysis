@@ -5,10 +5,8 @@ import blast_sequence as bs
 
 
 def reset_inputs():
-    for key in ["input_file", "option", "num_seq", "num_hits"]:
-        if key in st.session_state:
-            del st.session_state[key]  # explicitly remove each key
-    st.rerun()  # force rerun to refresh UI
+    st.session_state.clear()  # Completely wipe session state
+    st.rerun()  # Rerun the script to refresh the UI
 
 
 def main():
