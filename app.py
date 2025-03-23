@@ -32,6 +32,7 @@ def main():
     else:
             num_seq = total_accessions
     num_hits = st.number_input(label="Enter the number of top hits required for each sequence", value=0, step=1)
+    blast_file = False # initialize blast_file
     if st.button(label="Click to BLAST the FASTA sequences", type="primary"):
             blast_file = bs.generate_blast_dataframe(fasta_file, num_seq, num_hits)
     if blast_file:
