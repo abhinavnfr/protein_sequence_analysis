@@ -1,5 +1,6 @@
 streamlit
 biopython
 openpyxl
+XlsxWriter
 pandas
 numpy
