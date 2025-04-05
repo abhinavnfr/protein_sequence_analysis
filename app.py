@@ -13,8 +13,6 @@ def main():
 
     # Step 1: Upload accession number file
     st.markdown("<br><p style='font-size: 24px;'>Step 1: To get started, choose a text file containing accession numbers</p><br>", unsafe_allow_html=True)
-    # Step 1: Upload accession file
-    st.markdown("<br><p style='font-size: 24px;'>Step 1: Upload text file containing accession numbers</p><br>", unsafe_allow_html=True)
     input_file = st.file_uploader(label="Upload file", type=["txt"])
 
     # Step 2: Generate FASTA sequences
@@ -48,7 +46,6 @@ def main():
                            mime='text/plain')
 
     # Step 3: BLAST sequences
-    # Step 3: BLAST Sequences
     st.markdown("<br><p style='font-size: 24px;'>Step 3: Perform BLAST on retrieved FASTA sequences to get top hits</p>", unsafe_allow_html=True)
 
     option = st.selectbox("How many sequences from the generated FASTA file would you like to process?",
@@ -59,7 +56,6 @@ def main():
 
     if option == "First n sequences":
         num_seq = st.number_input(label="Enter the number of first n sequences required to BLAST", value=0, step=1)
-        num_seq = st.number_input(label="Enter the number of first n sequences to BLAST", value=0, step=1)
     elif option == "All sequences":
         num_seq = total_accessions
     else:
