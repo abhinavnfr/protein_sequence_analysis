@@ -11,10 +11,10 @@ def blast_sequence(fasta_file, idx, num_hits):
         seq_record = list(SeqIO.parse(file, "fasta"))
 
     if not seq_record:
-        print("No protein sequences found in the file.")
+        st.error("No protein sequences found in the file.")
         return
 
-    print(f"Running BLAST for the sequence: {seq_record[idx].id}")
+    st.write(f"Running BLAST for the sequence: {seq_record[idx].id}")
 
     # Run BLAST against the NCBI database
     result_handle = NCBIWWW.qblast("blastp", "nr", str(seq_record[idx].seq))
@@ -62,28 +62,45 @@ def blast_sequence(fasta_file, idx, num_hits):
 
     lst = [">" + seq_record[idx].id + " " + seq_record[idx].description + "\n" + str(seq_record[idx].seq),
            seq_record[idx].id, seq_record[idx].description, str(seq_record[idx].seq)]
-    print("Top 3 Percentage Identities with Details:")
+    st.write(f"Top {num_hits} Percentage Identities with Details:")
     for i, hit in enumerate(top_hits, start=1):
-        print(f"{i}: {hit['percent_identity']:.2f}% - Scientific Name: {hit['scientific_name']} - Accession: {hit['accession']}")
+        st.write(f"{i}: {hit['percent_identity']:.2f}% - Scientific Name: {hit['scientific_name']} - Accession: {hit['accession']}")
         lst.append(f"{hit['percent_identity']:.2f}%")
         lst.append(hit['scientific_name'])
         lst.append(hit['accession'])
 
-    print("="*100)
+    st.write("="*100)
 
     return lst
 
-def generate_blast_dataframe(fasta_file, num_seq, num_hits):
-    # Create an empty dataframe to store the result
-    df = pd.DataFrame(columns=["Complete_Input", "Input_Sequence_ID", "Input_Sequence_Description", "Input_Sequence",
-                               "Top_1st_Percent_Identity", "Top_1st_Scientific_Name", "Top_1st_Accession",
-                               "Top_2nd_Percent_Identity", "Top_2nd_Scientific_Name", "Top_2nd_Accession",
-                               "Top_3rd_Percent_Identity", "Top_3rd_Scientific_Name", "Top_3rd_Accession"]
-                      )
 
-    # BLAST sequences on loop
+def ordinal(n):
+    # Returns ordinal suffix for a number e.g., 1 -> 1st, 2 -> 2nd, 3 -> 3rd, 4 -> 4th ...
+    return f"{n}{'th' if 11<=n%100<=13 else {1:'st',2:'nd',3:'rd'}.get(n%10, 'th')}"
+
+
+def generate_blast_dataframe(fasta_file, num_seq, num_hits):
+    # Fixed columns
+    base_columns = ["Complete_Input", "Input_Sequence_ID", "Input_Sequence_Description", "Input_Sequence"]
+
+    # Dynamically generate columns based on num_hits
+    hit_columns = []
+    for i in range(1, num_hits + 1):
+        suffix = ordinal(i)
+        hit_columns.extend([
+            f"Top_{suffix}_Percent_Identity",
+            f"Top_{suffix}_Scientific_Name",
+            f"Top_{suffix}_Accession"
+        ])
+
+    all_columns = base_columns + hit_columns
+
+    # Create empty dataframe with dynamic columns
+    df = pd.DataFrame(columns=all_columns)
+
+    # BLAST sequences in a loop
     for i in range(num_seq):
-      lst = blast_sequence(fasta_file, i, num_hits)
-      df = pd.concat([df, pd.DataFrame([lst], columns=df.columns)], ignore_index=True)
+        lst = blast_sequence(fasta_file, i, num_hits)
+        df = pd.concat([df, pd.DataFrame([lst], columns=df.columns)], ignore_index=True)
 
     return df
