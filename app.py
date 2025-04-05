@@ -65,16 +65,15 @@ def main():
 
     if st.button(label="Click to BLAST the FASTA sequences", type="primary"):
         if fasta_file_content:
-            progress = st.progress(0, text="BLAST in progress...")
-
-            # Simulate progress
-            for percent_complete in range(0, 101, 10):
-                time.sleep(0.1)  # fake delay for visual effect
-                progress.progress(percent_complete, text="BLAST in progress...")
+            with st.spinner("Running BLAST... Please wait"):
+            start_time = time.time()
 
             # Perform BLAST
             df = bs.generate_blast_dataframe("sequences.fasta", num_seq, num_hits)
-            st.success("BLAST completed successfully!")
+
+            execution_time = time.time() - start_time
+            st.success(f"BLAST completed in {round(execution_time/60, 2)} minutes")
+            
             st.write(df)
 
             # Save df to Excel
@@ -91,12 +90,11 @@ def main():
         else:
             st.error("FASTA file not generated. Please generate the FASTA file first.")
 
-    # Reset option
+
     # Reset
     st.markdown("<br><p style='font-size: 20px;'>Reset</p>", unsafe_allow_html=True)
     if st.button("Click to reset and start again", type="secondary"):
         st.session_state.clear()
-        st.experimental_rerun()
 
 
 if __name__ == "__main__":
