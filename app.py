@@ -66,26 +66,26 @@ def main():
     if st.button(label="Click to BLAST the FASTA sequences", type="primary"):
         if fasta_file_content:
             with st.spinner("Running BLAST... Please wait"):
-            start_time = time.time()
-
-            # Perform BLAST
-            df = bs.generate_blast_dataframe("sequences.fasta", num_seq, num_hits)
-
-            execution_time = time.time() - start_time
-            st.success(f"BLAST completed in {round(execution_time/60, 2)} minutes")
-            
-            st.write(df)
-
-            # Save df to Excel
-            output = BytesIO()
-            with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-                df.to_excel(writer, index=False, sheet_name='BLAST Results')
-            output.seek(0)
-
-            st.download_button(label="Download BLAST Results as Excel",
-                               data=output,
-                               file_name="blast_file.xlsx",
-                               mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                start_time = time.time()
+    
+                # Perform BLAST
+                df = bs.generate_blast_dataframe("sequences.fasta", num_seq, num_hits)
+    
+                execution_time = time.time() - start_time
+                st.success(f"BLAST completed in {round(execution_time/60, 2)} minutes")
+                
+                st.write(df)
+    
+                # Save df to Excel
+                output = BytesIO()
+                with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                    df.to_excel(writer, index=False, sheet_name='BLAST Results')
+                output.seek(0)
+    
+                st.download_button(label="Download BLAST Results as Excel",
+                                   data=output,
+                                   file_name="blast_file.xlsx",
+                                   mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
         else:
             st.error("FASTA file not generated. Please generate the FASTA file first.")
