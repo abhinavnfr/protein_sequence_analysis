@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 from Bio.Blast import NCBIWWW, NCBIXML
 from Bio import SeqIO
+import streamlit as st
 
 # Function to BLAST a sequence
 def blast_sequence(fasta_file, idx, num_hits):
