@@ -19,9 +19,17 @@ def main():
     
     if st.button(label="Click to generate FASTA sequences", type="primary"):
             fasta_file_content, total_accessions = fs.generate_fasta_file(input_file)
+            # Save to session state
+            st.session_state["fasta_file_content"] = fasta_file_content
+            st.session_state["total_accessions"] = total_accessions
             # Save the file locally
             with open("sequences.fasta", "w") as f:
                     f.write(fasta_file_content.getvalue().decode("utf-8"))
+
+    # Retrieve from session state if available
+    fasta_file_content = st.session_state.get("fasta_file_content", None)
+    total_accessions = st.session_state.get("total_accessions", 0)
+
     if fasta_file_content:
             st.download_button(label="Download FASTA file having sequences", data=fasta_file_content.getvalue(), file_name='sequences.fasta', mime='text/plain')
 
