@@ -15,7 +15,7 @@ def blast_sequence(fasta_file, idx, num_hits):
         st.error("No protein sequences found in the file.")
         return
 
-    st.write(f"Running BLAST for the sequence: {seq_record[idx].id}")
+    # st.write(f"Running BLAST for the sequence: {seq_record[idx].id}") # optional print statement
 
     # Run BLAST against the NCBI database
     result_handle = NCBIWWW.qblast("blastp", "nr", str(seq_record[idx].seq))
@@ -63,14 +63,14 @@ def blast_sequence(fasta_file, idx, num_hits):
 
     lst = [">" + seq_record[idx].id + " " + seq_record[idx].description + "\n" + str(seq_record[idx].seq),
            seq_record[idx].id, seq_record[idx].description, str(seq_record[idx].seq)]
-    st.write(f"Top {num_hits} Percentage Identities with Details:")
+    # st.write(f"Top {num_hits} Percentage Identities with Details:") # optional print statement
     for i, hit in enumerate(top_hits, start=1):
-        st.write(f"{i}: {hit['percent_identity']:.2f}% - Scientific Name: {hit['scientific_name']} - Accession: {hit['accession']}")
+        # st.write(f"{i}: {hit['percent_identity']:.2f}% - Scientific Name: {hit['scientific_name']} - Accession: {hit['accession']}") # optional print statement
         lst.append(f"{hit['percent_identity']:.2f}%")
         lst.append(hit['scientific_name'])
         lst.append(hit['accession'])
 
-    st.write("="*100)
+    # st.write("="*100) # optional print statement
 
     return lst
 
