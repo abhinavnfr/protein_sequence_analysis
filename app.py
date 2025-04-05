@@ -14,12 +14,15 @@ def main():
 
     # fetch FASTA sequences
     st.markdown("<br><p style='font-size: 24px;'>Step 2: Fetch FASTA sequences from accession numbers</p>", unsafe_allow_html=True)
-    fasta_file = None # initialize fasta_file
+    fasta_file_content = None # store content of fasta file
     total_accessions = 0 # initialize total_accessions
     if st.button(label="Click to generate FASTA sequences", type="primary"):
-            fasta_file, total_accessions = fs.generate_fasta_file(input_file)
+            fasta_file_content, total_accessions = fs.generate_fasta_file(input_file)
+            # Save the file locally
+            with open("sequences.fasta", "w") as f:
+                    f.write(fasta_file_content)
     if fasta_file:
-            st.download_button(label="Download FASTA file having sequences", data=fasta_file, file_name='sequences.fasta', mime='text/plain')
+            st.download_button(label="Download FASTA file having sequences", data=fasta_file_content, file_name='sequences.fasta', mime='text/plain')
                 
 
     # perform BLAST on retrieved FASTA sequences to get top hits
@@ -36,8 +39,8 @@ def main():
     
     blast_file = None  # initialize blast_file
     if st.button(label="Click to BLAST the FASTA sequences", type="primary"):
-        if fasta_file:
-            df = bs.generate_blast_dataframe(fasta_file, num_seq, num_hits)
+        if fasta_file_content:
+            df = bs.generate_blast_dataframe("sequences.fasta", num_seq, num_hits)
             st.write(df)
         else:
             st.error("FASTA file not generated. Please generate the FASTA file first.")
