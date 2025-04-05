@@ -78,7 +78,7 @@ def main():
     
                 # Save df to Excel
                 output = BytesIO()
-                with pd.ExcelWriter(output, engine='openpyxl') as writer:
+                with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
                     df.to_excel(writer, index=False, sheet_name='BLAST Results')
                 output.seek(0)
     
