@@ -5,15 +5,15 @@ import blast_sequence as bs
 
 
 def main():
-    st.markdown("<h1 style='color: white;'>Protein Sequence Analysis App</h1><br>", unsafe_allow_html=True)
+    st.markdown("<h1>Protein Sequence Analysis App</h1><br>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: right; color: #ADD8E6;'>by Abhinav Rana</p>", unsafe_allow_html=True)
     
     # file uploader
-    st.markdown("<br><p style='font-size: 24px; color: white;'>Step 1: To get started, choose a text file containing accession numbers</p><br>", unsafe_allow_html=True)
+    st.markdown("<br><p style='font-size: 24px;'>Step 1: To get started, choose a text file containing accession numbers</p><br>", unsafe_allow_html=True)
     input_file = st.file_uploader(label="Upload file", type=["txt"])
 
     # fetch FASTA sequences
-    st.markdown("<br><p style='font-size: 24px; color: white;'>Step 2: Fetch FASTA sequences from accession numbers</p>", unsafe_allow_html=True)
+    st.markdown("<br><p style='font-size: 24px;'>Step 2: Fetch FASTA sequences from accession numbers</p>", unsafe_allow_html=True)
     fasta_file = None # initialize fasta_file
     total_accessions = 0 # initialize total_accessions
     if st.button(label="Click to generate FASTA sequences", type="primary"):
@@ -23,7 +23,7 @@ def main():
                 
 
     # perform BLAST on retrieved FASTA sequences to get top hits
-    st.markdown("<br><p style='font-size: 24px; color: white;'>Step 3: Perform BLAST on retrieved FASTA sequences to get top hits</p>", unsafe_allow_html=True)
+    st.markdown("<br><p style='font-size: 24px;'>Step 3: Perform BLAST on retrieved FASTA sequences to get top hits</p>", unsafe_allow_html=True)
     option = st.selectbox("How many sequences from the generated FASTA file would you like to process?",["None", "First n sequences", "All sequences"], index=0, placeholder="Choose an option")
     st.markdown("<p style='color: #FF4B4B;'>(Note: The more sequences you select, the more time it will take to BLAST)</p><br>", unsafe_allow_html=True)
     
@@ -43,7 +43,7 @@ def main():
             st.error("FASTA file not generated. Please generate the FASTA file first.")
 
     # reset
-    st.markdown("<br><p style='font-size: 20px; color: white;'>Reset</p>", unsafe_allow_html=True)
+    st.markdown("<br><p style='font-size: 20px;'>Reset</p>", unsafe_allow_html=True)
     st.button("Click to reset and start again", type="secondary")
 
 
