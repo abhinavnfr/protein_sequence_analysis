@@ -21,7 +21,7 @@ def main():
             # Save the file locally
             with open("sequences.fasta", "w") as f:
                     f.write(fasta_file_content)
-    if fasta_file:
+    if fasta_file_content:
             st.download_button(label="Download FASTA file having sequences", data=fasta_file_content, file_name='sequences.fasta', mime='text/plain')
                 
 
