@@ -115,8 +115,6 @@ def process_results(results, fasta_file):
     return pd.DataFrame(data, columns=columns)
 
 def generate_pfam_dataframe(fasta_file):
-    fasta_file = "sequences (1).fasta"
-
     # Step 1: Submit sequences to InterPro
     job_id = submit_to_interpro(fasta_file)
     st.write(f"Job submitted. Job ID: {job_id}")
