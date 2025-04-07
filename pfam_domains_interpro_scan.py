@@ -126,6 +126,7 @@ def generate_pfam_dataframe(fasta_file):
         status = check_status(job_id)
         # st.write(f"Job status: {status}") # optional print statement
         if status == "FINISHED":
+            st.write(f"Job status: {status}")
             break
         elif status == "ERROR":
             raise Exception("Error occurred during InterProScan job.")
