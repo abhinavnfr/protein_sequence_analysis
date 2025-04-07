@@ -1,10 +1,11 @@
 import os
 import streamlit as st
 import pandas as pd
-import fetch_fasta_sequence as fs
-import blast_sequence as bs
 from io import BytesIO
 import time
+import fetch_fasta_sequence as fs
+import blast_sequence as bs
+import pfam_domain_interpro_scan as pf
 
 
 def main():
@@ -91,6 +92,34 @@ def main():
             st.error("FASTA file not generated. Please generate the FASTA file first.")
 
 
+    # Step 4: PFAM domain search via interpro scan
+    st.markdown("<br><p style='font-size: 24px;'>Step 4: Perform PFAM domain search on retrieved FASTA sequences via InterProScan</p>", unsafe_allow_html=True)
+
+    if st.button(label="Click to search PFAM domains of the FASTA sequences", type="primary"):
+        if fasta_file_content:
+            with st.spinner("Searching PFAM domains... Please wait"):
+                start_time = time.time()
+    
+                # PFAM domain search
+                df = pf.generate_pfam_dataframe("sequences.fasta")
+
+                execution_time = time.time() - start_time
+                st.success(f"PFAM domain search completed in {round(execution_time/60, 2)} minutes")
+
+                st.write(df)
+
+                # Save df to Excel
+                output = BytesIO()
+                with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                    df.to_excel(writer, index=False, sheet_name='BLAST Results')
+                output.seek(0)
+    
+                st.download_button(label="Download PFAM Domain Search Results as Excel",
+                                   data=output,
+                                   file_name="pfam_file.xlsx",
+                                   mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            
+    
     # Reset
     st.markdown("<br><p style='font-size: 20px;'>Reset</p>", unsafe_allow_html=True)
     if st.button("Click to reset and start again", type="secondary"):
