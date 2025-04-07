@@ -4,6 +4,7 @@ import pandas as pd
 from Bio import SeqIO
 import streamlit as st
 
+
 def submit_to_interpro(fasta_file):
     """
     Submit protein sequences to the InterProScan REST API.
@@ -30,6 +31,7 @@ def submit_to_interpro(fasta_file):
         else:
             raise Exception(f"Error submitting job: {response.status_code} {response.text}")
 
+
 def check_status(job_id):
     """
     Check the status of the InterProScan job.
@@ -47,6 +49,7 @@ def check_status(job_id):
     else:
         raise Exception(f"Error checking status: {response.text}")
 
+
 def retrieve_results(job_id):
     """
     Retrieve results for a completed InterProScan job.
@@ -63,6 +66,7 @@ def retrieve_results(job_id):
         return response.text
     else:
         raise Exception(f"Error retrieving results: {response.text}")
+
 
 def process_results(results, fasta_file):
     """
@@ -114,27 +118,68 @@ def process_results(results, fasta_file):
     columns = ["Accession", "Sequence_Name", "Sequence"] + [f"PFAM_Domain_{i+1}" for i in range(max_domains)]
     return pd.DataFrame(data, columns=columns)
 
-def generate_pfam_dataframe(fasta_file):
-    # Step 1: Submit sequences to InterPro
-    job_id = submit_to_interpro(fasta_file)
-    st.write(f"Job submitted. Job ID: {job_id}")
+
+def split_fasta(input_file, chunk_size=750):
+    output_prefix = input_file.replace(".fasta", "_chunk")
+    chunk_files = []
+
+    with open(input_file, "r") as f:
+        sequences = []
+        current_seq = ""
+        header = ""
+
+        for line in f:
+            line = line.strip()
+            if line.startswith(">"):
+                if header and current_seq:
+                    sequences.append((header, current_seq))
+                header = line
+                current_seq = ""
+            else:
+                current_seq += line
+
+        if header and current_seq:
+            sequences.append((header, current_seq))
+
+        for i in range(0, len(sequences), chunk_size):
+            chunk = sequences[i:i + chunk_size]
+            output_file = f"{output_prefix}_part{i//chunk_size + 1}.fasta"
+            chunk_files.append(output_file)
+            with open(output_file, "w") as out_f:
+                for h, seq in chunk:
+                    out_f.write(f"{h}\n{seq}\n")
+
+    return chunk_files
+
+
+def generate_pfam_dataframe(input_fasta_file):
+    chunk_files = split_fasta(input_fasta_file)
+
+    for fasta_file in chunk_files:
+        df_list = []
+        # Step 1: Submit sequences to InterPro
+        job_id = submit_to_interpro(fasta_file)
+        st.write(f"Job submitted. Job ID: {job_id}")
     
-    # Step 2: Check job status
-    while True:
-        status = check_status(job_id)
-        # st.write(f"Job status: {status}") # optional print statement
-        if status == "FINISHED":
-            st.write(f"Job status: {status}")
-            break
-        elif status == "ERROR":
-            raise Exception("Error occurred during InterProScan job.")
-        time.sleep(30)  # Wait for 30 seconds before checking again
+        # Step 2: Check job status
+        while True:
+            status = check_status(job_id)
+            # st.write(f"Job status: {status}") # optional print statement
+            if status == "FINISHED":
+                st.write(f"Job status: {status}")
+                break
+            elif status == "ERROR":
+                raise Exception("Error occurred during InterProScan job.")
+            time.sleep(30)  # Wait for 30 seconds before checking again
     
-    # Step 3: Retrieve and process results
-    results = retrieve_results(job_id)
-    df = process_results(results, fasta_file)
+        # Step 3: Retrieve and process results
+        results = retrieve_results(job_id)
+        df = process_results(results, fasta_file)
+        df_list.append(df)
+
+    df_final = pd.concat(df_list, ignore_index=True)
     
-    return df
+    return df_final
 
 # df.shape[0]
 
