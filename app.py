@@ -5,7 +5,7 @@ from io import BytesIO
 import time
 import fetch_fasta_sequence as fs
 import blast_sequence as bs
-import pfam_domain_interpro_scan as pf
+import pfam_domains_interpro_scan as pf
 
 
 def main():
