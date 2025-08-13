@@ -6,6 +6,7 @@ import time
 import fetch_fasta_sequence as fs
 import blast_sequence as bs
 import pfam_domains_interpro_scan as pf
+import databricks_handler as dbh
 
 
 def main():
@@ -15,6 +16,13 @@ def main():
     # Step 1: Upload accession number file
     st.markdown("<br><p style='font-size: 24px;'>Step 1: To get started, choose a text file containing accession numbers</p><br>", unsafe_allow_html=True)
     input_file = st.file_uploader(label="Upload file", type=["txt"])
+    if input_file is not None and st.button("Update accessions in database"):
+        accessions = [line.strip() for line in input_file.read().decode("utf-8").splitlines()]
+        uc_table, existing_ids, new_accessions = dbh.update_uc_table_accession(accessions)
+        
+        st.success(f"New accession numbers added to {uc_table}: len(new_accessions)")
+        st.write(f"Input accession numbers already existing in {uc_table}: {len(accessions)-len(new_accessions)}")
+        st.write(f"Total accession numbers now in {uc_table}: {len(existing_ids)+len(new_accessions)}")
 
     # Step 2: Generate FASTA sequences
     st.markdown("<br><p style='font-size: 24px;'>Step 2: Fetch FASTA sequences from accession numbers</p>", unsafe_allow_html=True)

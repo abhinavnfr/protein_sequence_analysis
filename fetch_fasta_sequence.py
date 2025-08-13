@@ -2,6 +2,8 @@ from Bio import Entrez, SeqIO
 import streamlit as st
 from io import BytesIO
 
+
+
 def fetch_fasta_sequence(accession):
     """
     Retrieves a FASTA sequence from the NCBI database.

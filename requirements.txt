@@ -4,3 +4,4 @@ openpyxl
 XlsxWriter
 pandas
 numpy
+databricks-sql-connector
