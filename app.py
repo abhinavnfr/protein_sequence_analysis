@@ -29,7 +29,7 @@ def main():
 
     if st.button(label="Click to generate FASTA sequences", type="primary"):
         if input_file is not None:
-            fasta_file_content, total_accessions, results = fs.generate_fasta_file(input_file)
+            fasta_file_content, total_accessions, results = fs.generate_fasta_file(accessions)
             st.write(results)
 
             # Save to session state
