@@ -14,7 +14,7 @@ def fetch_fasta_sequence(accession):
     Returns:
         str: FASTA sequence.
     """
-    Entrez.email = "abhinavrana18july@gmail.com"  # Replace with your email
+    Entrez.email = get_entrez_email()
 
     # Search for the accession in the NCBI database
     try:
@@ -62,4 +62,4 @@ def generate_fasta_file(input_file):
             fasta_io.write(f"{sequence}\n".encode('utf-8'))
 
         fasta_io.seek(0)  # Reset the file pointer to the beginning of the BytesIO object
-        return fasta_io, total_accessions
+        return fasta_io, total_accessions, results
