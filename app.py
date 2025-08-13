@@ -16,7 +16,7 @@ def main():
     # Step 1: Upload accession number file
     st.markdown("<br><p style='font-size: 24px;'>Step 1: To get started, choose a text file containing accession numbers</p><br>", unsafe_allow_html=True)
     input_file = st.file_uploader(label="Upload file", type=["txt"])
-    if input_file is not None and st.button("Update accessions in database", type="primary"):
+    if input_file is not None:
         accessions = [line.strip() for line in input_file.read().decode("utf-8").splitlines()]
         uc_table, existing_ids, new_accessions = dbh.update_uc_table_accession(accessions)
         
