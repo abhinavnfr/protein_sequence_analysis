@@ -1,6 +1,7 @@
 from Bio import Entrez, SeqIO
 import streamlit as st
 from io import BytesIO
+import databricks_handler as dbh
 
 
 
@@ -14,7 +15,7 @@ def fetch_fasta_sequence(accession):
     Returns:
         str: FASTA sequence.
     """
-    Entrez.email = get_entrez_email()
+    Entrez.email = dbh.get_entrez_email()
 
     # Search for the accession in the NCBI database
     try:
