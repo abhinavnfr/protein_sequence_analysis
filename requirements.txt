@@ -3,5 +3,5 @@ biopython
 openpyxl
 XlsxWriter
 pandas
-numpy
+numpy>=1.24
 databricks-sql-connector
