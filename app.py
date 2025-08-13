@@ -20,7 +20,7 @@ def main():
         accessions = [line.strip() for line in input_file.read().decode("utf-8").splitlines()]
         uc_table, existing_ids, new_accessions = dbh.update_uc_table_accession(accessions)
         
-        st.success(f"New accession numbers added to {uc_table}: len(new_accessions)")
+        st.success(f"New accession numbers added to {uc_table}: {len(new_accessions)}")
         st.write(f"Input accession numbers already existing in {uc_table}: {len(accessions)-len(new_accessions)}")
         st.write(f"Total accession numbers now in {uc_table}: {len(existing_ids)+len(new_accessions)}")
 
