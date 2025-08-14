@@ -114,7 +114,7 @@ def submit_to_interpro(sequence):
             "email": get_entrez_email(), # Replace with a valid email address
             "title": "InterProScan job", # Optional title for your job
             }
-    response = requests.post(url, files=files, data=data)
+    response = requests.post(url, data=data)
 
     # Check response status
     if response.status_code == 200:
