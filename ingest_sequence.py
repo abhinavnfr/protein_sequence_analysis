@@ -183,40 +183,47 @@ def pfam_domain_search(accession, blasted_sequence):
         st.error(f"Failed to perform PFAM Domain search for {accession}: {str(e)}")
 
 
-# def split_fasta(input_file, chunk_size=750):
-#     output_prefix = input_file.replace(".fasta", "_chunk")
-#     chunk_files = []
+# update UC table raw.accession
+def update_uc_table_accession(sequences_to_ingest: list) -> None:
+    uc_table = "workspace.raw.accession"
+    try:
+        conn = dbh.get_databricks_connection()
+        cursor = conn.cursor()
 
-#     with open(input_file, "r") as f:
-#         sequences = []
-#         current_seq = ""
-#         header = ""
+        # Ensure sequences_to_ingest is a list of lists
+        if sequences_to_ingest and not isinstance(sequences_to_ingest[0], (list, tuple)):
+            sequences_to_ingest = [sequences_to_ingest]  # Wrap single row into a list
 
-#         for line in f:
-#             line = line.strip()
-#             if line.startswith(">"):
-#                 if header and current_seq:
-#                     sequences.append((header, current_seq))
-#                 header = line
-#                 current_seq = ""
-#             else:
-#                 current_seq += line
+        # Fetch table column names from UC table
+        cursor.execute(f"DESCRIBE TABLE {uc_table}")
+        columns_info = cursor.fetchall()
+        table_columns = [
+            row for row in columns_info
+            if row and not row.startswith("#")
+        ]
 
-#         if header and current_seq:
-#             sequences.append((header, current_seq))
+        # Determine the column names to insert
+        num_values = len(sequences_to_ingest)
+        insert_columns = table_columns[:num_values]
 
-#         for i in range(0, len(sequences), chunk_size):
-#             chunk = sequences[i:i + chunk_size]
-#             output_file = f"{output_prefix}_part{i//chunk_size + 1}.fasta"
-#             chunk_files.append(output_file)
-#             with open(output_file, "w") as out_f:
-#                 for h, seq in chunk:
-#                     out_f.write(f"{h}\n{seq}\n")
+        # Create query with placeholders
+        placeholders = ", ".join(["%s"] * num_values)
+        col_names = ", ".join(insert_columns)
+        insert_sql = f"INSERT INTO {uc_table} ({col_names}) VALUES ({placeholders})"
 
-#     return chunk_files
+        # Perform batch insert
+        cursor.executemany(insert_sql, sequences_to_ingest)
+        conn.commit()
 
+        st.success(f"Inserted {len(sequences_to_ingest)} row(s) into UC table: {uc_table}")
 
-# PFAM domain search
+    except Exception as e:
+        st.error(f"Error inserting into {uc_table}: {e}")
+        raise
+    
+    cursor.close()
+    conn.close()
+
 
 
 # # Update UC table workspace.raw.accession
