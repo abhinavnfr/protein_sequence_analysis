@@ -3,7 +3,7 @@ import streamlit as st
 import pandas as pd
 from io import BytesIO
 import time
-import fetch_fasta_sequence as fs
+from ingest_sequence import get_entrez_email, filter_new_sequences, fetch_fasta_sequence, blast_sequence, 
 import blast_sequence as bs
 import pfam_domains_interpro_scan as pf
 import databricks_handler as dbh
@@ -18,110 +18,109 @@ def main():
     input_file = st.file_uploader(label="Upload file", type=["txt"])
     if input_file is not None:
         accessions = [line.strip() for line in input_file.read().decode("utf-8").splitlines()]
-        fs.update_uc_table_accession(accessions)
+        new_accessions = filter_new_accessions(accessions)
+        for acc in new_accessions:
+            fasta_sequence = fetch_fasta_sequence(acc)
+            blasted_sequence = blast_sequence(fasta_sequence)
 
-    # Step 2: Generate FASTA sequences
-    st.markdown("<br><p style='font-size: 24px;'>Step 2: Fetch FASTA sequences from accession numbers</p>", unsafe_allow_html=True)
+    # # Step 2: Generate FASTA sequences
+    # st.markdown("<br><p style='font-size: 24px;'>Step 2: Fetch FASTA sequences from accession numbers</p>", unsafe_allow_html=True)
 
-    if st.button(label="Click to generate FASTA sequences", type="primary"):
-        fasta_file_content, total_accessions, results = fs.generate_fasta_file(accessions)
-        st.write(results)
+    # if st.button(label="Click to generate FASTA sequences", type="primary"):
+    #     fasta_file_content, total_accessions, results = fs.generate_fasta_file(accessions)
+    #     st.write(results)
 
-        # Save to session state
-        st.session_state["fasta_file_content"] = fasta_file_content
-        st.session_state["total_accessions"] = total_accessions
+    #     # Save to session state
+    #     st.session_state["fasta_file_content"] = fasta_file_content
+    #     st.session_state["total_accessions"] = total_accessions
 
-        # Save locally for BLAST
-        with open("sequences.fasta", "w") as f:
-            f.write(fasta_file_content.getvalue().decode("utf-8"))
+    #     # Save locally for BLAST
+    #     with open("sequences.fasta", "w") as f:
+    #         f.write(fasta_file_content.getvalue().decode("utf-8"))
 
-        st.success("FASTA file generated successfully!")
+    # # Retrieve from session state
+    # fasta_file_content = st.session_state.get("fasta_file_content", None)
+    # total_accessions = st.session_state.get("total_accessions", 0)
 
-    else:
-        st.error("Please upload an input file.")
+    # if fasta_file_content:
+    #     st.download_button(label="Download FASTA file",
+    #                        type="primary",
+    #                        data=fasta_file_content.getvalue(),
+    #                        file_name='out_sequences.fasta',
+    #                        mime='text/plain')
 
-    # Retrieve from session state
-    fasta_file_content = st.session_state.get("fasta_file_content", None)
-    total_accessions = st.session_state.get("total_accessions", 0)
+    # # # Step 3: BLAST sequences
+    # # st.markdown("<br><p style='font-size: 24px;'>Step 3: Perform BLAST on retrieved FASTA sequences to get top hits</p>", unsafe_allow_html=True)
 
-    if fasta_file_content:
-        st.download_button(label="Download FASTA file having sequences",
-                           data=fasta_file_content.getvalue(),
-                           file_name='out_sequences.fasta',
-                           mime='text/plain')
+    # # option = st.selectbox("How many sequences from the generated FASTA file would you like to process?",
+    # #                       ["None", "First n sequences", "All sequences"],
+    # #                       index=0, placeholder="Choose an option")
 
-    # Step 3: BLAST sequences
-    st.markdown("<br><p style='font-size: 24px;'>Step 3: Perform BLAST on retrieved FASTA sequences to get top hits</p>", unsafe_allow_html=True)
+    # # st.markdown("<p style='color: #FF4B4B;'>(Note: The more sequences you select, the more time it will take to BLAST)</p><br>", unsafe_allow_html=True)
 
-    option = st.selectbox("How many sequences from the generated FASTA file would you like to process?",
-                          ["None", "First n sequences", "All sequences"],
-                          index=0, placeholder="Choose an option")
+    # # if option == "First n sequences":
+    # #     num_seq = st.number_input(label="Enter the number of first n sequences required to BLAST", value=0, step=1)
+    # # elif option == "All sequences":
+    # #     num_seq = total_accessions
+    # # else:
+    # #     num_seq = 0
 
-    st.markdown("<p style='color: #FF4B4B;'>(Note: The more sequences you select, the more time it will take to BLAST)</p><br>", unsafe_allow_html=True)
+    # # num_hits = st.number_input(label="Enter the number of top hits required for each sequence", value=0, step=1)
 
-    if option == "First n sequences":
-        num_seq = st.number_input(label="Enter the number of first n sequences required to BLAST", value=0, step=1)
-    elif option == "All sequences":
-        num_seq = total_accessions
-    else:
-        num_seq = 0
-
-    num_hits = st.number_input(label="Enter the number of top hits required for each sequence", value=0, step=1)
-
-    if st.button(label="Click to BLAST the FASTA sequences", type="primary"):
-        if fasta_file_content:
-            with st.spinner("Running BLAST... Please wait"):
-                start_time = time.time()
+    # # if st.button(label="Click to BLAST the FASTA sequences", type="primary"):
+    # #     if fasta_file_content:
+    # #         with st.spinner("Running BLAST... Please wait"):
+    # #             start_time = time.time()
     
-                # Perform BLAST
-                df = bs.generate_blast_dataframe("sequences.fasta", num_seq, num_hits)
+    # #             # Perform BLAST
+    # #             df = bs.generate_blast_dataframe("sequences.fasta", num_seq, num_hits)
     
-                execution_time = time.time() - start_time
-                st.success(f"BLAST completed in {round(execution_time/60, 2)} minutes")
+    # #             execution_time = time.time() - start_time
+    # #             st.success(f"BLAST completed in {round(execution_time/60, 2)} minutes")
                 
-                st.write(df)
+    # #             st.write(df)
     
-                # Save df to Excel
-                output = BytesIO()
-                with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-                    df.to_excel(writer, index=False, sheet_name='BLAST Results')
-                output.seek(0)
+    # #             # Save df to Excel
+    # #             output = BytesIO()
+    # #             with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+    # #                 df.to_excel(writer, index=False, sheet_name='BLAST Results')
+    # #             output.seek(0)
     
-                st.download_button(label="Download BLAST Results as Excel",
-                                   data=output,
-                                   file_name="blast_file.xlsx",
-                                   mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    # #             st.download_button(label="Download BLAST Results as Excel",
+    # #                                data=output,
+    # #                                file_name="blast_file.xlsx",
+    # #                                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
-        else:
-            st.error("FASTA file not generated. Please generate the FASTA file first.")
+    # #     else:
+    # #         st.error("FASTA file not generated. Please generate the FASTA file first.")
 
 
-    # Step 4: PFAM domain search via interpro scan
-    st.markdown("<br><p style='font-size: 24px;'>Step 4: Perform PFAM domain search on retrieved FASTA sequences via InterProScan</p>", unsafe_allow_html=True)
+    # # # Step 4: PFAM domain search via interpro scan
+    # # st.markdown("<br><p style='font-size: 24px;'>Step 4: Perform PFAM domain search on retrieved FASTA sequences via InterProScan</p>", unsafe_allow_html=True)
 
-    if st.button(label="Click to search PFAM domains of the FASTA sequences", type="primary"):
-        if fasta_file_content:
-            with st.spinner("Searching PFAM domains... Please wait"):
-                start_time = time.time()
+    # # if st.button(label="Click to search PFAM domains of the FASTA sequences", type="primary"):
+    # #     if fasta_file_content:
+    # #         with st.spinner("Searching PFAM domains... Please wait"):
+    # #             start_time = time.time()
     
-                # PFAM domain search
-                df = pf.generate_pfam_dataframe("sequences.fasta")
+    # #             # PFAM domain search
+    # #             df = pf.generate_pfam_dataframe("sequences.fasta")
 
-                execution_time = time.time() - start_time
-                st.success(f"PFAM domain search completed in {round(execution_time/60, 2)} minutes")
+    # #             execution_time = time.time() - start_time
+    # #             st.success(f"PFAM domain search completed in {round(execution_time/60, 2)} minutes")
 
-                st.write(df)
+    # #             st.write(df)
 
-                # Save df to Excel
-                output = BytesIO()
-                with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
-                    df.to_excel(writer, index=False, sheet_name='BLAST Results')
-                output.seek(0)
+    # #             # Save df to Excel
+    # #             output = BytesIO()
+    # #             with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+    # #                 df.to_excel(writer, index=False, sheet_name='BLAST Results')
+    # #             output.seek(0)
     
-                st.download_button(label="Download PFAM Domain Search Results as Excel",
-                                   data=output,
-                                   file_name="pfam_file.xlsx",
-                                   mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    # #             st.download_button(label="Download PFAM Domain Search Results as Excel",
+    # #                                data=output,
+    # #                                file_name="pfam_file.xlsx",
+    # #                                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
             
     
     # Reset

@@ -11,8 +11,6 @@ def get_databricks_connection():
         access_token=st.secrets["databricks"]["access_token"]
     )
 
-# Set Entrez email from secrets
-def get_entrez_email():
-    return st.secrets["entrez"]["email"]
+
 
 
