@@ -3,7 +3,7 @@ import streamlit as st
 import pandas as pd
 from io import BytesIO
 import time
-from ingest_sequence import get_entrez_email, filter_new_sequences, fetch_fasta_sequence, blast_sequence
+import ingest_sequence as ingest
 import blast_sequence as bs
 import pfam_domains_interpro_scan as pf
 import databricks_handler as dbh
@@ -18,10 +18,11 @@ def main():
     input_file = st.file_uploader(label="Upload file", type=["txt"])
     if input_file is not None:
         accessions = [line.strip() for line in input_file.read().decode("utf-8").splitlines()]
-        new_accessions = filter_new_sequences(accessions)
+        new_accessions = ingest.filter_new_sequences(accessions)
         for acc in new_accessions:
-            fasta_sequence = fetch_fasta_sequence(acc)
-            blasted_sequence = blast_sequence(acc, fasta_sequence)
+            fasta_sequence = ingest.fetch_fasta_sequence(acc)
+            blasted_sequence = ingest.blast_sequence(acc, fasta_sequence)
+            pfam_sequence = ingest.pfam_domain_search(acc, blasted_sequence)
 
     # # Step 2: Generate FASTA sequences
     # st.markdown("<br><p style='font-size: 24px;'>Step 2: Fetch FASTA sequences from accession numbers</p>", unsafe_allow_html=True)
