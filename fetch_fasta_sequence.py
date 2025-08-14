@@ -92,3 +92,6 @@ def generate_fasta_file(accessions: list):
 
         fasta_io.seek(0)  # Reset the file pointer to the beginning of the BytesIO object
         return fasta_io, total_accessions, results
+    
+    except Exception as e:
+        st.error(f"Error generating FASTA file: {str(e)}")
