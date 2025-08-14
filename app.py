@@ -21,7 +21,7 @@ def main():
         new_accessions = ingest.filter_new_sequences(accessions)
         new_accesions_count = len(new_accessions)
         
-        sequences_to_ingest = []
+        # initiate progress bar
         progress_bar = st.progress(0)
         status_text = st.empty()
         for i, acc in enumerate(new_accessions):
@@ -30,16 +30,15 @@ def main():
                 fasta_sequence = ingest.fetch_fasta_sequence(acc)
                 blasted_sequence = ingest.blast_sequence(acc, fasta_sequence)
                 pfam_sequence = ingest.pfam_domain_search(acc, blasted_sequence)
-                sequences_to_ingest.append(pfam_sequence)
+                ingest.update_uc_table_accession(pfam_sequence)
             except Exception as e:
                 st.error(f"Error processing {acc}: {e}")
             
-            # Update progress bar
-            progress_percent = int((i / new_accesions_count) * 100)
+            # update progress bar
+            progress_percent = int(((i+1) / new_accesions_count) * 100)
             progress_bar.progress(progress_percent)
             time.sleep(0.1)
         
-        ingest.update_uc_table_accession(sequences_to_ingest)
         progress_bar.progress(100)
     
     

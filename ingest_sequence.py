@@ -27,6 +27,8 @@ def filter_new_sequences(accessions: list) -> list:
         existing_ids = set(row[0] for row in cursor.fetchall())
         new_accessions = [acc for acc in accessions if acc not in existing_ids]
         st.success(f"New accessions found: {len(new_accessions)}")
+        cursor.close()
+        conn.close()
         return new_accessions
     except Exception as e:
         st.error(f"Error filtering new sequences: {str(e)}")
@@ -183,48 +185,35 @@ def pfam_domain_search(accession, blasted_sequence):
 
 
 # update UC table raw.accession
-def update_uc_table_accession(sequences_to_ingest: list) -> None:
+def update_uc_table_accession(pfam_sequence: list) -> None:
     uc_table = "workspace.raw.accession"
     try:
-        with st.spinner(f"Inserting new accessions to database", show_time=True):
-            conn = dbh.get_databricks_connection()
-            cursor = conn.cursor()
+        conn = dbh.get_databricks_connection()
+        cursor = conn.cursor()
 
-            # Ensure sequences_to_ingest is a list of lists
-            if sequences_to_ingest and not isinstance(sequences_to_ingest[0], (list, tuple)):
-                sequences_to_ingest = [sequences_to_ingest]  # Wrap single row into a list
+        # Fetch column names for the table
+        cursor.execute(f"DESCRIBE TABLE {uc_table}")
+        columns_info = cursor.fetchall()
+        table_columns = [row[0] for row in columns_info if row != ""]
 
-            # Fetch table column names from UC table
-            cursor.execute(f"DESCRIBE TABLE {uc_table}")
-            columns_info = cursor.fetchall()
-            table_columns = [
-                row[0] for row in columns_info
-                if row and not row.startswith("#")
-            ]
+        # Trim to only number of provided values
+        insert_columns = table_columns[:len(pfam_sequence)]
 
-            # Determine the column names to insert
-            num_values = len(sequences_to_ingest)
-            insert_columns = table_columns[:num_values]
+        # Prepare parameter placeholders
+        placeholders = ", ".join(["%s"] * len(pfam_sequence))
+        col_names = ", ".join(insert_columns)
 
-            # Create query with placeholders
-            placeholders = ", ".join(["%s"] * num_values)
-            col_names = ", ".join(insert_columns)
-            insert_sql = f"INSERT INTO {uc_table} ({col_names}) VALUES ({placeholders})"
-
-            # Perform batch insert
-            cursor.executemany(insert_sql, sequences_to_ingest)
-            conn.commit()
-
-            st.success(f"Inserted {len(sequences_to_ingest)} row(s) into UC table: {uc_table}")
+        query = f"INSERT INTO {uc_table} ({col_names}) VALUES ({placeholders})"
+        cursor.execute(query, pfam_sequence)
+        conn.commit()
+        cursor.close()
+        conn.close()
+        st.success(f"Processed sequence inserted into UC table {uc_table} for accession: {pfam_sequence[0]}")
 
     except Exception as e:
-        st.error(f"Error inserting into {uc_table}: {e}")
-        raise
+        print(f"Error inserting processed sequence for accession {pfam_sequence[0]} into UC table {uc_table}: {e}")
+        
     
-    cursor.close()
-    conn.close()
-
-
 
 
 # # generate FASTA file from accession numbers
