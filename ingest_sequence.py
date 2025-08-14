@@ -186,12 +186,13 @@ def pfam_domain_search(accession, blasted_sequence):
 
 # update UC table raw.accession
 def update_uc_table_accession(pfam_sequence: list) -> None:
+    st.write("inside update_uc_table_accession")
     uc_table = "workspace.raw.accession"
     with st.spinner(f"Inserting processed sequence to UC table {uc_table} for accession: {pfam_sequence[0]}"):
         try:
             conn = dbh.get_databricks_connection()
             cursor = conn.cursor()
-
+            st.write("connection to dbx successful")
             # Fetch column names for the table
             cursor.execute(f"DESCRIBE TABLE {uc_table}")
             columns_info = cursor.fetchall()
