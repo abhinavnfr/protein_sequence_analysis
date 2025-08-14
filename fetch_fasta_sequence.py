@@ -46,7 +46,7 @@ def update_uc_table_accession(accessions: list) -> None:
                 )
                 progress_percentage = (i + 1) / new_accessions_count
                 progress_bar.progress(progress_percentage)
-                percentage_text.text(f"Progress: {int(progress_percentage * 100)}%")
+                percentage_text.text(f"Updating sequences in database: {int(progress_percentage * 100)}%")
 
             conn.commit()
 
@@ -68,18 +68,15 @@ def generate_fasta_file(accessions: list):
     uc_table = "workspace.raw.accession"
     results = {}
     total_accessions = len(accessions)
-
     try:
         conn = dbh.get_databricks_connection()
         cursor = conn.cursor()
-
         # Retrieve sequences from UC table
         for acc in accessions:
             cursor.execute(f"SELECT sequence FROM {uc_table} WHERE id = ?", (acc,))
             row = cursor.fetchone()
             if row and row[0]:
                 results[acc] = row
-
         cursor.close()
         conn.close()
 
