@@ -47,7 +47,7 @@ def fetch_fasta_sequence(accession: str) -> str:
 # BLAST a FASTA sequence
 def blast_sequence(accession, seq_record, num_hits=5):
     try:
-        with st.spinner("BLASTing FASTA sequence for accession: {accession}"):
+        with st.spinner("BLASTing FASTA sequence for accession: {accession}", show_time=True):
             # Run BLAST against the NCBI database
             result_handle = NCBIWWW.qblast("blastp", "nr", str(seq_record))
 
