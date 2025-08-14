@@ -21,7 +21,7 @@ def main():
         new_accessions = filter_new_sequences(accessions)
         for acc in new_accessions:
             fasta_sequence = fetch_fasta_sequence(acc)
-            blasted_sequence = blast_sequence(fasta_sequence)
+            blasted_sequence = blast_sequence(acc, fasta_sequence)
 
     # # Step 2: Generate FASTA sequences
     # st.markdown("<br><p style='font-size: 24px;'>Step 2: Fetch FASTA sequences from accession numbers</p>", unsafe_allow_html=True)
