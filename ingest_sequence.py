@@ -24,6 +24,7 @@ def filter_new_sequences(accessions: list) -> list:
         cursor.execute(f"SELECT id FROM {uc_table}")
         existing_ids = set(row[0] for row in cursor.fetchall())
         new_accessions = [acc for acc in accessions if acc not in existing_ids]
+        st.success(f"New accessions found: {len(new_accessions)}")
         return new_accessions
     except Exception as e:
         st.error(f"Error filtering new sequences: {str(e)}")
@@ -34,9 +35,11 @@ def filter_new_sequences(accessions: list) -> list:
 def fetch_fasta_sequence(accession: str) -> str:
     Entrez.email = get_entrez_email()
     try:
-        with Entrez.efetch(db="protein", id=accession, rettype="fasta", retmode="text") as handle:
-            record = handle.read()
-        return record
+        with st.spinner("Fetching FASTA sequence for accession: {accession}", show_time=True):
+            with Entrez.efetch(db="protein", id=accession, rettype="fasta", retmode="text") as handle:
+                record = handle.read()
+            st.success("Successfully fetched FASTA sequence for accession: {accession}")
+            return record
     except Exception as e:
         st.error(f"Failed to retrieve sequence for {accession}: {str(e)}")
 
@@ -44,58 +47,58 @@ def fetch_fasta_sequence(accession: str) -> str:
 # BLAST a FASTA sequence
 def blast_sequence(accession, seq_record, num_hits=5):
     try:
-        # Run BLAST against the NCBI database
-        result_handle = NCBIWWW.qblast("blastp", "nr", str(seq_record))
+        with st.spinner("BLASTing FASTA sequence for accession: {accession}"):
+            # Run BLAST against the NCBI database
+            result_handle = NCBIWWW.qblast("blastp", "nr", str(seq_record))
 
-        # Save the result to an XML file
-        result_file = "blast_results.xml"
-        with open(result_file, "w") as out_handle:
-            out_handle.write(result_handle.read())
+            # Save the result to an XML file
+            result_file = "blast_results.xml"
+            with open(result_file, "w") as out_handle:
+                out_handle.write(result_handle.read())
 
-        result_handle.close()
+            result_handle.close()
 
-        # Parse the BLAST results
-        with open(result_file) as result_handle:
-            blast_records = NCBIXML.parse(result_handle)
+            # Parse the BLAST results
+            with open(result_file) as result_handle:
+                blast_records = NCBIXML.parse(result_handle)
 
-            # Get the first BLAST record
-            blast_record = next(blast_records)
+                # Get the first BLAST record
+                blast_record = next(blast_records)
 
-            # List to store information about alignments
-            hits = []
+                # List to store information about alignments
+                hits = []
 
-            # Extract percentage identities and corresponding details from HSPs
-            for alignment in blast_record.alignments:
-                for hsp in alignment.hsps:
-                    percent_identity = (hsp.identities / hsp.align_length) * 100
-                    hits.append({
-                        "percent_identity": percent_identity,
-                        "scientific_name": alignment.hit_def.split(' >')[0],
-                        "accession": alignment.accession
-                    })
+                # Extract percentage identities and corresponding details from HSPs
+                for alignment in blast_record.alignments:
+                    for hsp in alignment.hsps:
+                        percent_identity = (hsp.identities / hsp.align_length) * 100
+                        hits.append({
+                            "percent_identity": percent_identity,
+                            "scientific_name": alignment.hit_def.split(' >')[0],
+                            "accession": alignment.accession
+                        })
 
-            # Sort hits by percentage identity in descending order
-            hits = sorted(hits, key=lambda x: x["percent_identity"], reverse=True) # hits = hits[::-1]
+                # Sort hits by percentage identity in descending order
+                hits = sorted(hits, key=lambda x: x["percent_identity"], reverse=True) # hits = hits[::-1]
 
-            # Get the top 3 unique percentage identities
-            top_hits = []
-            unique_identities = set()
+                # Get the top 3 unique percentage identities
+                top_hits = []
+                unique_identities = set()
 
-            for hit in hits:
-                if len(top_hits) >= num_hits: # This decides how many top hits you want
-                    break
-                if hit["percent_identity"] not in unique_identities:
-                    top_hits.append(hit)
-                    unique_identities.add(hit["percent_identity"])
+                for hit in hits:
+                    if len(top_hits) >= num_hits: # This decides how many top hits you want
+                        break
+                    if hit["percent_identity"] not in unique_identities:
+                        top_hits.append(hit)
+                        unique_identities.add(hit["percent_identity"])
 
-        lst = [accession, seq_record]
-        # st.write(f"Top {num_hits} Percentage Identities with Details:") # optional print statement
-        for i, hit in enumerate(top_hits, start=1):
-            lst.append(f"{hit['percent_identity']:.2f}%")
-            lst.append(hit['scientific_name'])
-            lst.append(hit['accession'])
-        st.write(lst)
-        return lst
+            blasted_sequence = [accession, seq_record]
+            for i, hit in enumerate(top_hits, start=1):
+                blasted_sequence.append(f"{hit['percent_identity']:.2f}%")
+                blasted_sequence.append(hit['scientific_name'])
+                blasted_sequence.append(hit['accession'])
+            st.success("BLASTed sequence for accession: {accession}")
+            return blasted_sequence
 
     except Exception as e:
         st.error(f"Failed to BLAST sequence for {accession}: {str(e)}")
