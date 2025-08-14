@@ -53,9 +53,9 @@ def update_uc_table_accession(accessions: list) -> None:
         cursor.close()
         conn.close()
 
-        st.success(f"New accession numbers added: {new_accessions_count}")
-        st.success(f"Already existing: {len(accessions) - new_accessions_count}")
-        st.success(f"Total now: {len(existing_ids) + new_accessions_count}")
+        st.success(f"Already existing sequences in UC table {uc_table}: {len(accessions) - new_accessions_count}")
+        st.success(f"New sequences added to UC table {uc_table}: {new_accessions_count}")
+        st.success(f"Total sequences now in {uc_table}: {len(existing_ids) + new_accessions_count}")
 
     except Exception as e:
         st.error(f"Error updating UC table {uc_table}: {str(e)}")
