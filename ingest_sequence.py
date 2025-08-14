@@ -186,26 +186,28 @@ def pfam_domain_search(accession, blasted_sequence):
 
 # update UC table raw.accession
 def update_uc_table_accession(pfam_sequence: list) -> None:
-    st.write("inside update_uc_table_accession")
     uc_table = "workspace.raw.accession"
-    with st.spinner(f"Inserting processed sequence to UC table {uc_table} for accession: {pfam_sequence[0]}"):
+    with st.spinner(f"Inserting processed sequence to UC table {uc_table} for accession: {pfam_sequence[0]}", show_time=True):
         try:
             conn = dbh.get_databricks_connection()
             cursor = conn.cursor()
-            st.write("connection to dbx successful")
+
             # Fetch column names for the table
             cursor.execute(f"DESCRIBE TABLE {uc_table}")
             columns_info = cursor.fetchall()
+            st.write(columns_info)
             table_columns = [row[0] for row in columns_info if row != ""]
-
+            st.write(table_columns)
             # Trim to only number of provided values
             insert_columns = table_columns[:len(pfam_sequence)]
-
+            st.write(insert_columns)
             # Prepare parameter placeholders (use ? for Databricks SQL)
             placeholders = ", ".join(["?"] * len(pfam_sequence))
+            st.write(placeholders)
             col_names = ", ".join(insert_columns)
-
+            st.write(col_names)
             query = f"INSERT INTO {uc_table} ({col_names}) VALUES ({placeholders})"
+            st.write(query)
             cursor.execute(query, pfam_sequence)
 
             conn.commit()
