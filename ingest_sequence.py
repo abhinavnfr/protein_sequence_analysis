@@ -165,17 +165,19 @@ def process_interpro_results(results, blasted_sequence):
         if sequence_name not in domain_dict:
             domain_dict[sequence_name] = []
         domain_dict[sequence_name].append((domain_acc, domain_name))
+    
+    st.write(domain_dict)
 
-    # Convert to DataFrame
-    # Split the description to separate Accession and Sequence_Name
-    accession = record.id  # First part is the accession (e.g., XP_042375699.1)
-    sequence_name = " ".join(record.description.split(" ")[1:])  # Everything after the accession
-    sequence = str(record.seq)
-    domains = domain_dict.get(record.id, [])
-    domain_names = [f"{domain_acc} ({domain_name})" for domain_acc, domain_name in domains]
-    pfam_sequence = blasted_sequence + domain_names
+    # # Convert to DataFrame
+    # # Split the description to separate Accession and Sequence_Name
+    # accession = record.id  # First part is the accession (e.g., XP_042375699.1)
+    # sequence_name = " ".join(record.description.split(" ")[1:])  # Everything after the accession
+    # sequence = str(record.seq)
+    # domains = domain_dict.get(record.id, [])
+    # domain_names = [f"{domain_acc} ({domain_name})" for domain_acc, domain_name in domains]
+    # pfam_sequence = blasted_sequence + domain_names
 
-    return pfam_sequence
+    # return pfam_sequence
 
 
 # perform Interpro Scan PFAM Domain
