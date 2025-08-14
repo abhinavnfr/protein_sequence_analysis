@@ -178,6 +178,7 @@ def process_interpro_results(results, blasted_sequence):
     return pfam_sequence
 
 
+# perform Interpro Scan PFAM Domain
 def pfam_domain_search(accession, blasted_sequence):
     try:
         with st.spinner(f"Performing Interpro Scan PFAM Domain search for accession: {accession}", show_time=True):
@@ -197,6 +198,7 @@ def pfam_domain_search(accession, blasted_sequence):
             # Step 3: Retrieve and process results
             results = retrieve_results(job_id)
             pfam_sequence = process_interpro_results(results, blasted_sequence)
+            st.success(f"Completed Interpro Scan PFAM Domain search for accession: {accession}")
             st.write(pfam_sequence)
             return pfam_sequence
     except Exception as e:
