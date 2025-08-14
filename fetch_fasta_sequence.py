@@ -4,14 +4,11 @@ from io import BytesIO
 import databricks_handler as dbh
 
 
-
-def fetch_fasta_sequence(accession):
+def fetch_fasta_sequence(accession: str) -> str:
     """
     Retrieves a FASTA sequence from the NCBI database.
-
     Parameters:
         accession (str): Accession number of the sequence.
-
     Returns:
         str: FASTA sequence.
     """
@@ -27,40 +24,71 @@ def fetch_fasta_sequence(accession):
         return f"Failed to retrieve {accession}: {str(e)}"
 
 
-def generate_fasta_file(accessions):
+def update_uc_table_accession(accessions: list) -> None:
     """
-    Generates a FASTA file from a list of accession numbers provided in an input file.
-
+    Updates UC table workspace.raw.accession with accession numbers and their corresponding FASTA sequences.
     Parameters:
-        input_file (file-like object): A file-like object containing accession numbers (one per line). The file should be in plain text format.
+        accessions (list): List of accession numbers.
+    Returns:
+        None
+    """
+    uc_table = "workspace.raw.accession"
+    try:
+        conn = dbh.get_databricks_connection()
+        cursor = conn.cursor()
+        
+        # Fetch existing accession IDs
+        cursor.execute(f"SELECT id FROM {uc_table}")
+        existing_ids = set(row[0] for row in cursor.fetchall())
+        
+        new_accessions = [acc for acc in accession_numbers if acc not in existing_ids]
+        
+        # Insert only new ones
+        new_accessions_count = len(new_accessions)
+        progress_bar = st.progress(0)  # Initialize the progress bar
+        percentage_text = st.empty()  # Placeholder for percentage text
+        if new_accessions:
+            for acc in new_accessions:
+                sequence = fetch_fasta_sequence(acc)
+                cursor.execute(f"INSERT INTO {uc_table} (id, sequence, record_create_ts) VALUES (?)", (acc, sequence, CURRENT_TIMESTAMP()))
+                progress_percentage = (i + 1) / new_accessions_count  # Calculate percentage
+                progress_bar.progress(progress_percentage)  # Update the progress bar
+                percentage_text.text(f"Progress: {int(progress_percentage * 100)}%")  # Update percentage text
+            conn.commit()
+        
+        cursor.close()
+        conn.close()
+        st.success(f"New accession numbers added to {uc_table}: {new_accessions_count}")
+        st.success(f"Input accession numbers already existing in {uc_table}: {len(accessions)-new_accessions_count}")
+        st.success(f"Total accession numbers now in {uc_table}: {len(existing_ids)+len(new_accessions)}")
+    
+    except Exception as e:
+        st.error(f"Error updating {uc_table}: {str(e)}")
 
+
+def generate_fasta_file(accessions: list):
+    """
+    Generates a FASTA file from a list of accession numbers provided.
+    Parameters:
+        accessions (list): List of accession numbers.
     Returns:
         BytesIO: In-memory FASTA file containing the retrieved sequences.
     """
-    # if input_file is not None:
-        # try:
-        #     # Read accession numbers from the input file
-        #     accessions = [line.strip() for line in input_file.read().decode("utf-8").splitlines()]
-        # except Exception as e:
-        #     st.error("Error reading the file. Please ensure it is a text file containing accession numbers.")
-        #     return None
-
-    # Retrieve the FASTA sequences
+    uc_table = "workspace.raw.accession"
     results = {}
     total_accessions = len(accessions)
-    progress_bar = st.progress(0)  # Initialize the progress bar
-    percentage_text = st.empty()  # Placeholder for percentage text
 
-    for i, accession in enumerate(accessions):
-        results[accession] = fetch_fasta_sequence(accession)
-        progress_percentage = (i + 1) / total_accessions  # Calculate percentage
-        progress_bar.progress(progress_percentage)  # Update the progress bar
-        percentage_text.text(f"Progress: {int(progress_percentage * 100)}%")  # Update percentage text
+    try:
+        conn = dbh.get_databricks_connection()
+        cursor = conn.cursor()
 
-    # Save the retrieved sequences into a BytesIO object
-    fasta_io = BytesIO()
-    for accession, sequence in results.items():
-        fasta_io.write(f"{sequence}\n".encode('utf-8'))
+        # for acc accessions:
+        #     results[acc] = 
 
-    fasta_io.seek(0)  # Reset the file pointer to the beginning of the BytesIO object
-    return fasta_io, total_accessions, results
+        # Save the retrieved sequences into a BytesIO object
+        fasta_io = BytesIO()
+        for accession, sequence in results.items():
+            fasta_io.write(f"{sequence}\n".encode('utf-8'))
+
+        fasta_io.seek(0)  # Reset the file pointer to the beginning of the BytesIO object
+        return fasta_io, total_accessions, results
