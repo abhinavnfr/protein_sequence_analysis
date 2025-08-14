@@ -18,6 +18,7 @@ def main():
     input_file = st.file_uploader(label="Upload file", type=["txt"])
     if input_file is not None:
         accessions = [line.strip() for line in input_file.read().decode("utf-8").splitlines()]
+        st.write(accessions)
         fs.update_uc_table_accession(accessions)
 
     # Step 2: Generate FASTA sequences
