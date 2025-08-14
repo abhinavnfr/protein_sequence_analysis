@@ -195,17 +195,15 @@ def update_uc_table_accession(pfam_sequence: list) -> None:
             # Fetch column names for the table
             cursor.execute(f"DESCRIBE TABLE {uc_table}")
             columns_info = cursor.fetchall()
-            st.write(columns_info)
             table_columns = [row[0] for row in columns_info if row != ""]
-            st.write(table_columns)
+ 
             # Trim to only number of provided values
             insert_columns = table_columns[:len(pfam_sequence)] + ["record_create_ts"]
-            st.write(insert_columns)
+
             # Prepare parameter placeholders (use ? for Databricks SQL)
             placeholders = ", ".join(["?"] * len(pfam_sequence) + ["current_timestamp()"])
-            st.write(placeholders)
             col_names = ", ".join(insert_columns)
-            st.write(col_names)
+
             query = f"INSERT INTO {uc_table} ({col_names}) VALUES ({placeholders})"
             st.write(query)
             cursor.execute(query, pfam_sequence)
