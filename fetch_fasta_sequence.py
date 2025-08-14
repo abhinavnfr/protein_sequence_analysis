@@ -80,7 +80,7 @@ def generate_fasta_file(accessions: list):
             cursor.execute(f"SELECT sequence FROM {uc_table} WHERE id = ?", (acc,))
             row = cursor.fetchone()
             if row and row[0]:
-                results[acc] = row
+                results[acc] = row[0]
         cursor.close()
         conn.close()
         st.write(results)
