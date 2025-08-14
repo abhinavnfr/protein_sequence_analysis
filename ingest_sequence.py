@@ -143,43 +143,6 @@ def retrieve_results(job_id):
         raise Exception(f"Error retrieving results: {response.text}")
 
 
-# process the InterProScan results to extract PFAM domains with names, and dynamically parse Accession and Sequence_Name
-def process_interpro_results(results, blasted_sequence):
-    rows = []
-    for line in results.strip().split("\n"):
-        if line.startswith("#"):  # Ignore comment lines
-            continue
-        parts = line.split("\t")
-        sequence_name = parts[0]
-        database = parts[3]
-        domain_acc = parts[4]  # Domain accession number (e.g., PF00931)
-        domain_name = parts[5]  # Domain name (e.g., NB-ARC)
-
-        # Filter only PFAM domains
-        if database == "Pfam":
-            rows.append((sequence_name, domain_acc, domain_name))
-
-    # Aggregate domains for each sequence
-    domain_dict = {}
-    for sequence_name, domain_acc, domain_name in rows:
-        if sequence_name not in domain_dict:
-            domain_dict[sequence_name] = []
-        domain_dict[sequence_name].append((domain_acc, domain_name))
-    
-    st.write(domain_dict)
-
-    # # Convert to DataFrame
-    # # Split the description to separate Accession and Sequence_Name
-    # accession = record.id  # First part is the accession (e.g., XP_042375699.1)
-    # sequence_name = " ".join(record.description.split(" ")[1:])  # Everything after the accession
-    # sequence = str(record.seq)
-    # domains = domain_dict.get(record.id, [])
-    # domain_names = [f"{domain_acc} ({domain_name})" for domain_acc, domain_name in domains]
-    # pfam_sequence = blasted_sequence + domain_names
-
-    # return pfam_sequence
-
-
 # perform Interpro Scan PFAM Domain
 def pfam_domain_search(accession, blasted_sequence):
     try:
@@ -199,7 +162,20 @@ def pfam_domain_search(accession, blasted_sequence):
     
             # Step 3: Retrieve and process results
             results = retrieve_results(job_id)
-            pfam_sequence = process_interpro_results(results, blasted_sequence)
+            pfam_sequence = blasted_sequence
+            for line in results.strip().split("\n"):
+                if line.startswith("#"):  # Ignore comment lines
+                    continue
+                parts = line.split("\t")
+                database = parts[3]
+                domain_acc = parts[4]  # Domain accession number (e.g., PF00931)
+                domain_name = parts[5]  # Domain name (e.g., NB-ARC)
+
+                # Filter only PFAM domains
+                if database == "Pfam":
+                    pfam_sequence.append(domain_acc)
+                    pfam_sequence.append(domain_name)
+            
             st.success(f"Completed Interpro Scan PFAM Domain search for accession: {accession}")
             st.write(pfam_sequence)
             return pfam_sequence
@@ -312,6 +288,43 @@ def pfam_domain_search(accession, blasted_sequence):
 #         st.error(f"Error generating FASTA file: {str(e)}")
 #         return None, 0, {}
 
+
+# process the InterProScan results to extract PFAM domains with names, and dynamically parse Accession and Sequence_Name
+# def process_interpro_results(results, blasted_sequence):
+#     rows = []
+#     for line in results.strip().split("\n"):
+#         if line.startswith("#"):  # Ignore comment lines
+#             continue
+#         parts = line.split("\t")
+#         sequence_name = parts[0]
+#         database = parts[3]
+#         domain_acc = parts[4]  # Domain accession number (e.g., PF00931)
+#         domain_name = parts[5]  # Domain name (e.g., NB-ARC)
+
+#         # Filter only PFAM domains
+#         if database == "Pfam":
+#             rows.append((sequence_name, domain_acc, domain_name))
+
+#     # Aggregate domains for each sequence
+#     domain_dict = {}
+#     for sequence_name, domain_acc, domain_name in rows:
+#         if sequence_name not in domain_dict:
+#             domain_dict[sequence_name] = []
+#         domain_dict[sequence_name].append((domain_acc, domain_name))
+    
+#     st.write(domain_dict)
+#     domain_names = 
+
+    # # Convert to DataFrame
+    # # Split the description to separate Accession and Sequence_Name
+    # accession = record.id  # First part is the accession (e.g., XP_042375699.1)
+    # sequence_name = " ".join(record.description.split(" ")[1:])  # Everything after the accession
+    # sequence = str(record.seq)
+    # domains = domain_dict.get(record.id, [])
+    # domain_names = [f"{domain_acc} ({domain_name})" for domain_acc, domain_name in domains]
+    # pfam_sequence = blasted_sequence + domain_names
+
+    # return pfam_sequence
 
 
 
