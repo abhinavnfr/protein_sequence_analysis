@@ -187,32 +187,35 @@ def pfam_domain_search(accession, blasted_sequence):
 # update UC table raw.accession
 def update_uc_table_accession(pfam_sequence: list) -> None:
     uc_table = "workspace.raw.accession"
-    try:
-        conn = dbh.get_databricks_connection()
-        cursor = conn.cursor()
+    with st.spinner(f"Inserting processed sequence to UC table {uc_table} for accession: {pfam_sequence[0]}"):
+        try:
+            conn = dbh.get_databricks_connection()
+            cursor = conn.cursor()
 
-        # Fetch column names for the table
-        cursor.execute(f"DESCRIBE TABLE {uc_table}")
-        columns_info = cursor.fetchall()
-        table_columns = [row[0] for row in columns_info if row != ""]
+            # Fetch column names for the table
+            cursor.execute(f"DESCRIBE TABLE {uc_table}")
+            columns_info = cursor.fetchall()
+            table_columns = [row[0] for row in columns_info if row != ""]
 
-        # Trim to only number of provided values
-        insert_columns = table_columns[:len(pfam_sequence)]
+            # Trim to only number of provided values
+            insert_columns = table_columns[:len(pfam_sequence)]
 
-        # Prepare parameter placeholders
-        placeholders = ", ".join(["%s"] * len(pfam_sequence))
-        col_names = ", ".join(insert_columns)
+            # Prepare parameter placeholders (use ? for Databricks SQL)
+            placeholders = ", ".join(["?"] * len(pfam_sequence))
+            col_names = ", ".join(insert_columns)
 
-        query = f"INSERT INTO {uc_table} ({col_names}) VALUES ({placeholders})"
-        cursor.execute(query, pfam_sequence)
-        conn.commit()
-        cursor.close()
-        conn.close()
-        st.success(f"Processed sequence inserted into UC table {uc_table} for accession: {pfam_sequence[0]}")
+            query = f"INSERT INTO {uc_table} ({col_names}) VALUES ({placeholders})"
+            cursor.execute(query, pfam_sequence)
 
-    except Exception as e:
-        print(f"Error inserting processed sequence for accession {pfam_sequence[0]} into UC table {uc_table}: {e}")
-        
+            conn.commit()
+            cursor.close()
+            conn.close()
+
+            st.success(f"Processed sequence inserted into UC table {uc_table} for accession: {pfam_sequence[0]}")
+
+        except Exception as e:
+            print(f"Error inserting processed sequence for accession {pfam_sequence[0]} into UC table {uc_table}: {e}")
+  
     
 
 
