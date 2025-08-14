@@ -24,22 +24,21 @@ def main():
     st.markdown("<br><p style='font-size: 24px;'>Step 2: Fetch FASTA sequences from accession numbers</p>", unsafe_allow_html=True)
 
     if st.button(label="Click to generate FASTA sequences", type="primary"):
-        if input_file is not None:
-            fasta_file_content, total_accessions, results = fs.generate_fasta_file(accessions)
-            st.write(results)
+        fasta_file_content, total_accessions, results = fs.generate_fasta_file(accessions)
+        st.write(results)
 
-            # Save to session state
-            st.session_state["fasta_file_content"] = fasta_file_content
-            st.session_state["total_accessions"] = total_accessions
+        # Save to session state
+        st.session_state["fasta_file_content"] = fasta_file_content
+        st.session_state["total_accessions"] = total_accessions
 
-            # Save locally for BLAST
-            with open("sequences.fasta", "w") as f:
-                f.write(fasta_file_content.getvalue().decode("utf-8"))
+        # Save locally for BLAST
+        with open("sequences.fasta", "w") as f:
+            f.write(fasta_file_content.getvalue().decode("utf-8"))
 
-            st.success("FASTA file generated successfully!")
+        st.success("FASTA file generated successfully!")
 
-        else:
-            st.error("Please upload an input file.")
+    else:
+        st.error("Please upload an input file.")
 
     # Retrieve from session state
     fasta_file_content = st.session_state.get("fasta_file_content", None)

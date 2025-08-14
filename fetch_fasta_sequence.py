@@ -64,6 +64,10 @@ def update_uc_table_accession(accessions: list) -> None:
 def generate_fasta_file(accessions: list):
     """
     Generates a FASTA file from accession numbers stored in Databricks.
+    Parameters:
+        accessions (list): List of accession numbers to retrieve sequences for.
+    Returns:
+        fasta_io (BytesIO): BytesIO object containing the generated FASTA file.
     """
     uc_table = "workspace.raw.accession"
     results = {}
@@ -79,7 +83,7 @@ def generate_fasta_file(accessions: list):
                 results[acc] = row
         cursor.close()
         conn.close()
-
+        st.write(results)
         fasta_io = BytesIO()
         for sequence in results.values():
             fasta_io.write(f"{sequence.strip()}\n".encode('utf-8'))
