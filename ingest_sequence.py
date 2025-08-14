@@ -177,7 +177,6 @@ def pfam_domain_search(accession, blasted_sequence):
                     pfam_sequence.append(domain_name)
             
             st.success(f"Completed Interpro Scan PFAM Domain search for accession: {accession}")
-            st.write(pfam_sequence)
             return pfam_sequence
     except Exception as e:
         st.error(f"Failed to perform PFAM Domain search for {accession}: {str(e)}")
@@ -187,35 +186,36 @@ def pfam_domain_search(accession, blasted_sequence):
 def update_uc_table_accession(sequences_to_ingest: list) -> None:
     uc_table = "workspace.raw.accession"
     try:
-        conn = dbh.get_databricks_connection()
-        cursor = conn.cursor()
+        with st.spinner(f"Inserting new accessions to database", show_time=True):
+            conn = dbh.get_databricks_connection()
+            cursor = conn.cursor()
 
-        # Ensure sequences_to_ingest is a list of lists
-        if sequences_to_ingest and not isinstance(sequences_to_ingest[0], (list, tuple)):
-            sequences_to_ingest = [sequences_to_ingest]  # Wrap single row into a list
+            # Ensure sequences_to_ingest is a list of lists
+            if sequences_to_ingest and not isinstance(sequences_to_ingest[0], (list, tuple)):
+                sequences_to_ingest = [sequences_to_ingest]  # Wrap single row into a list
 
-        # Fetch table column names from UC table
-        cursor.execute(f"DESCRIBE TABLE {uc_table}")
-        columns_info = cursor.fetchall()
-        table_columns = [
-            row for row in columns_info
-            if row and not row.startswith("#")
-        ]
+            # Fetch table column names from UC table
+            cursor.execute(f"DESCRIBE TABLE {uc_table}")
+            columns_info = cursor.fetchall()
+            table_columns = [
+                row for row in columns_info
+                if row and not row.startswith("#")
+            ]
 
-        # Determine the column names to insert
-        num_values = len(sequences_to_ingest)
-        insert_columns = table_columns[:num_values]
+            # Determine the column names to insert
+            num_values = len(sequences_to_ingest)
+            insert_columns = table_columns[:num_values]
 
-        # Create query with placeholders
-        placeholders = ", ".join(["%s"] * num_values)
-        col_names = ", ".join(insert_columns)
-        insert_sql = f"INSERT INTO {uc_table} ({col_names}) VALUES ({placeholders})"
+            # Create query with placeholders
+            placeholders = ", ".join(["%s"] * num_values)
+            col_names = ", ".join(insert_columns)
+            insert_sql = f"INSERT INTO {uc_table} ({col_names}) VALUES ({placeholders})"
 
-        # Perform batch insert
-        cursor.executemany(insert_sql, sequences_to_ingest)
-        conn.commit()
+            # Perform batch insert
+            cursor.executemany(insert_sql, sequences_to_ingest)
+            conn.commit()
 
-        st.success(f"Inserted {len(sequences_to_ingest)} row(s) into UC table: {uc_table}")
+            st.success(f"Inserted {len(sequences_to_ingest)} row(s) into UC table: {uc_table}")
 
     except Exception as e:
         st.error(f"Error inserting into {uc_table}: {e}")
@@ -226,42 +226,6 @@ def update_uc_table_accession(sequences_to_ingest: list) -> None:
 
 
 
-# # Update UC table workspace.raw.accession
-# def update_uc_table_accession(blasted_accessions: list) -> list:
-#     uc_table = "workspace.raw.accession"
-#     try:
-#         conn = dbh.get_databricks_connection()
-#         cursor = conn.cursor()
-
-#         progress_bar = st.progress(0)
-#         percentage_text = st.empty()
-
-#         if accessions:
-#             for i, acc in enumerate(accessions):
-#                 sequence = fetch_fasta_sequence(acc)
-#                 cursor.execute(
-#                     f"""INSERT INTO {uc_table} (id, sequence, record_create_ts) 
-#                         VALUES (?, ?, CURRENT_TIMESTAMP)""",
-#                     (acc, sequence)
-#                 )
-#                 progress_percentage = (i + 1) / new_accessions_count
-#                 progress_bar.progress(progress_percentage)
-#                 percentage_text.text(f"Updating sequences in database: {int(progress_percentage * 100)}%")
-
-#             conn.commit()
-
-#         cursor.close()
-#         conn.close()
-
-#         st.success(f"Already existing sequences in UC table {uc_table}: {len(accessions) - new_accessions_count}")
-#         st.success(f"New sequences added to UC table {uc_table}: {new_accessions_count}")
-#         st.success(f"Total sequences now in {uc_table}: {len(existing_ids) + new_accessions_count}")
-#         return new_accessions
-
-#     except Exception as e:
-#         st.error(f"Error updating UC table {uc_table}: {str(e)}")
-#         return []
-   
 
 # # generate FASTA file from accession numbers
 # def generate_fasta_file(accessions: list):
@@ -294,46 +258,5 @@ def update_uc_table_accession(sequences_to_ingest: list) -> None:
 #     except Exception as e:
 #         st.error(f"Error generating FASTA file: {str(e)}")
 #         return None, 0, {}
-
-
-# process the InterProScan results to extract PFAM domains with names, and dynamically parse Accession and Sequence_Name
-# def process_interpro_results(results, blasted_sequence):
-#     rows = []
-#     for line in results.strip().split("\n"):
-#         if line.startswith("#"):  # Ignore comment lines
-#             continue
-#         parts = line.split("\t")
-#         sequence_name = parts[0]
-#         database = parts[3]
-#         domain_acc = parts[4]  # Domain accession number (e.g., PF00931)
-#         domain_name = parts[5]  # Domain name (e.g., NB-ARC)
-
-#         # Filter only PFAM domains
-#         if database == "Pfam":
-#             rows.append((sequence_name, domain_acc, domain_name))
-
-#     # Aggregate domains for each sequence
-#     domain_dict = {}
-#     for sequence_name, domain_acc, domain_name in rows:
-#         if sequence_name not in domain_dict:
-#             domain_dict[sequence_name] = []
-#         domain_dict[sequence_name].append((domain_acc, domain_name))
-    
-#     st.write(domain_dict)
-#     domain_names = 
-
-    # # Convert to DataFrame
-    # # Split the description to separate Accession and Sequence_Name
-    # accession = record.id  # First part is the accession (e.g., XP_042375699.1)
-    # sequence_name = " ".join(record.description.split(" ")[1:])  # Everything after the accession
-    # sequence = str(record.seq)
-    # domains = domain_dict.get(record.id, [])
-    # domain_names = [f"{domain_acc} ({domain_name})" for domain_acc, domain_name in domains]
-    # pfam_sequence = blasted_sequence + domain_names
-
-    # return pfam_sequence
-
-
-
 
 

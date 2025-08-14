@@ -13,22 +13,36 @@ def main():
     st.markdown("<h1>Protein Sequence Analysis App</h1><br>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: right; color: #FF4B4B;'>by Abhinav Rana</p>", unsafe_allow_html=True)
 
-    # Step 1: Upload accession number file
+    # Step 1: Process input accession numbers file
     st.markdown("<br><p style='font-size: 24px;'>Step 1: To get started, choose a text file containing accession numbers</p><br>", unsafe_allow_html=True)
     input_file = st.file_uploader(label="Upload file", type=["txt"])
     if input_file is not None:
         accessions = [line.strip() for line in input_file.read().decode("utf-8").splitlines()]
         new_accessions = ingest.filter_new_sequences(accessions)
+        new_accesions_count = len(new_accessions)
         
         sequences_to_ingest = []
-        for acc in new_accessions:
-            fasta_sequence = ingest.fetch_fasta_sequence(acc)
-            blasted_sequence = ingest.blast_sequence(acc, fasta_sequence)
-            pfam_sequence = ingest.pfam_domain_search(acc, blasted_sequence)
-            sequences_to_ingest.append(pfam_sequence)
+        progress_bar = st.progress(0)
+        status_text = st.empty()
+        for i, acc in enumerate(new_accessions):
+            try:
+                status_text.text(f"Processing {i}/{new_accesions_count}: {acc} ...")
+                fasta_sequence = ingest.fetch_fasta_sequence(acc)
+                blasted_sequence = ingest.blast_sequence(acc, fasta_sequence)
+                pfam_sequence = ingest.pfam_domain_search(acc, blasted_sequence)
+                sequences_to_ingest.append(pfam_sequence)
+            except Exception as e:
+                st.error(f"Error processing {acc}: {e}")
             
+            # Update progress bar
+            progress_percent = int((i / new_accesions_count) * 100)
+            progress_bar.progress(progress_percent)
+            time.sleep(0.1)
+        
         ingest.update_uc_table_accession(sequences_to_ingest)
-
+        progress_bar.progress(100)
+    
+    
     # # Step 2: Generate FASTA sequences
     # st.markdown("<br><p style='font-size: 24px;'>Step 2: Fetch FASTA sequences from accession numbers</p>", unsafe_allow_html=True)
 
