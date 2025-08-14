@@ -198,7 +198,7 @@ def update_uc_table_accession(sequences_to_ingest: list) -> None:
             cursor.execute(f"DESCRIBE TABLE {uc_table}")
             columns_info = cursor.fetchall()
             table_columns = [
-                row for row in columns_info
+                row[0] for row in columns_info
                 if row and not row.startswith("#")
             ]
 
