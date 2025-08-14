@@ -47,7 +47,7 @@ def main():
     if fasta_file_content:
         st.download_button(label="Download FASTA file having sequences",
                            data=fasta_file_content.getvalue(),
-                           file_name='sequences.fasta',
+                           file_name='out_sequences.fasta',
                            mime='text/plain')
 
     # Step 3: BLAST sequences

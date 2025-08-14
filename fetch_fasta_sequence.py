@@ -72,23 +72,26 @@ def generate_fasta_file(accessions: list):
     uc_table = "workspace.raw.accession"
     results = {}
     total_accessions = len(accessions)
+
     try:
         conn = dbh.get_databricks_connection()
         cursor = conn.cursor()
+
         # Retrieve sequences from UC table
         for acc in accessions:
             cursor.execute(f"SELECT sequence FROM {uc_table} WHERE id = ?", (acc,))
             row = cursor.fetchone()
             if row and row[0]:
                 results[acc] = row[0]
+        
         cursor.close()
         conn.close()
-        st.write(results)
+        
         fasta_io = BytesIO()
         for sequence in results.values():
             fasta_io.write(f"{sequence.strip()}\n".encode('utf-8'))
-
         fasta_io.seek(0)
+        
         return fasta_io, total_accessions, results
 
     except Exception as e:
