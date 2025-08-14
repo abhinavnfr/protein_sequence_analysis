@@ -205,7 +205,6 @@ def update_uc_table_accession(pfam_sequence: list) -> None:
             col_names = ", ".join(insert_columns)
 
             query = f"INSERT INTO {uc_table} ({col_names}) VALUES ({placeholders})"
-            st.write(query)
             cursor.execute(query, pfam_sequence)
 
             conn.commit()
