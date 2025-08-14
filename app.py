@@ -3,7 +3,7 @@ import streamlit as st
 import pandas as pd
 from io import BytesIO
 import time
-from ingest_sequence import get_entrez_email, filter_new_sequences, fetch_fasta_sequence, blast_sequence, 
+from ingest_sequence import get_entrez_email, filter_new_sequences, fetch_fasta_sequence, blast_sequence
 import blast_sequence as bs
 import pfam_domains_interpro_scan as pf
 import databricks_handler as dbh
