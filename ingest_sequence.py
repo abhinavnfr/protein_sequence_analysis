@@ -217,7 +217,7 @@ def update_uc_table_accession(pfam_sequence: list) -> None:
             st.success(f"Processed sequence inserted into UC table {uc_table} for accession: {pfam_sequence[0]}")
 
         except Exception as e:
-            print(f"Error inserting processed sequence for accession {pfam_sequence[0]} into UC table {uc_table}: {e}")
+            st.error(f"Error inserting processed sequence for accession {pfam_sequence[0]} into UC table {uc_table}: {e}")
   
     
 
