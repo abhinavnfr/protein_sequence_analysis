@@ -35,10 +35,10 @@ def filter_new_sequences(accessions: list) -> list:
 def fetch_fasta_sequence(accession: str) -> str:
     Entrez.email = get_entrez_email()
     try:
-        with st.spinner("Fetching FASTA sequence for accession: {accession}", show_time=True):
+        with st.spinner(f"Fetching FASTA sequence for accession: {accession}", show_time=True):
             with Entrez.efetch(db="protein", id=accession, rettype="fasta", retmode="text") as handle:
                 record = handle.read()
-            st.success("Successfully fetched FASTA sequence for accession: {accession}")
+            st.success(f"Successfully fetched FASTA sequence for accession: {accession}")
             return record
     except Exception as e:
         st.error(f"Failed to retrieve sequence for {accession}: {str(e)}")
@@ -47,7 +47,7 @@ def fetch_fasta_sequence(accession: str) -> str:
 # BLAST a FASTA sequence
 def blast_sequence(accession, seq_record, num_hits=5):
     try:
-        with st.spinner("BLASTing FASTA sequence for accession: {accession}", show_time=True):
+        with st.spinner(f"BLASTing FASTA sequence for accession: {accession}", show_time=True):
             # Run BLAST against the NCBI database
             result_handle = NCBIWWW.qblast("blastp", "nr", str(seq_record))
 
@@ -97,7 +97,7 @@ def blast_sequence(accession, seq_record, num_hits=5):
                 blasted_sequence.append(f"{hit['percent_identity']:.2f}%")
                 blasted_sequence.append(hit['scientific_name'])
                 blasted_sequence.append(hit['accession'])
-            st.success("BLASTed sequence for accession: {accession}")
+            st.success(f"BLASTed sequence for accession: {accession}")
             return blasted_sequence
 
     except Exception as e:
