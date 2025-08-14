@@ -18,7 +18,7 @@ def main():
     input_file = st.file_uploader(label="Upload file", type=["txt"])
     if input_file is not None:
         accessions = [line.strip() for line in input_file.read().decode("utf-8").splitlines()]
-        new_accessions = filter_new_accessions(accessions)
+        new_accessions = filter_new_sequences(accessions)
         for acc in new_accessions:
             fasta_sequence = fetch_fasta_sequence(acc)
             blasted_sequence = blast_sequence(fasta_sequence)
