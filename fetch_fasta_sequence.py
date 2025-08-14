@@ -41,7 +41,7 @@ def update_uc_table_accession(accessions: list) -> None:
         cursor.execute(f"SELECT id FROM {uc_table}")
         existing_ids = set(row[0] for row in cursor.fetchall())
         
-        new_accessions = [acc for acc in accession_numbers if acc not in existing_ids]
+        new_accessions = [acc for acc in accessions if acc not in existing_ids]
         
         # Insert only new ones
         new_accessions_count = len(new_accessions)
@@ -58,12 +58,12 @@ def update_uc_table_accession(accessions: list) -> None:
         
         cursor.close()
         conn.close()
-        st.success(f"New accession numbers added to {uc_table}: {new_accessions_count}")
-        st.success(f"Input accession numbers already existing in {uc_table}: {len(accessions)-new_accessions_count}")
-        st.success(f"Total accession numbers now in {uc_table}: {len(existing_ids)+len(new_accessions)}")
+        st.success(f"New accession numbers added to UC table {uc_table}: {new_accessions_count}")
+        st.success(f"Input accession numbers already existing in UC table {uc_table}: {len(accessions)-new_accessions_count}")
+        st.success(f"Total accession numbers now in UC table {uc_table}: {len(existing_ids)+len(new_accessions)}")
     
     except Exception as e:
-        st.error(f"Error updating {uc_table}: {str(e)}")
+        st.error(f"Error updating UC table {uc_table}: {str(e)}")
 
 
 def generate_fasta_file(accessions: list):
