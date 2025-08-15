@@ -1,7 +1,0 @@
-streamlit
-biopython
-openpyxl
-XlsxWriter
-pandas
-numpy<2.0
-databricks-sql-connector
