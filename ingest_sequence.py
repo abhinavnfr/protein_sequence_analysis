@@ -200,11 +200,12 @@ def pfam_domain_search(accession, effectorp_sequence):
         with st.spinner(f"Performing Interpro Scan PFAM Domain search for accession: {accession}", show_time=True):
             # Step 1: Submit sequence to InterPro
             job_id = submit_to_interpro(effectorp_sequence[1])
+            st.write(f"Submitted Job ID for accession: {accession}: {job_id}")
     
             # Step 2: Check job status
             while True:
                 status = check_status(job_id)
-                # st.write(f"Job status: {status}") # optional print statement
+                st.write(f"Job status: {status}") # optional print statement
                 if status == "FINISHED":
                     break
                 elif status == "ERROR":
