@@ -104,7 +104,6 @@ def blast_sequence(accession, fasta_sequence, num_hits=5):
                 blasted_sequence.append(hit['scientific_name'])
                 blasted_sequence.append(hit['accession'])
                 blasted_sequence.append(fetch_fasta_sequence(hit['accession']))
-            st.write(blasted_sequence)
             st.success(f"Successfully BLASTed sequence for accession: {accession}")
             return blasted_sequence
 
