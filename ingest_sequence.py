@@ -103,7 +103,8 @@ def blast_sequence(accession, fasta_sequence, num_hits=5):
                 blasted_sequence.append(f"{hit['percent_identity']:.2f}%")
                 blasted_sequence.append(hit['scientific_name'])
                 blasted_sequence.append(hit['accession'])
-            print(blasted_sequence)
+                blasted_sequence.append(fetch_fasta_sequence(hit['accession']))
+            st.write(blasted_sequence)
             st.success(f"BLASTed sequence for accession: {accession}")
             return blasted_sequence
 
