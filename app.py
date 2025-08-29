@@ -29,6 +29,7 @@ def main():
                 status_text.text(f"Processing {i+1}/{new_accesions_count}: {acc}")
                 fasta_sequence = ingest.fetch_fasta_sequence(acc)
                 blasted_sequence = ingest.blast_sequence(acc, fasta_sequence)
+                st.write(blasted_sequence)
                 # effectorp_sequence = ingest.predict_effectorp(acc, blasted_sequence)
                 # pfam_sequence = ingest.pfam_domain_search(acc, effectorp_sequence)
                 # ingest.update_uc_table_accession(pfam_sequence)
