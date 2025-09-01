@@ -114,7 +114,7 @@ def blast_sequence(accession, fasta_sequence, num_hits=5):
 
 # perform Effector P of protein sequence
 def predict_effectorp(accession, blasted_sequence):
-    with st.spinner(f"Predicting effectorp for accession: {accession}", show_time=True):
+    with st.spinner(f"Predicting EffectorP for accession: {accession}", show_time=True):
         try:
             # Submit sequence to the form endpoint. The HTML shows the textarea name is 'seq'
             submit_url = st.secrets["effectorp"]["submit_url"]
@@ -128,7 +128,6 @@ def predict_effectorp(accession, blasted_sequence):
                 }
                 session = requests.Session()
                 response = session.post(submit_url, data=data)
-                st.write("Submitted accessiom:{blasted_sequence[i]}")
                 if response.status_code != 200:
                     raise Exception(f"Form submission failed for accession: {blasted_sequence[0]}")
                 
@@ -157,7 +156,6 @@ def predict_effectorp(accession, blasted_sequence):
                     if row:
                         results.append(row)
                 effectorp_sequence += results[1][1:5]
-                st.success(f"EffectorP predicted for accession: {blasted_sequence[i-1]}")
             st.success(f"EffectorP predicted for accession: {accession}")
             return effectorp_sequence
         
@@ -208,12 +206,12 @@ def pfam_domain_search(accession, effectorp_sequence):
         with st.spinner(f"Performing Interpro Scan PFAM Domain search for accession: {accession}", show_time=True):
             # Step 1: Submit sequence to InterPro
             job_id = submit_to_interpro(effectorp_sequence[1])
-            st.write(f"Submitted Job ID for accession: {accession}: {job_id}")
+            # st.write(f"Submitted Job ID for accession: {accession}: {job_id}") # optional print statement
     
             # Step 2: Check job status
             while True:
                 status = check_status(job_id)
-                st.write(f"Job status: {status}") # optional print statement
+                # st.write(f"Job status: {status}") # optional print statement
                 if status == "FINISHED":
                     break
                 elif status == "ERROR":
