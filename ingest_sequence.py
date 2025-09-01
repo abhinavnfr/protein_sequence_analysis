@@ -128,6 +128,7 @@ def predict_effectorp(accession, blasted_sequence):
                 }
                 session = requests.Session()
                 response = session.post(submit_url, data=data)
+                st.write("Submitted accessiom:{blasted_sequence[i]}")
                 if response.status_code != 200:
                     raise Exception(f"Form submission failed for accession: {blasted_sequence[0]}")
                 
@@ -156,6 +157,7 @@ def predict_effectorp(accession, blasted_sequence):
                     if row:
                         results.append(row)
                 effectorp_sequence += results[1][1:5]
+                st.success(f"EffectorP predicted for accession: {blasted_sequence[i-1]}")
             st.success(f"EffectorP predicted for accession: {accession}")
             return effectorp_sequence
         
