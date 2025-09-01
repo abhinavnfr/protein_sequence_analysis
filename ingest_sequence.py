@@ -38,13 +38,14 @@ def filter_new_sequences(accessions: list) -> list:
 
 
 # fetch FASTA sequence from accession number
-def fetch_fasta_sequence(accession: str) -> str:
+def fetch_fasta_sequence(accession: str, blast_accession: str) -> str:
     Entrez.email = get_entrez_email()
     try:
         with st.spinner(f"Fetching FASTA sequence for accession: {accession}", show_time=True):
             with Entrez.efetch(db="protein", id=accession, rettype="fasta", retmode="text") as handle:
                 record = handle.read()
-            st.success(f"Successfully fetched FASTA sequence for accession: {accession}")
+            if accession == blast_accession:
+                st.success(f"Successfully fetched FASTA sequence for accession: {accession}")
             return record
     except Exception as e:
         st.error(f"Failed to retrieve sequence for {accession}: {str(e)}")
@@ -103,7 +104,7 @@ def blast_sequence(accession, fasta_sequence, num_hits=5):
                 blasted_sequence.append(f"{hit['percent_identity']:.2f}%")
                 blasted_sequence.append(hit['scientific_name'])
                 blasted_sequence.append(hit['accession'])
-                blasted_sequence.append(fetch_fasta_sequence(hit['accession']))
+                blasted_sequence.append(fetch_fasta_sequence(hit['accession'], accession))
             st.success(f"Successfully BLASTed sequence for accession: {accession}")
             return blasted_sequence
 
@@ -117,40 +118,44 @@ def predict_effectorp(accession, blasted_sequence):
         try:
             # Submit sequence to the form endpoint. The HTML shows the textarea name is 'seq'
             submit_url = st.secrets["effectorp"]["submit_url"]
-            data = {
-                'seq': blasted_sequence[1],
-                'submit': 'Run EffectorP'
-            }
-            session = requests.Session()
-            response = session.post(submit_url, data=data)
-            if response.status_code != 200:
-                raise Exception(f"Form submission failed for accession: {blasted_sequence[0]}")
             
-            # Regex pattern for UUID (dataset id)
-            pattern = r'dataset ([0-9a-f\-]{36})'
-            match = re.search(pattern, response.text)
-            if match:
-                dataset_id = match.group(1)
-            else:
-                raise Exception("Dataset ID not found")
+            effectorp_sequence = blasted_sequence
+            
+            for i in range(5, 22, 4):
+                data = {
+                    'seq': blasted_sequence[i],
+                    'submit': 'Run EffectorP'
+                }
+                session = requests.Session()
+                response = session.post(submit_url, data=data)
+                if response.status_code != 200:
+                    raise Exception(f"Form submission failed for accession: {blasted_sequence[0]}")
+                
+                # Regex pattern for UUID (dataset id)
+                pattern = r'dataset ([0-9a-f\-]{36})'
+                match = re.search(pattern, response.text)
+                if match:
+                    dataset_id = match.group(1)
+                else:
+                    raise Exception("Dataset ID not found")
 
-            result_url = f"{st.secrets["effectorp"]["result_url"]}{dataset_id}"
-            while True:
-                result_response = session.get(result_url)
-                result_soup = BeautifulSoup(result_response.text, "html.parser")
-                if "Summary table" in result_response.text:
-                    break
-                # Wait and retry
-                time.sleep(5)
-            
-            # Extract the summary table from final result page
-            table = result_soup.find("table")
-            results = []
-            for tr in table.find_all("tr"):
-                row = [td.get_text(strip=True) for td in tr.find_all(["td", "th"])]
-                if row:
-                    results.append(row)
-            effectorp_sequence = blasted_sequence + results[1][1:5]
+                result_url = f"{st.secrets["effectorp"]["result_url"]}{dataset_id}"
+                while True:
+                    result_response = session.get(result_url)
+                    result_soup = BeautifulSoup(result_response.text, "html.parser")
+                    if "Summary table" in result_response.text:
+                        break
+                    # Wait and retry
+                    time.sleep(5)
+                
+                # Extract the summary table from final result page
+                table = result_soup.find("table")
+                results = []
+                for tr in table.find_all("tr"):
+                    row = [td.get_text(strip=True) for td in tr.find_all(["td", "th"])]
+                    if row:
+                        results.append(row)
+                effectorp_sequence += results[1][1:5]
             st.success(f"EffectorP predicted for accession: {accession}")
             return effectorp_sequence
         

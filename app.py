@@ -27,10 +27,10 @@ def main():
         for i, acc in enumerate(new_accessions):
             try:
                 status_text.text(f"Processing {i+1}/{new_accesions_count}: {acc}")
-                fasta_sequence = ingest.fetch_fasta_sequence(acc)
+                fasta_sequence = ingest.fetch_fasta_sequence(acc, acc)
                 blasted_sequence = ingest.blast_sequence(acc, fasta_sequence)
-                st.write(blasted_sequence)
-                # effectorp_sequence = ingest.predict_effectorp(acc, blasted_sequence)
+                effectorp_sequence = ingest.predict_effectorp(acc, blasted_sequence)
+                st.write(effectorp_sequence)
                 # pfam_sequence = ingest.pfam_domain_search(acc, effectorp_sequence)
                 # ingest.update_uc_table_accession(pfam_sequence)
             except Exception as e:
