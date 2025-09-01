@@ -38,7 +38,7 @@ def filter_new_sequences(accessions: list) -> list:
 
 
 # fetch FASTA sequence from accession number
-def fetch_fasta_sequence(accession: str, blast_accession: str) -> str:
+def fetch_fasta_sequence(accession, blast_accession):
     Entrez.email = get_entrez_email()
     try:
         with st.spinner(f"Fetching FASTA sequence for accession: {accession}", show_time=True):
