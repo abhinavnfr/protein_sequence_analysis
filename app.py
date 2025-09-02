@@ -48,8 +48,8 @@ def main():
     # Step 2: Generate optional FASTA file
     st.markdown("<br><p style='font-size: 24px;'>Would you like to download a FASTA file for your input accession numbers?</p>", unsafe_allow_html=True)
 
-    if st.button(label="Yes", type="primary"):
-        df_fasta = 
+    # if st.button(label="Yes", type="primary"):
+    #     df_fasta = 
     #     fasta_file_content, total_accessions, results = fs.generate_fasta_file(accessions)
     #     st.write(results)
 
