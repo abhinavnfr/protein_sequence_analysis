@@ -122,6 +122,7 @@ def add_blast_uc_table(accession: str, blasted_sequence: list) -> None:
             cursor.execute(f"DESCRIBE TABLE {uc_table}")
             columns_info = cursor.fetchall()
             table_columns = [row[0] for row in columns_info if row != ""]
+            st.write(table_columns)
  
             for seq in blasted_sequence:
                 # Trim to only number of provided values
@@ -132,6 +133,7 @@ def add_blast_uc_table(accession: str, blasted_sequence: list) -> None:
                 col_names = ", ".join(insert_columns)
 
                 query = f"INSERT INTO {uc_table} ({col_names}) VALUES ({placeholders})"
+                st.write(query)
                 cursor.execute(query, seq)
 
             conn.commit()
