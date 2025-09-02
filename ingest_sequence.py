@@ -121,7 +121,7 @@ def predict_effectorp(accession, blasted_sequence):
             
             effectorp_sequence = blasted_sequence
             
-            for i in range(5, 22, 4):
+            for i in range(1, 22, 4):
                 data = {
                     'seq': blasted_sequence[i],
                     'submit': 'Run EffectorP'
