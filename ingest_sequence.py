@@ -124,7 +124,6 @@ def add_blast_uc_table(accession: str, blasted_sequence: list) -> None:
             table_columns = [row[0] for row in columns_info if row != ""]
  
             for seq in blasted_sequence:
-                st.write(seq)
                 # Trim to only number of provided values
                 insert_columns = table_columns[2:len(seq)+2] + ["record_create_ts", "record_update_ts"]
 
