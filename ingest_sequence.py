@@ -20,7 +20,7 @@ def get_entrez_email():
 
 # filter only new sequences from input
 def filter_new_sequences(accessions: list) -> list:
-    uc_table = "workspace.raw.accession"
+    uc_table = "workspace.raw.protein"
     try:
         conn = dbh.get_databricks_connection()
         cursor = conn.cursor()
@@ -88,7 +88,7 @@ def blast_sequence(accession, fasta_sequence, num_hits=5):
                 # Sort hits by percentage identity in descending order
                 hits = sorted(hits, key=lambda x: x["percent_identity"], reverse=True) # hits = hits[::-1]
 
-                # Get the top 3 unique percentage identities
+                # Get the top n unique percentage identities
                 top_hits = []
                 unique_identities = set()
 
@@ -99,17 +99,50 @@ def blast_sequence(accession, fasta_sequence, num_hits=5):
                         top_hits.append(hit)
                         unique_identities.add(hit["percent_identity"])
 
-            blasted_sequence = [accession, fasta_sequence]
+            blasted_sequence = [[accession, fasta_sequence]]
             for i, hit in enumerate(top_hits, start=1):
-                blasted_sequence.append(f"{hit['percent_identity']:.2f}%")
-                blasted_sequence.append(hit['scientific_name'])
-                blasted_sequence.append(hit['accession'])
-                blasted_sequence.append(fetch_fasta_sequence(hit['accession'], accession))
+                temp_list = [hit['accession'], fetch_fasta_sequence(hit['accession'], accession), i, f"{hit['percent_identity']:.2f}%"]
+                blasted_sequence.append(temp_list)
             st.success(f"Successfully BLASTed sequence for accession: {accession}")
             return blasted_sequence
 
     except Exception as e:
         st.error(f"Failed to BLAST sequence for {accession}: {str(e)}")
+
+
+# add BLAST sequences to UC table raw.protein
+def add_blast_uc_table(blasted_sequence: list) -> None:
+    uc_table = "workspace.raw.protein"
+    with st.spinner(f"Inserting processed sequence to UC table {uc_table} for accession: {blasted_sequence[0]}", show_time=True):
+        try:
+            conn = dbh.get_databricks_connection()
+            cursor = conn.cursor()
+
+            # Fetch column names for the table
+            cursor.execute(f"DESCRIBE TABLE {uc_table}")
+            columns_info = cursor.fetchall()
+            table_columns = [row[0] for row in columns_info if row != ""]
+ 
+            # Trim to only number of provided values
+            insert_columns = table_columns[:len(blasted_sequence)] + ["record_create_ts", "record_update_ts"]
+
+            # Prepare parameter placeholders (use ? for Databricks SQL)
+            placeholders = ", ".join(["?"] * len(blasted_sequence) + ["current_timestamp()", "current_timestamp()"])
+            col_names = ", ".join(insert_columns)
+
+            query = f"INSERT INTO {uc_table} ({col_names}) VALUES ({placeholders})"
+            cursor.execute(query, blasted_sequence)
+
+            conn.commit()
+            cursor.close()
+            conn.close()
+
+            st.success(f"Processed sequence inserted into UC table {uc_table} for accession: {pfam_sequence[0]}")
+
+        except Exception as e:
+            st.error(f"Error inserting processed sequence for accession {pfam_sequence[0]} into UC table {uc_table}: {e}")
+  
+
 
 
 # perform Effector P of protein sequence
@@ -240,38 +273,6 @@ def pfam_domain_search(accession, effectorp_sequence):
         st.error(f"Failed to perform PFAM Domain search for {accession}: {str(e)}")
 
 
-# update UC table raw.accession
-def update_uc_table_accession(pfam_sequence: list) -> None:
-    uc_table = "workspace.raw.accession"
-    with st.spinner(f"Inserting processed sequence to UC table {uc_table} for accession: {pfam_sequence[0]}", show_time=True):
-        try:
-            conn = dbh.get_databricks_connection()
-            cursor = conn.cursor()
-
-            # Fetch column names for the table
-            cursor.execute(f"DESCRIBE TABLE {uc_table}")
-            columns_info = cursor.fetchall()
-            table_columns = [row[0] for row in columns_info if row != ""]
- 
-            # Trim to only number of provided values
-            insert_columns = table_columns[:len(pfam_sequence)] + ["record_create_ts"]
-
-            # Prepare parameter placeholders (use ? for Databricks SQL)
-            placeholders = ", ".join(["?"] * len(pfam_sequence) + ["current_timestamp()"])
-            col_names = ", ".join(insert_columns)
-
-            query = f"INSERT INTO {uc_table} ({col_names}) VALUES ({placeholders})"
-            cursor.execute(query, pfam_sequence)
-
-            conn.commit()
-            cursor.close()
-            conn.close()
-
-            st.success(f"Processed sequence inserted into UC table {uc_table} for accession: {pfam_sequence[0]}")
-
-        except Exception as e:
-            st.error(f"Error inserting processed sequence for accession {pfam_sequence[0]} into UC table {uc_table}: {e}")
-  
     
 
 
