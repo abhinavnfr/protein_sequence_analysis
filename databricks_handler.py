@@ -12,5 +12,11 @@ def get_databricks_connection():
     )
 
 
+def get_curated_blast_sequence():
+    uc_table = "workspace.curated.blast_sequence"
+    try:
+        conn = dbh.get_databricks_connection()
+        cursor = conn.cursor()
 
-
+        cursor.execute(f"SELECT fasta_sequence FROM {uc_table} WHERE id IN {}")
+        existing_ids = set(row[0] for row in cursor.fetchall())

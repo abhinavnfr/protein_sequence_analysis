@@ -4,6 +4,7 @@ import pandas as pd
 from io import BytesIO
 import time
 import ingest_sequence as ingest
+import read_curated as rc
 # import blast_sequence as bs
 # import pfam_domains_interpro_scan as pf
 import databricks_handler as dbh
@@ -14,7 +15,7 @@ def main():
     st.markdown("<p style='text-align: right; color: #FF4B4B;'>by Abhinav Rana</p>", unsafe_allow_html=True)
 
     # Step 1: Process input accession numbers file
-    st.markdown("<br><p style='font-size: 24px;'>Step 1: To get started, choose a text file containing accession numbers</p><br>", unsafe_allow_html=True)
+    st.markdown("<br><p style='font-size: 24px;'>To get started, choose a text file containing accession numbers</p><br>", unsafe_allow_html=True)
     input_file = st.file_uploader(label="Upload file", type=["txt"])
     if input_file is not None:
         accessions = [line.strip() for line in input_file.read().decode("utf-8").splitlines()]
@@ -44,10 +45,11 @@ def main():
         progress_bar.progress(100)
     
     
-    # # Step 2: Generate FASTA sequences
-    # st.markdown("<br><p style='font-size: 24px;'>Step 2: Fetch FASTA sequences from accession numbers</p>", unsafe_allow_html=True)
+    # Step 2: Generate optional FASTA file
+    st.markdown("<br><p style='font-size: 24px;'>Would you like to download a FASTA file for your input accession numbers?</p>", unsafe_allow_html=True)
 
-    # if st.button(label="Click to generate FASTA sequences", type="primary"):
+    if st.button(label="Yes", type="primary"):
+        df_fasta = 
     #     fasta_file_content, total_accessions, results = fs.generate_fasta_file(accessions)
     #     st.write(results)
 

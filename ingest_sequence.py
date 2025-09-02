@@ -125,7 +125,7 @@ def add_blast_uc_table(accession: str, blasted_sequence: list) -> None:
  
             for seq in blasted_sequence:
                 # Trim to only number of provided values
-                insert_columns = table_columns[:len(seq)] + ["record_create_ts", "record_update_ts"]
+                insert_columns = table_columns[2:len(seq)] + ["record_create_ts", "record_update_ts"]
 
                 # Prepare parameter placeholders (use ? for Databricks SQL)
                 placeholders = ", ".join(["?"] * len(seq) + ["current_timestamp()", "current_timestamp()"])
