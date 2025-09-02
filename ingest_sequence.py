@@ -144,26 +144,30 @@ def add_blast_uc_table(accession: str, blasted_sequence: list) -> None:
             st.error(f"Error inserting BLAST sequences for accession {accession} into UC table {uc_table}: {e}")
   
 
-
-
 # perform Effector P of protein sequence
-def predict_effectorp(accession, blasted_sequence):
-    with st.spinner(f"Predicting EffectorP for accession: {accession}", show_time=True):
+def predict_effectorp():
+    uc_table = "workspace.raw.protein"
+    with st.spinner(f"Predicting EffectorP for accessions with no prediction", show_time=True):
         try:
+            conn = dbh.get_databricks_connection()
+            cursor = conn.cursor()
+
+            cursor.execute(f"SELECT sequence FROM {uc_table} WHERE prediction IS NULL")
+            sequences = set(row[0] for row in cursor.fetchall())
+            blasted_sequence = [seq for seq in sequences]
+
             # Submit sequence to the form endpoint. The HTML shows the textarea name is 'seq'
             submit_url = st.secrets["effectorp"]["submit_url"]
             
-            effectorp_sequence = blasted_sequence
-            
-            for i in range(1, 22, 4):
+            for seq in blasted_sequence:
                 data = {
-                    'seq': blasted_sequence[i],
+                    'seq': seq,
                     'submit': 'Run EffectorP'
                 }
                 session = requests.Session()
                 response = session.post(submit_url, data=data)
                 if response.status_code != 200:
-                    raise Exception(f"Form submission failed for accession: {blasted_sequence[0]}")
+                    raise Exception(f"Form submission failed for accession: {seq}")
                 
                 # Regex pattern for UUID (dataset id)
                 pattern = r'dataset ([0-9a-f\-]{36})'
@@ -189,10 +193,20 @@ def predict_effectorp(accession, blasted_sequence):
                     row = [td.get_text(strip=True) for td in tr.find_all(["td", "th"])]
                     if row:
                         results.append(row)
-                effectorp_sequence += results[1][1:5]
+                update_sql = f"""UPDATE {uc_table} 
+                                    SET cytoplasmic_effector = {results[1][1]}, 
+                                        apoplastic_effector = {results[1][2]}, 
+                                        non_effector = {results[1][3]},
+                                        prediction = {results[1][4]}
+                                    WHERE sequence = {seq}
+                            """
+            
+            conn.commit()
+            cursor.close()
+            conn.close()
+
             st.success(f"EffectorP predicted for accession: {accession}")
-            return effectorp_sequence
-        
+
         except Exception as e:
             st.error(f"Failed to predict EffectorP for accession: {accession}")
 
