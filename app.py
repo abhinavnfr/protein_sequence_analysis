@@ -31,6 +31,7 @@ def main():
                 blasted_sequence = ingest.blast_sequence(acc, fasta_sequence)
                 st.write(blasted_sequence)
                 st.write("")
+                ingest.add_blast_uc_table(acc, blasted_sequence)
                 # effectorp_sequence = ingest.predict_effectorp(acc, blasted_sequence)
                 # st.write(effectorp_sequence)
                 # pfam_sequence = ingest.pfam_domain_search(acc, effectorp_sequence)
