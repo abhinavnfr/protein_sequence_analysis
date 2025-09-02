@@ -152,7 +152,7 @@ def predict_effectorp():
             conn = dbh.get_databricks_connection()
             cursor = conn.cursor()
 
-            cursor.execute(f"SELECT fasta_sequence FROM {uc_table} WHERE prediction IS NULL")
+            cursor.execute(f"SELECT fasta_sequence FROM {uc_table} WHERE prediction IS NULL AND blast_of_id IS NOT NULL")
             sequences = set(row[0] for row in cursor.fetchall())
             blasted_sequence = [seq for seq in sequences]
 
@@ -199,7 +199,7 @@ def predict_effectorp():
                                         non_effector = '{results[1][3]}',
                                         prediction = '{results[1][4]}',
                                         record_update_ts = current_timestamp()
-                                    WHERE fasta_sequence = '{seq}'
+                                    WHERE fasta_sequence = '{seq}' AND blast_of_id IS NOT NULL
                             """
                 cursor.execute(update_sql)
             
@@ -258,7 +258,7 @@ def pfam_domain_search():
             conn = dbh.get_databricks_connection()
             cursor = conn.cursor()
 
-            cursor.execute(f"SELECT fasta_sequence FROM {uc_table} WHERE pfam_domain_acc_1 IS NULL")
+            cursor.execute(f"SELECT fasta_sequence FROM {uc_table} WHERE pfam_domain_acc_1 IS NULL AND blast_of_id IS NOT NULL")
             sequences = set(row[0] for row in cursor.fetchall())
             blasted_sequence = [seq for seq in sequences]
 
@@ -294,7 +294,7 @@ def pfam_domain_search():
                                             SET pfam_domain_acc_{domain_num} = '{domain_acc}',
                                                 pfam_domain_name_{domain_num} = '{domain_name}',
                                                 record_update_ts = current_timestamp()
-                                            WHERE fasta_sequence = '{seq}'
+                                            WHERE fasta_sequence = '{seq}' AND blast_of_id IS NOT NULL
                                         """
                         cursor.execute(update_query)
                         domain_num += 1
