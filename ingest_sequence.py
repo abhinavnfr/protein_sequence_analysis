@@ -132,7 +132,6 @@ def add_blast_uc_table(accession: str, blasted_sequence: list) -> None:
                 col_names = ", ".join(insert_columns)
 
                 query = f"INSERT INTO {uc_table} ({col_names}) VALUES ({placeholders})"
-                st.write(query)
                 cursor.execute(query, seq)
 
             conn.commit()
