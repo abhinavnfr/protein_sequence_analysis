@@ -147,7 +147,7 @@ def add_blast_uc_table(accession: str, blasted_sequence: list) -> None:
 # perform Effector P of protein sequence
 def predict_effectorp():
     uc_table = "workspace.raw.protein"
-    with st.spinner(f"Predicting EffectorP for accessions with no prediction", show_time=True):
+    with st.spinner(f"Predicting EffectorP for sequences with no prediction", show_time=True):
         try:
             conn = dbh.get_databricks_connection()
             cursor = conn.cursor()
@@ -167,7 +167,7 @@ def predict_effectorp():
                 session = requests.Session()
                 response = session.post(submit_url, data=data)
                 if response.status_code != 200:
-                    raise Exception(f"Form submission failed for accession: {seq}")
+                    raise Exception(f"Form submission failed for sequence: {seq}")
                 
                 # Regex pattern for UUID (dataset id)
                 pattern = r'dataset ([0-9a-f\-]{36})'
@@ -205,10 +205,10 @@ def predict_effectorp():
             cursor.close()
             conn.close()
 
-            st.success(f"EffectorP predicted for accession: {accession}")
+            st.success(f"EffectorP predicted for all sequence with no prediction")
 
         except Exception as e:
-            st.error(f"Failed to predict EffectorP for accession: {accession}")
+            st.error(f"Failed to predict EffectorP for sequences")
 
 
 # submit protein sequences to the InterProScan REST API.
