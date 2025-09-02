@@ -39,7 +39,9 @@ def main():
             progress_bar.progress(progress_percent)
             time.sleep(0.1)
         
+        time.sleep(1)
         ingest.predict_effectorp()
+        time.sleep(1)
         ingest.pfam_domain_search()
         progress_bar.progress(100)
     
