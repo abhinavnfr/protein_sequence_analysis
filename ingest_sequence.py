@@ -111,9 +111,9 @@ def blast_sequence(accession, fasta_sequence, num_hits=5):
 
 
 # add BLAST sequences to UC table raw.protein
-def add_blast_uc_table(blasted_sequence: list) -> None:
+def add_blast_uc_table(accession: str, blasted_sequence: list) -> None:
     uc_table = "workspace.raw.protein"
-    with st.spinner(f"Inserting processed sequence to UC table {uc_table} for accession: {blasted_sequence[0]}", show_time=True):
+    with st.spinner(f"Inserting BLAST sequences to UC table {uc_table} for accession: {accession}", show_time=True):
         try:
             conn = dbh.get_databricks_connection()
             cursor = conn.cursor()
@@ -123,24 +123,25 @@ def add_blast_uc_table(blasted_sequence: list) -> None:
             columns_info = cursor.fetchall()
             table_columns = [row[0] for row in columns_info if row != ""]
  
-            # Trim to only number of provided values
-            insert_columns = table_columns[:len(blasted_sequence)] + ["record_create_ts", "record_update_ts"]
+            for seq in blasted_sequence:
+                # Trim to only number of provided values
+                insert_columns = table_columns[:len(seq)] + ["record_create_ts", "record_update_ts"]
 
-            # Prepare parameter placeholders (use ? for Databricks SQL)
-            placeholders = ", ".join(["?"] * len(blasted_sequence) + ["current_timestamp()", "current_timestamp()"])
-            col_names = ", ".join(insert_columns)
+                # Prepare parameter placeholders (use ? for Databricks SQL)
+                placeholders = ", ".join(["?"] * len(seq) + ["current_timestamp()", "current_timestamp()"])
+                col_names = ", ".join(insert_columns)
 
-            query = f"INSERT INTO {uc_table} ({col_names}) VALUES ({placeholders})"
-            cursor.execute(query, blasted_sequence)
+                query = f"INSERT INTO {uc_table} ({col_names}) VALUES ({placeholders})"
+                cursor.execute(query, seq)
 
             conn.commit()
             cursor.close()
             conn.close()
 
-            st.success(f"Processed sequence inserted into UC table {uc_table} for accession: {pfam_sequence[0]}")
+            st.success(f"BLAST sequences inserted into UC table {uc_table} for accession: {accession}")
 
         except Exception as e:
-            st.error(f"Error inserting processed sequence for accession {pfam_sequence[0]} into UC table {uc_table}: {e}")
+            st.error(f"Error inserting BLAST sequences for accession {accession} into UC table {uc_table}: {e}")
   
 
 
