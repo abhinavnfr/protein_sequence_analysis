@@ -293,7 +293,7 @@ def pfam_domain_search():
                         update_query = f"""UPDATE {uc_table}
                                             SET pfam_domain_acc_{domain_num} = '{domain_acc}',
                                                 pfam_domain_name_{domain_num} = '{domain_name}'
-                                            WHERE fasta_sequence = {seq}
+                                            WHERE fasta_sequence = '{seq}'
                                         """
                         cursor.execute(update_query)
                         domain_num += 1
