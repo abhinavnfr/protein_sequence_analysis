@@ -198,7 +198,7 @@ def predict_effectorp():
                                         apoplastic_effector = {results[1][2]}, 
                                         non_effector = {results[1][3]},
                                         prediction = {results[1][4]}
-                                    WHERE sequence = {seq}
+                                    WHERE fasta_sequence = {seq}
                             """
                 cursor.execute(update_sql)
             
