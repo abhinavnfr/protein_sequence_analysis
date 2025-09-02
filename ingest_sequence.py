@@ -147,7 +147,7 @@ def add_blast_uc_table(accession: str, blasted_sequence: list) -> None:
 # perform Effector P of protein sequence
 def predict_effectorp():
     uc_table = "workspace.raw.protein"
-    with st.spinner(f"Predicting EffectorP for sequences with no prediction", show_time=True):
+    with st.spinner(f"Predicting EffectorP for sequences", show_time=True):
         try:
             conn = dbh.get_databricks_connection()
             cursor = conn.cursor()
@@ -197,7 +197,8 @@ def predict_effectorp():
                                     SET cytoplasmic_effector = '{results[1][1]}', 
                                         apoplastic_effector = '{results[1][2]}', 
                                         non_effector = '{results[1][3]}',
-                                        prediction = '{results[1][4]}'
+                                        prediction = '{results[1][4]}',
+                                        record_update_ts = current_timestamp()
                                     WHERE fasta_sequence = '{seq}'
                             """
                 cursor.execute(update_sql)
@@ -205,8 +206,8 @@ def predict_effectorp():
             conn.commit()
             cursor.close()
             conn.close()
-
-            st.success(f"EffectorP predicted for all sequence with no prediction")
+            
+            st.success(f"EffectorP predicted for all sequences")
 
         except Exception as e:
             st.error(f"Error predicting EffectorP for sequences: {e}")
@@ -250,43 +251,61 @@ def retrieve_results(job_id):
 
 
 # perform Interpro Scan PFAM Domain
-def pfam_domain_search(accession, effectorp_sequence):
+def pfam_domain_search():
+    uc_table = "workspace.raw.protein"
     try:
-        with st.spinner(f"Performing Interpro Scan PFAM Domain search for accession: {accession}", show_time=True):
-            # Step 1: Submit sequence to InterPro
-            job_id = submit_to_interpro(effectorp_sequence[1])
-            # st.write(f"Submitted Job ID for accession: {accession}: {job_id}") # optional print statement
-    
-            # Step 2: Check job status
-            while True:
-                status = check_status(job_id)
-                # st.write(f"Job status: {status}") # optional print statement
-                if status == "FINISHED":
-                    break
-                elif status == "ERROR":
-                    raise Exception(f"Error occurred during InterProScan job for accession: {accession}")
-                time.sleep(30)  # Wait for 30 seconds before checking again
-    
-            # Step 3: Retrieve and process results
-            results = retrieve_results(job_id)
-            pfam_sequence = effectorp_sequence
-            for line in results.strip().split("\n"):
-                if line.startswith("#"):  # Ignore comment lines
-                    continue
-                parts = line.split("\t")
-                database = parts[3]
-                domain_acc = parts[4]  # Domain accession number (e.g., PF00931)
-                domain_name = parts[5]  # Domain name (e.g., NB-ARC)
+        with st.spinner(f"Performing Interpro Scan PFAM Domain search for sequences", show_time=True):
+            conn = dbh.get_databricks_connection()
+            cursor = conn.cursor()
 
-                # Filter only PFAM domains
-                if database == "Pfam":
-                    pfam_sequence.append(domain_acc)
-                    pfam_sequence.append(domain_name)
+            cursor.execute(f"SELECT fasta_sequence FROM {uc_table} WHERE pfam_domain_acc_1 IS NULL")
+            sequences = set(row[0] for row in cursor.fetchall())
+            blasted_sequence = [seq for seq in sequences]
+
+            for seq in blasted_sequence:
+                # Step 1: Submit sequence to InterPro
+                job_id = submit_to_interpro(seq)
+                # st.write(f"Submitted Job ID for accession: {accession}: {job_id}") # optional print statement
+    
+                # Step 2: Check job status
+                while True:
+                    status = check_status(job_id)
+                    # st.write(f"Job status: {status}") # optional print statement
+                    if status == "FINISHED":
+                        break
+                    elif status == "ERROR":
+                        raise Exception(f"Error occurred during InterProScan job for accession: {accession}")
+                    time.sleep(30)  # Wait for 30 seconds before checking again
+    
+                # Step 3: Retrieve and process results
+                results = retrieve_results(job_id)
+                domain_num = 1
+                for line in results.strip().split("\n"):
+                    if line.startswith("#"):  # Ignore comment lines
+                        continue
+                    parts = line.split("\t")
+                    database = parts[3]
+                    domain_acc = parts[4]  # Domain accession number (e.g., PF00931)
+                    domain_name = parts[5]  # Domain name (e.g., NB-ARC)
+
+                    # Filter only PFAM domains
+                    if database == "Pfam":
+                        update_query = f"""UPDATE {uc_table}
+                                            SET pfam_domain_acc_{domain_num} = '{domain_acc}',
+                                                pfam_domain_name_{domain_num} = '{domain_name}'
+                                            WHERE fasta_sequence = {seq}
+                                        """
+                        cursor.execute(update_query)
+                        domain_num += 1
             
-            st.success(f"Completed Interpro Scan PFAM Domain search for accession: {accession}")
-            return pfam_sequence
+            conn.commit()
+            cursor.close()
+            conn.close()
+
+            st.success(f"Completed Interpro Scan PFAM Domain search for all sequences")
+    
     except Exception as e:
-        st.error(f"Failed to perform PFAM Domain search for {accession}: {str(e)}")
+        st.error(f"Failed to perform PFAM Domain search for sequences")
 
 
     

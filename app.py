@@ -31,8 +31,7 @@ def main():
                 blasted_sequence = ingest.blast_sequence(acc, fasta_sequence)
                 ingest.add_blast_uc_table(acc, blasted_sequence)
                 ingest.predict_effectorp()
-                # st.write(effectorp_sequence)
-                # pfam_sequence = ingest.pfam_domain_search(acc, effectorp_sequence)
+                ingest.pfam_domain_search()
                 # ingest.update_uc_table_accession(pfam_sequence)
             except Exception as e:
                 st.error(f"Error processing {acc}: {e}")
