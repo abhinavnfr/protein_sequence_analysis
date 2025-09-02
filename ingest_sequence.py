@@ -200,6 +200,7 @@ def predict_effectorp():
                                         prediction = {results[1][4]}
                                     WHERE sequence = {seq}
                             """
+                cursor.execute(update_sql)
             
             conn.commit()
             cursor.close()
@@ -208,7 +209,7 @@ def predict_effectorp():
             st.success(f"EffectorP predicted for all sequence with no prediction")
 
         except Exception as e:
-            st.error(f"Failed to predict EffectorP for sequences")
+            st.error(f"Error predicting EffectorP for sequences: {e}")
 
 
 # submit protein sequences to the InterProScan REST API.
