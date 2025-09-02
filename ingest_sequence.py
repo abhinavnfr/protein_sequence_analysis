@@ -194,11 +194,11 @@ def predict_effectorp():
                     if row:
                         results.append(row)
                 update_sql = f"""UPDATE {uc_table} 
-                                    SET cytoplasmic_effector = {results[1][1]}, 
-                                        apoplastic_effector = {results[1][2]}, 
-                                        non_effector = {results[1][3]},
-                                        prediction = {results[1][4]}
-                                    WHERE fasta_sequence = {seq}
+                                    SET cytoplasmic_effector = '{results[1][1]}', 
+                                        apoplastic_effector = '{results[1][2]}', 
+                                        non_effector = '{results[1][3]}',
+                                        prediction = '{results[1][4]}'
+                                    WHERE fasta_sequence = '{seq}'
                             """
                 cursor.execute(update_sql)
             
