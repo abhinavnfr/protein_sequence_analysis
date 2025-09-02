@@ -147,7 +147,7 @@ def add_blast_uc_table(accession: str, blasted_sequence: list) -> None:
 # perform Effector P of protein sequence
 def predict_effectorp():
     uc_table = "workspace.raw.protein"
-    with st.spinner(f"Predicting EffectorP for sequences", show_time=True):
+    with st.spinner(f"Predicting EffectorP for new sequences", show_time=True):
         try:
             conn = dbh.get_databricks_connection()
             cursor = conn.cursor()
@@ -207,10 +207,10 @@ def predict_effectorp():
             cursor.close()
             conn.close()
             
-            st.success(f"EffectorP predicted for all sequences")
+            st.success(f"EffectorP predicted for all new sequences")
 
         except Exception as e:
-            st.error(f"Error predicting EffectorP for sequences: {e}")
+            st.error(f"Error predicting EffectorP for new sequences: {e}")
 
 
 # submit protein sequences to the InterProScan REST API.
@@ -254,7 +254,7 @@ def retrieve_results(job_id):
 def pfam_domain_search():
     uc_table = "workspace.raw.protein"
     try:
-        with st.spinner(f"Performing Interpro Scan PFAM Domain search for sequences", show_time=True):
+        with st.spinner(f"Performing Interpro Scan PFAM Domain search for new sequences", show_time=True):
             conn = dbh.get_databricks_connection()
             cursor = conn.cursor()
 
@@ -303,10 +303,10 @@ def pfam_domain_search():
             cursor.close()
             conn.close()
 
-            st.success(f"Completed Interpro Scan PFAM Domain search for all sequences")
+            st.success(f"Completed Interpro Scan PFAM Domain search for all new sequences")
     
     except Exception as e:
-        st.error(f"Failed to perform PFAM Domain search for sequences")
+        st.error(f"Error performing PFAM Domain search for new sequences: {e}")
 
 
     
