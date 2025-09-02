@@ -152,7 +152,7 @@ def predict_effectorp():
             conn = dbh.get_databricks_connection()
             cursor = conn.cursor()
 
-            cursor.execute(f"SELECT sequence FROM {uc_table} WHERE prediction IS NULL")
+            cursor.execute(f"SELECT fasta_sequence FROM {uc_table} WHERE prediction IS NULL")
             sequences = set(row[0] for row in cursor.fetchall())
             blasted_sequence = [seq for seq in sequences]
 
