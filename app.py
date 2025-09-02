@@ -4,7 +4,6 @@ import pandas as pd
 from io import BytesIO
 import time
 import ingest_sequence as ingest
-import read_curated as rc
 # import blast_sequence as bs
 # import pfam_domains_interpro_scan as pf
 import databricks_handler as dbh
@@ -49,7 +48,7 @@ def main():
     st.markdown("<br><p style='font-size: 24px;'>Would you like to download a FASTA file for your input accession numbers?</p>", unsafe_allow_html=True)
 
     # if st.button(label="Yes", type="primary"):
-    #     df_fasta = 
+    #     df_fasta = dbh.
     #     fasta_file_content, total_accessions, results = fs.generate_fasta_file(accessions)
     #     st.write(results)
 
