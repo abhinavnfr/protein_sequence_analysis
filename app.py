@@ -24,15 +24,13 @@ def main():
         # initiate progress bar
         progress_bar = st.progress(0)
         status_text = st.empty()
+        
         for i, acc in enumerate(new_accessions):
             try:
                 status_text.text(f"Processing {i+1}/{new_accesions_count}: {acc}")
                 fasta_sequence = ingest.fetch_fasta_sequence(acc, acc)
                 blasted_sequence = ingest.blast_sequence(acc, fasta_sequence)
                 ingest.add_blast_uc_table(acc, blasted_sequence)
-                ingest.predict_effectorp()
-                ingest.pfam_domain_search()
-                # ingest.update_uc_table_accession(pfam_sequence)
             except Exception as e:
                 st.error(f"Error processing {acc}: {e}")
             
@@ -41,6 +39,8 @@ def main():
             progress_bar.progress(progress_percent)
             time.sleep(0.1)
         
+        ingest.predict_effectorp()
+        ingest.pfam_domain_search()
         progress_bar.progress(100)
     
     
