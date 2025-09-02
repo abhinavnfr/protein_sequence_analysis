@@ -101,7 +101,7 @@ def blast_sequence(accession, fasta_sequence, num_hits=5):
 
             blasted_sequence = [[accession, fasta_sequence]]
             for i, hit in enumerate(top_hits, start=1):
-                temp_list = [hit['accession'], fetch_fasta_sequence(hit['accession'], accession), i, f"{hit['percent_identity']:.2f}%"]
+                temp_list = [accession, hit['accession'], fetch_fasta_sequence(hit['accession'], accession), i, f"{hit['percent_identity']:.2f}%"]
                 blasted_sequence.append(temp_list)
             st.success(f"Successfully BLASTed sequence for accession: {accession}")
             return blasted_sequence
