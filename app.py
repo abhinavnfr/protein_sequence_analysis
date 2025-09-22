@@ -34,14 +34,13 @@ def main():
 
         for i, seq in enumerate(seq_to_blast):
             try:
-                status_text.text(f"Processing {i+1}/{seq_to_blast_count}: {seq[0]}")
                 blasted_sequence = ingest.blast_sequence(seq[0], seq[1])
                 ingest.add_blast_uc_table(seq[0], blasted_sequence)
             except Exception as e:
                 st.error(f"Error processing {acc}: {e}")
             
             # update progress bar
-            progress_percent = int(((i+1) / new_accesions_count) * 100)
+            progress_percent = int(((i+1) / seq_to_blast_count) * 100)
             progress_bar.progress(progress_percent)
             time.sleep(0.1)
         

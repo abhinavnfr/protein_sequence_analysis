@@ -186,7 +186,7 @@ def blast_sequence(accession, fasta_sequence, num_hits=5):
                         top_hits.append(hit)
                         unique_identities.add(hit["percent_identity"])
 
-            blasted_sequence = [[accession, fasta_sequence] + [None]*3]
+            blasted_sequence = []
             for i, hit in enumerate(top_hits, start=1):
                 temp_list = [hit['accession'], fetch_fasta_sequence(hit['accession'], accession), accession, i, f"{hit['percent_identity']:.2f}%"]
                 blasted_sequence.append(temp_list)
