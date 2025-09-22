@@ -95,7 +95,7 @@ def main():
         with pd.ExcelWriter(results_mw, engine='xlsxwriter') as writer:
             df_mw.to_excel(writer, index=False, sheet_name='results_pfam')
         results_mw.seek(0)
-        st.download_button(label="Download InterProScan PFAM Domain Search results", 
+        st.download_button(label="Download Molecular Weight results", 
                            type="secondary", 
                            icon=":material/download:",
                            data=results_mw,
