@@ -4,6 +4,7 @@ import pandas as pd
 from io import BytesIO
 import time
 import ingest_sequence as ingest
+import generate_view as gv
 # import blast_sequence as bs
 # import pfam_domains_interpro_scan as pf
 import databricks_handler as dbh
@@ -59,6 +60,16 @@ def main():
     elif st.button(label="Perform only EffectorP", type="primary"):
         time.sleep(1)
         ingest.predict_effectorp()
+        df_effectorp = gv.generate_view_effectorp(accessions)
+        results_effectorp = BytesIO()
+        with pd.ExcelWriter(results_effectorp, engine='xlsxwriter') as writer:
+            df.to_excel(writer, index=False, sheet_name='results_effectorp')
+        results_effectorp.seek(0)
+        st.download_button(label="Download EffectorP results", 
+                           type="primary", 
+                           data=results_effectorp
+                           file_name="results_effectorp.xlsx",
+                           mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
     
     elif st.button(label="Perform only InterproScan PFAM Domain Search", type="primary"):
         time.sleep(1)
@@ -170,10 +181,10 @@ def main():
     # #                                mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
             
     
-    # Reset
-    st.markdown("<br><p style='font-size: 20px;'>Reset</p>", unsafe_allow_html=True)
-    if st.button("Click to reset and start again", type="secondary"):
-        st.session_state.clear()
+    # # Reset
+    # st.markdown("<br><p style='font-size: 20px;'>Reset</p>", unsafe_allow_html=True)
+    # if st.button("Click to reset and start again", type="secondary"):
+    #     st.session_state.clear()
 
 
 if __name__ == "__main__":
