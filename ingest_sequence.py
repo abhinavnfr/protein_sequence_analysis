@@ -128,7 +128,7 @@ def get_seq_to_blast():
         with st.spinner(f"Identifying sequences to BLAST from UC table {uc_table}"):
             conn = dbh.get_databricks_connection()
             cursor = conn.cursor()
-            cursor.execute(f"SELECT id, fasta_sequence FROM {uc_table} WHERE id NOT IN (SELECT DISTINCT blast_of_id FROM {uc_table} WHERE blast_of_id IS NOT NULL)")
+            cursor.execute(f"SELECT id, fasta_sequence FROM {uc_table} WHERE id NOT IN (SELECT DISTINCT blast_of_id FROM {uc_table} WHERE blast_of_id IS NOT NULL) AND blast_of_id IS NULL")
             rows = cursor.fetchall()
             fasta_sequences = [(row[0], row[1]) for row in rows]
             st.success(f"Successfully identified sequences to BLAST from UC table {uc_table}")
