@@ -138,6 +138,7 @@ def get_seq_to_blast():
     except Exception as e:
         st.error(f"Failed to identify sequences to BLAST from UC table {uc_table}")
 
+
 # BLAST a FASTA sequence
 def blast_sequence(accession, fasta_sequence, num_hits=5):
     try:
