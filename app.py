@@ -4,7 +4,7 @@ import pandas as pd
 from io import BytesIO
 import time
 import ingest_sequence as ingest
-import generate_view as gv
+import generate_views as gv
 # import blast_sequence as bs
 # import pfam_domains_interpro_scan as pf
 import databricks_handler as dbh
