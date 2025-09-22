@@ -60,7 +60,7 @@ def main():
     elif st.button(label="Perform only EffectorP", type="primary"):
         time.sleep(1)
         ingest.predict_effectorp()
-        df_effectorp = gv.generate_view_effectorp(accessions)
+        df_effectorp = gv.generate_view("workspace.curated.effectorp", accessions)
         results_effectorp = BytesIO()
         with pd.ExcelWriter(results_effectorp, engine='xlsxwriter') as writer:
             df_effectorp.to_excel(writer, index=False, sheet_name='results_effectorp')
@@ -68,7 +68,7 @@ def main():
         st.download_button(label="Download EffectorP results",
                            on_click="ignore", 
                            type="secondary", 
-                           icon = ":material/download:",
+                           icon=":material/download:",
                            data=results_effectorp,
                            file_name="results_effectorp.xlsx",
                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
@@ -76,10 +76,34 @@ def main():
     elif st.button(label="Perform only InterproScan PFAM Domain Search", type="primary"):
         time.sleep(1)
         ingest.pfam_domain_search()
+        df_pfam = gv.generate_view("workspace.curated.pfam", accessions)
+        results_pfam = BytesIO()
+        with pd.ExcelWriter(results_pfam, engine='xlsxwriter') as writer:
+            df_pfam.to_excel(writer, index=False, sheet_name='results_pfam')
+        results_pfam.seek(0)
+        st.download_button(label="Download InterProScan PFAM Domain Search results",
+                           on_click="ignore", 
+                           type="secondary", 
+                           icon=":material/download:",
+                           data=results_effectorp,
+                           file_name="results_pfam.xlsx",
+                           mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
     
     elif st.button(label="Perform only Molecular Weight Calculation", type="primary"):
         time.sleep(1)
         ingest.calculate_molecular_weight_kda()
+        df_mw = gv.generate_view("workspace.curated.molecularweight", accessions)
+        results_mw = BytesIO()
+        with pd.ExcelWriter(results_mw, engine='xlsxwriter') as writer:
+            df_mw.to_excel(writer, index=False, sheet_name='results_pfam')
+        results_mw.seek(0)
+        st.download_button(label="Download InterProScan PFAM Domain Search results",
+                           on_click="ignore", 
+                           type="secondary", 
+                           icon=":material/download:",
+                           data=results_mw,
+                           file_name="results_molecularweight.xlsx",
+                           mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
     
     # Step 2: Generate optional FASTA file

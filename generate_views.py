@@ -2,9 +2,8 @@ import databricks_handler as dbh
 import pandas as pd
 
 
-# Generate view EffectorP
-def generate_view_effectorp(accessions: list):
-    curated_view = "workspace.curated.effectorp"
+# Generate view
+def generate_view(curated_view, accessions: list):
     try:
         conn = dbh.get_databricks_connection()
         cursor = conn.cursor()
@@ -23,6 +22,5 @@ def generate_view_effectorp(accessions: list):
         return df
         
     except Exception as e:
-        print(f"Failed to generate view EffectorP: {e}")
+        print(f"Failed to generate view {curated_view.split('.')[-1]}: {e}")
         return pd.DataFrame()  # Return empty DataFrame on error
-
