@@ -67,7 +67,7 @@ def main():
         results_effectorp.seek(0)
         st.download_button(label="Download EffectorP results", 
                            type="primary", 
-                           data=results_effectorp
+                           data=results_effectorp,
                            file_name="results_effectorp.xlsx",
                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
     
