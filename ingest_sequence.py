@@ -37,6 +37,7 @@ def filter_new_sequences(accessions: list) -> list:
         st.error(f"Error filtering new sequences: {str(e)}")
         return []
 
+
 # add new accession IDs to UC table raw.protein
 def add_new_accession_uc_table(accessions: list):
     uc_table = "workspace.raw.protein"
