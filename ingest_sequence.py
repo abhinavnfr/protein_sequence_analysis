@@ -42,7 +42,7 @@ def filter_new_sequences(accessions: list) -> list:
         return []
 
 
-# add new accession IDs to UC table raw.protein
+# add new accession IDs into UC table raw.protein
 def add_new_accession_uc_table(accessions: list):
     if len(accessions) == 0:
         return
@@ -50,7 +50,7 @@ def add_new_accession_uc_table(accessions: list):
     uc_table = "workspace.raw.protein"
     
     try:
-        with st.spinner(f"Adding new accession IDs to UC table {uc_table}", show_time=True):
+        with st.spinner(f"Adding new accession IDs into UC table {uc_table}", show_time=True):
             conn = dbh.get_databricks_connection()
             cursor = conn.cursor()
             # Fetch column names for the table
@@ -87,11 +87,11 @@ def fetch_fasta_sequence(accession, blast_accession):
         st.error(f"Failed to retrieve sequence for {accession}: {str(e)}")
 
 
-# add fasta sequence to UC table raw.protein
+# add fasta sequence into UC table raw.protein
 def add_fasta_uc_table():
     uc_table = "workspace.raw.protein"
     try:
-        with st.spinner(f"Adding FASTA sequences for new accessions to UC table {uc_table}", show_time=True):
+        with st.spinner(f"Adding FASTA sequences for new accessions into UC table {uc_table}", show_time=True):
             conn = dbh.get_databricks_connection()
             cursor = conn.cursor()
             cursor.execute(f"SELECT id FROM {uc_table} WHERE fasta_sequence IS NULL")
@@ -103,16 +103,20 @@ def add_fasta_uc_table():
             
             for acc in accession_lst:
                 fasta_sequence = fetch_fasta_sequence(acc, acc)
-                update_query = f"UPDATE {uc_table} SET fasta_sequence = '{fasta_sequence}' WHERE id = '{acc}'"
+                update_query = f"""UPDATE {uc_table} 
+                                        SET fasta_sequence = '{fasta_sequence}', 
+                                        record_update_ts = current_timestamp() 
+                                    WHERE id = '{acc}'
+                                """
                 cursor.execute(update_query)
             
             conn.commit()
             cursor.close()
             conn.close()
-            st.success(f"Successfully added FASTA sequences for new accessionsto UC table {uc_table}")
+            st.success(f"Successfully added FASTA sequences for new accessions into UC table {uc_table}")
     
     except Exception as e:
-        st.error(f"Failed to add FASTA sequences for new accessions to UC table {uc_table}: {str(e)}")
+        st.error(f"Failed to add FASTA sequences for new accessions into UC table {uc_table}: {str(e)}")
 
 
 # BLAST a FASTA sequence
