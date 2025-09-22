@@ -19,7 +19,7 @@ def get_entrez_email():
     return st.secrets["entrez"]["email"]
 
 
-# filter only new sequences from input
+# Filter only new sequences from input
 def filter_new_sequences(accessions: list) -> list:
     if len(accessions) == 0:
         return []
@@ -42,7 +42,7 @@ def filter_new_sequences(accessions: list) -> list:
         return []
 
 
-# add new accession IDs into UC table raw.protein
+# Add new accession IDs into UC table raw.protein
 def add_new_accession_uc_table(accessions: list):
     if len(accessions) == 0:
         return
@@ -71,10 +71,10 @@ def add_new_accession_uc_table(accessions: list):
         st.error(f"Error adding new accessions {accessions} into UC table {uc_table}: {e}")
 
 
-# fetch FASTA sequence from accession number
+# Fetch FASTA sequence from accession number
 def fetch_fasta_sequence(accession, blast_accession):
     Entrez.email = get_entrez_email()
-    
+
     try:
         with st.spinner(f"Fetching FASTA sequence for accession: {accession}", show_time=True):
             with Entrez.efetch(db="protein", id=accession, rettype="fasta", retmode="text") as handle:
@@ -87,9 +87,10 @@ def fetch_fasta_sequence(accession, blast_accession):
         st.error(f"Failed to retrieve sequence for {accession}: {str(e)}")
 
 
-# add fasta sequence into UC table raw.protein
+# Add fasta sequence into UC table raw.protein
 def add_fasta_uc_table():
     uc_table = "workspace.raw.protein"
+
     try:
         with st.spinner(f"Adding FASTA sequences for new accessions into UC table {uc_table}", show_time=True):
             conn = dbh.get_databricks_connection()
@@ -118,6 +119,24 @@ def add_fasta_uc_table():
     except Exception as e:
         st.error(f"Failed to add FASTA sequences for new accessions into UC table {uc_table}: {str(e)}")
 
+
+# Get sequences to BLAST
+def get_seq_to_blast():
+    uc_table = "workspace.raw.protein"
+    
+    try:
+        with st.spinner(f"Getting sequences to BLAST from UC table {uc_table}"):
+            conn = dbh.get_databricks_connection()
+            cursor = conn.cursor()
+            cursor.execute(f"SELECT id, fasta_sequence FROM {uc_table} WHERE id NOT IN (SELECT DISTINCT blast_of_id FROM {uc_table} WHERE blast_of_id IS NOT NULL)")
+            sequences = set(row[0] for row in cursor.fetchall())
+            fasta_sequences = [seq for seq in accessions]
+            st.write(fasta_sequences)
+            st.success(f"Successfully identified sequences to BLAST from UC table {uc_table}")
+            return fasta_sequences
+    
+    except Exception as e:
+        st.error(f"Failed to identify sequences to BLAST from UC table {uc_table}")
 
 # BLAST a FASTA sequence
 def blast_sequence(accession, fasta_sequence, num_hits=5):
