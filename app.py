@@ -66,7 +66,7 @@ def main():
             df_effectorp.to_excel(writer, index=False, sheet_name='results_effectorp')
         results_effectorp.seek(0)
         st.download_button(label="Download EffectorP results", 
-                           type="primary", 
+                           type="secondary", 
                            data=results_effectorp,
                            file_name="results_effectorp.xlsx",
                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
