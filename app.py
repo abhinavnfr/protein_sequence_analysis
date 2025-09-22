@@ -20,10 +20,7 @@ def main():
         accessions = [line.strip() for line in input_file.read().decode("utf-8").splitlines()]
         new_accessions = ingest.filter_new_sequences(accessions)
         new_accesions_count = len(new_accessions)
-        
-        if new_accesions_count > 0:
-            ingest.add_new_accession_uc_table(new_accessions)
-        
+        ingest.add_new_accession_uc_table(new_accessions)
         ingest.add_fasta_uc_table()
 
         if st.button(label="Perform BLAST, InterProScan, EffectorP, and Molecular Weight Calculation end-to-end", type="primary"):
