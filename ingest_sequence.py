@@ -341,12 +341,12 @@ def retrieve_results(job_id):
         raise Exception(f"Error retrieving results: {response.text}")
 
 
-# perform Interpro Scan PFAM Domain
+# perform InterproScan PFAM Domain
 def pfam_domain_search():
     uc_table = "workspace.raw.protein"
 
     try:
-        with st.spinner(f"Performing Interpro Scan PFAM Domain search for sequences", show_time=True):
+        with st.spinner(f"Performing InterproScan PFAM Domain Search for sequences", show_time=True):
             conn = dbh.get_databricks_connection()
             cursor = conn.cursor()
 
@@ -355,7 +355,7 @@ def pfam_domain_search():
             blasted_sequence = [seq for seq in sequences]
 
             if len(blasted_sequence) == 0:
-                st.success(f"Completed Interpro Scan PFAM Domain search for all sequences")
+                st.success(f"Completed InterproScan PFAM Domain Search for all sequences")
                 return
 
             for seq in blasted_sequence:
@@ -399,10 +399,10 @@ def pfam_domain_search():
             cursor.close()
             conn.close()
 
-            st.success(f"Completed Interpro Scan PFAM Domain search for all sequences")
+            st.success(f"Completed InterproScan PFAM Domain Search for all sequences")
     
     except Exception as e:
-        st.error(f"Error performing PFAM Domain search for sequences: {e}")
+        st.error(f"Error performing InterproScan PFAM Domain Search for sequences: {e}")
 
 
 # calculate molecular weights of protein sequences

@@ -23,7 +23,7 @@ def main():
         ingest.add_new_accession_uc_table(new_accessions)
         ingest.add_fasta_uc_table()
     
-    if st.button(label="Perform BLAST, EffectorP, InterProScan, and Molecular Weight Calculation end-to-end", type="primary"):
+    if st.button(label="Perform BLAST, EffectorP, InterproScan PFAM Domain Search, and Molecular Weight Calculation end-to-end", type="primary"):
         # get sequences to BLAST
         seq_to_blast = ingest.get_seq_to_blast()
         seq_to_blast_count = len(seq_to_blast)
@@ -42,10 +42,31 @@ def main():
         ingest.pfam_domain_search()
         time.sleep(1)
         ingest.calculate_molecular_weight_kda()
+
+    elif st.button(label="Perform only BLAST", type="primary"):
+        # get sequences to BLAST
+        seq_to_blast = ingest.get_seq_to_blast()
+        seq_to_blast_count = len(seq_to_blast)
+
+        for seq in enumerate(seq_to_blast):
+            try:
+                blasted_sequence = ingest.blast_sequence(seq[0], seq[1])
+                ingest.add_blast_uc_table(seq[0], blasted_sequence)
+            except Exception as e:
+                st.error(f"Error processing {acc}: {e}")
+            time.sleep(0.1)
     
-    elif st.button(label="Perform EffectorP alone", type="primary"):
+    elif st.button(label="Perform only EffectorP", type="primary"):
         time.sleep(1)
         ingest.predict_effectorp()
+    
+    elif st.button(label="Perform only InterproScan PFAM Domain Search", type="primary"):
+        time.sleep(1)
+        ingest.pfam_domain_search()
+    
+    elif st.button(label="Perform only Molecular Weight Calculation", type="primary"):
+        time.sleep(1)
+        ingest.calculate_molecular_weight_kda()
 
     
     # Step 2: Generate optional FASTA file
