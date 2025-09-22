@@ -30,6 +30,7 @@ def main():
 
         # get sequences to BLAST
         fasta_sequences = ingest.get_seq_to_blast()
+        st.write(fasta_sequences)
 
         # for i, seq in enumerate(fasta_sequences):
         #     try:
