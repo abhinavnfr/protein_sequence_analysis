@@ -65,8 +65,7 @@ def main():
         with pd.ExcelWriter(results_effectorp, engine='xlsxwriter') as writer:
             df_effectorp.to_excel(writer, index=False, sheet_name='results_effectorp')
         results_effectorp.seek(0)
-        st.download_button(label="Download EffectorP results",
-                           on_click="ignore", 
+        st.download_button(label="Download EffectorP results", 
                            type="secondary", 
                            icon=":material/download:",
                            data=results_effectorp,
@@ -81,8 +80,7 @@ def main():
         with pd.ExcelWriter(results_pfam, engine='xlsxwriter') as writer:
             df_pfam.to_excel(writer, index=False, sheet_name='results_pfam')
         results_pfam.seek(0)
-        st.download_button(label="Download InterProScan PFAM Domain Search results",
-                           on_click="ignore", 
+        st.download_button(label="Download InterProScan PFAM Domain Search results", 
                            type="secondary", 
                            icon=":material/download:",
                            data=results_pfam,
@@ -97,8 +95,7 @@ def main():
         with pd.ExcelWriter(results_mw, engine='xlsxwriter') as writer:
             df_mw.to_excel(writer, index=False, sheet_name='results_pfam')
         results_mw.seek(0)
-        st.download_button(label="Download InterProScan PFAM Domain Search results",
-                           on_click="ignore", 
+        st.download_button(label="Download InterProScan PFAM Domain Search results", 
                            type="secondary", 
                            icon=":material/download:",
                            data=results_mw,
