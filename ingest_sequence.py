@@ -65,10 +65,10 @@ def add_new_accession_uc_table(accessions: list):
             conn.commit()
             cursor.close()
             conn.close()
-            st.success(f"Successfully added new records into UC table {uc_table} for accessions: {accessions}")
+            st.success(f"Successfully added new accessions {accessions} into UC table {uc_table}")
 
     except Exception as e:
-        st.error(f"Error adding new records for accessions {accessions} into UC table {uc_table}: {e}")
+        st.error(f"Error adding new accessions {accessions} into UC table {uc_table}: {e}")
 
 
 # fetch FASTA sequence from accession number
