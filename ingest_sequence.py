@@ -25,7 +25,6 @@ def filter_new_sequences(accessions: list) -> list:
     try:
         conn = dbh.get_databricks_connection()
         cursor = conn.cursor()
-
         cursor.execute(f"SELECT id FROM {uc_table}")
         existing_ids = set(row[0] for row in cursor.fetchall())
         new_accessions = [acc for acc in accessions if acc not in existing_ids]
@@ -45,7 +44,6 @@ def add_new_accession_uc_table(accessions: list):
         with st.spinner(f"Adding new accession IDs to UC table {uc_table}", show_time=True):
             conn = dbh.get_databricks_connection()
             cursor = conn.cursor()
-
             # Fetch column names for the table
             cursor.execute(f"DESCRIBE TABLE {uc_table}")
             columns_info = cursor.fetchall()
@@ -58,7 +56,6 @@ def add_new_accession_uc_table(accessions: list):
             conn.commit()
             cursor.close()
             conn.close()
-
             st.success(f"Successfully added new records into UC table {uc_table} for accessions: {accessions}")
 
     except Exception as e:
@@ -84,6 +81,8 @@ def add_fasta_uc_table():
     uc_table = "workspace.raw.protein"
     try:
         with st.spinner(f"Adding FASTA sequences for new accession IDs to UC table {uc_table}", show_time=True):
+            conn = dbh.get_databricks_connection()
+            cursor = conn.cursor()
             cursor.execute(f"SELECT id FROM {uc_table} WHERE fasta_sequence IS NULL")
             accessions = set(row[0] for row in cursor.fetchall())
             accession_lst = [id for id in accessions]
@@ -96,7 +95,6 @@ def add_fasta_uc_table():
             conn.commit()
             cursor.close()
             conn.close()
-
             st.success(f"Successfully added FASTA sequences for new accession IDs to UC table {uc_table}")
     
     except Exception as e:
