@@ -157,6 +157,10 @@ def predict_effectorp():
             sequences = set(row[0] for row in cursor.fetchall())
             blasted_sequence = [seq for seq in sequences]
 
+            if len(blasted_sequence) == 0:
+                st.success(f"Completed Interpro Scan PFAM Domain search for all new sequences")
+                return
+
             # Submit sequence to the form endpoint. The HTML shows the textarea name is 'seq'
             submit_url = st.secrets["effectorp"]["submit_url"]
             
@@ -263,6 +267,10 @@ def pfam_domain_search():
             sequences = set(row[0] for row in cursor.fetchall())
             blasted_sequence = [seq for seq in sequences]
 
+            if len(blasted_sequence) == 0:
+                st.success(f"Completed Interpro Scan PFAM Domain search for all new sequences")
+                return
+
             for seq in blasted_sequence:
                 # Step 1: Submit sequence to InterPro
                 job_id = submit_to_interpro(seq)
@@ -322,11 +330,15 @@ def calculate_molecular_weight_kda():
         sequences = set(row[0] for row in cursor.fetchall())
         blasted_sequence = [seq for seq in sequences]
 
+        if len(blasted_sequence) == 0:
+            st.success(f"Calculated Molecular Weights, Isoelectric Points and Lengths for all new sequences")
+
         for seq in blasted_sequence:
-            analysis = ProteinAnalysis(regexp_replace(seq, '>(.|\\r|\\n)*?\\n', ''))
+            trimmed_seq = ''.join([line.strip() for line in seq.splitlines() if not line.startswith('>')])
+            analysis = ProteinAnalysis(trimmed_seq)
             mw_kda = round(analysis.molecular_weight() / 1000, 2)  # Convert Da to kDa
             pi = round(analysis.isoelectric_point(), 2)
-            aa_length = len(sequence)
+            aa_length = len(trimmed_seq)
 
             update_sql = f"""UPDATE {uc_table} 
                                     SET molecular_weight_kda = {mw_kda}, 
