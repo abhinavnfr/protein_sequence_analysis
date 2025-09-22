@@ -1,5 +1,6 @@
 from Bio import Entrez, SeqIO
 from Bio.Blast import NCBIWWW, NCBIXML
+from Bio.SeqUtils.ProtParam import ProteinAnalysis
 import streamlit as st
 from io import BytesIO
 import databricks_handler as dbh
@@ -152,7 +153,7 @@ def predict_effectorp():
             conn = dbh.get_databricks_connection()
             cursor = conn.cursor()
 
-            cursor.execute(f"SELECT fasta_sequence FROM {uc_table} WHERE prediction IS NULL AND blast_of_id IS NOT NULL")
+            cursor.execute(f"SELECT fasta_sequence FROM {uc_table} WHERE prediction IS NULL")
             sequences = set(row[0] for row in cursor.fetchall())
             blasted_sequence = [seq for seq in sequences]
 
@@ -199,7 +200,7 @@ def predict_effectorp():
                                         non_effector = '{results[1][3]}',
                                         prediction = '{results[1][4]}',
                                         record_update_ts = current_timestamp()
-                                    WHERE fasta_sequence = '{seq}' AND blast_of_id IS NOT NULL
+                                    WHERE fasta_sequence = '{seq}'
                             """
                 cursor.execute(update_sql)
             
@@ -258,7 +259,7 @@ def pfam_domain_search():
             conn = dbh.get_databricks_connection()
             cursor = conn.cursor()
 
-            cursor.execute(f"SELECT fasta_sequence FROM {uc_table} WHERE pfam_domain_acc_1 IS NULL AND blast_of_id IS NOT NULL")
+            cursor.execute(f"SELECT fasta_sequence FROM {uc_table} WHERE pfam_domain_acc_1 IS NULL")
             sequences = set(row[0] for row in cursor.fetchall())
             blasted_sequence = [seq for seq in sequences]
 
@@ -294,7 +295,7 @@ def pfam_domain_search():
                                             SET pfam_domain_acc_{domain_num} = '{domain_acc}',
                                                 pfam_domain_name_{domain_num} = '{domain_name}',
                                                 record_update_ts = current_timestamp()
-                                            WHERE fasta_sequence = '{seq}' AND blast_of_id IS NOT NULL
+                                            WHERE fasta_sequence = '{seq}'
                                         """
                         cursor.execute(update_query)
                         domain_num += 1
@@ -309,39 +310,40 @@ def pfam_domain_search():
         st.error(f"Error performing PFAM Domain search for new sequences: {e}")
 
 
+# calculate molecular weights of protein sequences
+def calculate_molecular_weight_kda():
+    uc_table = "workspace.raw.protein"
+    st.spinner(f"Calculating molecular weights for new sequences", show_time=True)
+    try:
+        conn = dbh.get_databricks_connection()
+        cursor = conn.cursor()
+
+        cursor.execute(f"SELECT fasta_sequence FROM {uc_table} WHERE molecular_weight_kda IS NULL")
+        sequences = set(row[0] for row in cursor.fetchall())
+        blasted_sequence = [seq for seq in sequences]
+
+        for seq in blasted_sequence:
+            analysis = ProteinAnalysis(regexp_replace(seq, '>(.|\\r|\\n)*?\\n', ''))
+            mw_kda = round(analysis.molecular_weight() / 1000, 2)  # Convert Da to kDa
+            pi = round(analysis.isoelectric_point(), 2)
+            aa_length = len(sequence)
+
+            update_sql = f"""UPDATE {uc_table} 
+                                    SET molecular_weight_kda = {mw_kda}, 
+                                        isoelectric_point_pi = {pi}, 
+                                        sequence_length = {aa_length},
+                                        record_update_ts = current_timestamp()
+                                    WHERE fasta_sequence = '{seq}'
+                            """
+            cursor.execute(update_sql)
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        st.success(f"Calculated Molecular Weights, Isoelectric Points and Lengths for all new sequences")
     
-
-
-# # generate FASTA file from accession numbers
-# def generate_fasta_file(accessions: list):
-#     uc_table = "workspace.curated.sequence"
-#     results = {}
-#     total_accessions = len(accessions)
-
-#     try:
-#         conn = dbh.get_databricks_connection()
-#         cursor = conn.cursor()
-
-#         # Retrieve sequences from UC table
-#         for acc in accessions:
-#             cursor.execute(f"SELECT sequence FROM {uc_table} WHERE id = ?", (acc,))
-#             row = cursor.fetchone()
-#             if row and row[0]:
-#                 results[acc] = row[0]
-        
-#         cursor.close()
-#         conn.close()
-        
-#         fasta_io = BytesIO()
-#         for sequence in results.values():
-#             fasta_io.write(f"{sequence.strip()}\n".encode('utf-8'))
-        
-#         fasta_io.seek(0)
-#         st.success("FASTA file generated successfully!")
-#         return fasta_io, total_accessions, results
-
-#     except Exception as e:
-#         st.error(f"Error generating FASTA file: {str(e)}")
-#         return None, 0, {}
+    except Exception as e:
+        st.error(f"Error calculating Molecular Weights, Isoelectric Points and Lengths for new sequences: {e}")
 
 
