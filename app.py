@@ -24,96 +24,96 @@ def main():
         ingest.add_new_accession_uc_table(new_accessions)
         ingest.add_fasta_uc_table()
     
-    if st.button(label="Perform BLAST, EffectorP, InterproScan PFAM Domain Search, and Molecular Weight Calculation end-to-end", type="primary"):
-        # get sequences to BLAST
-        seq_to_blast = ingest.get_seq_to_blast()
-        seq_to_blast_count = len(seq_to_blast)
+        if st.button(label="Perform BLAST, EffectorP, InterproScan PFAM Domain Search, Molecular Weight Calculation end-to-end", type="primary"):
+            # get sequences to BLAST
+            seq_to_blast = ingest.get_seq_to_blast()
+            seq_to_blast_count = len(seq_to_blast)
 
-        for seq in enumerate(seq_to_blast):
-            try:
-                blasted_sequence = ingest.blast_sequence(seq[0], seq[1])
-                ingest.add_blast_uc_table(seq[0], blasted_sequence)
-            except Exception as e:
-                st.error(f"Error processing {acc}: {e}")
-            time.sleep(0.1)
+            for seq in enumerate(seq_to_blast):
+                try:
+                    blasted_sequence = ingest.blast_sequence(seq[0], seq[1])
+                    ingest.add_blast_uc_table(seq[0], blasted_sequence)
+                except Exception as e:
+                    st.error(f"Error processing {acc}: {e}")
+                time.sleep(0.1)
+            
+            time.sleep(1)
+            ingest.predict_effectorp()
+            time.sleep(1)
+            ingest.pfam_domain_search()
+            time.sleep(1)
+            ingest.calculate_molecular_weight_kda()
+
+        elif st.button(label="Perform only BLAST", type="primary"):
+            # get sequences to BLAST
+            seq_to_blast = ingest.get_seq_to_blast()
+            seq_to_blast_count = len(seq_to_blast)
+
+            for seq in seq_to_blast:
+                try:
+                    blasted_sequence = ingest.blast_sequence(seq[0], seq[1])
+                    ingest.add_blast_uc_table(seq[0], blasted_sequence)
+                except Exception as e:
+                    st.error(f"Error processing {acc}: {e}")
+                time.sleep(0.1)
+            df_blast = gv.generate_view("workspace.curated.blast_sequence", accessions)
+            results_blast = BytesIO()
+            with pd.ExcelWriter(results_blast, engine='xlsxwriter') as writer:
+                df_blast.to_excel(writer, index=False, sheet_name='results_blast')
+            results_blast.seek(0)
+            st.download_button(label="Download BLAST results", 
+                            type="secondary", 
+                            icon=":material/download:",
+                            data=results_blast,
+                            file_name="results_blast.xlsx",
+                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+            
+        elif st.button(label="Perform only EffectorP", type="primary"):
+            time.sleep(1)
+            ingest.predict_effectorp()
+            df_effectorp = gv.generate_view("workspace.curated.effectorp", accessions)
+            results_effectorp = BytesIO()
+            with pd.ExcelWriter(results_effectorp, engine='xlsxwriter') as writer:
+                df_effectorp.to_excel(writer, index=False, sheet_name='results_effectorp')
+            results_effectorp.seek(0)
+            st.download_button(label="Download EffectorP results", 
+                            type="secondary", 
+                            icon=":material/download:",
+                            data=results_effectorp,
+                            file_name="results_effectorp.xlsx",
+                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
         
-        time.sleep(1)
-        ingest.predict_effectorp()
-        time.sleep(1)
-        ingest.pfam_domain_search()
-        time.sleep(1)
-        ingest.calculate_molecular_weight_kda()
-
-    elif st.button(label="Perform only BLAST", type="primary"):
-        # get sequences to BLAST
-        seq_to_blast = ingest.get_seq_to_blast()
-        seq_to_blast_count = len(seq_to_blast)
-
-        for seq in seq_to_blast:
-            try:
-                blasted_sequence = ingest.blast_sequence(seq[0], seq[1])
-                ingest.add_blast_uc_table(seq[0], blasted_sequence)
-            except Exception as e:
-                st.error(f"Error processing {acc}: {e}")
-            time.sleep(0.1)
-        df_blast = gv.generate_view("workspace.curated.blast_sequence", accessions)
-        results_blast = BytesIO()
-        with pd.ExcelWriter(results_blast, engine='xlsxwriter') as writer:
-            df_blast.to_excel(writer, index=False, sheet_name='results_blast')
-        results_blast.seek(0)
-        st.download_button(label="Download BLAST results", 
-                           type="secondary", 
-                           icon=":material/download:",
-                           data=results_blast,
-                           file_name="results_blast.xlsx",
-                           mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        elif st.button(label="Perform only InterproScan PFAM Domain Search", type="primary"):
+            time.sleep(1)
+            ingest.pfam_domain_search()
+            df_pfam = gv.generate_view("workspace.curated.pfam", accessions)
+            results_pfam = BytesIO()
+            with pd.ExcelWriter(results_pfam, engine='xlsxwriter') as writer:
+                df_pfam.to_excel(writer, index=False, sheet_name='results_pfam')
+            results_pfam.seek(0)
+            st.download_button(label="Download InterProScan PFAM Domain Search results", 
+                            type="secondary", 
+                            icon=":material/download:",
+                            data=results_pfam,
+                            file_name="results_pfam.xlsx",
+                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
         
-    elif st.button(label="Perform only EffectorP", type="primary"):
-        time.sleep(1)
-        ingest.predict_effectorp()
-        df_effectorp = gv.generate_view("workspace.curated.effectorp", accessions)
-        results_effectorp = BytesIO()
-        with pd.ExcelWriter(results_effectorp, engine='xlsxwriter') as writer:
-            df_effectorp.to_excel(writer, index=False, sheet_name='results_effectorp')
-        results_effectorp.seek(0)
-        st.download_button(label="Download EffectorP results", 
-                           type="secondary", 
-                           icon=":material/download:",
-                           data=results_effectorp,
-                           file_name="results_effectorp.xlsx",
-                           mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-    
-    elif st.button(label="Perform only InterproScan PFAM Domain Search", type="primary"):
-        time.sleep(1)
-        ingest.pfam_domain_search()
-        df_pfam = gv.generate_view("workspace.curated.pfam", accessions)
-        results_pfam = BytesIO()
-        with pd.ExcelWriter(results_pfam, engine='xlsxwriter') as writer:
-            df_pfam.to_excel(writer, index=False, sheet_name='results_pfam')
-        results_pfam.seek(0)
-        st.download_button(label="Download InterProScan PFAM Domain Search results", 
-                           type="secondary", 
-                           icon=":material/download:",
-                           data=results_pfam,
-                           file_name="results_pfam.xlsx",
-                           mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-    
-    elif st.button(label="Perform only Molecular Weight Calculation", type="primary"):
-        time.sleep(1)
-        ingest.calculate_molecular_weight_kda()
-        df_mw = gv.generate_view("workspace.curated.molecularweight", accessions)
-        results_mw = BytesIO()
-        with pd.ExcelWriter(results_mw, engine='xlsxwriter') as writer:
-            df_mw.to_excel(writer, index=False, sheet_name='results_molecularweight')
-        results_mw.seek(0)
-        st.download_button(label="Download Molecular Weight results", 
-                           type="secondary", 
-                           icon=":material/download:",
-                           data=results_mw,
-                           file_name="results_molecularweight.xlsx",
-                           mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        elif st.button(label="Perform only Molecular Weight Calculation", type="primary"):
+            time.sleep(1)
+            ingest.calculate_molecular_weight_kda()
+            df_mw = gv.generate_view("workspace.curated.molecularweight", accessions)
+            results_mw = BytesIO()
+            with pd.ExcelWriter(results_mw, engine='xlsxwriter') as writer:
+                df_mw.to_excel(writer, index=False, sheet_name='results_molecularweight')
+            results_mw.seek(0)
+            st.download_button(label="Download Molecular Weight results", 
+                            type="secondary", 
+                            icon=":material/download:",
+                            data=results_mw,
+                            file_name="results_molecularweight.xlsx",
+                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
-    
+        
     # Step 2: Generate optional FASTA file
     # st.markdown("<br><p style='font-size: 24px;'>Following files are now available for download:</p>", unsafe_allow_html=True)
 
