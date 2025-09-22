@@ -49,7 +49,7 @@ def main():
         seq_to_blast = ingest.get_seq_to_blast()
         seq_to_blast_count = len(seq_to_blast)
 
-        for seq in enumerate(seq_to_blast):
+        for seq in seq_to_blast:
             try:
                 blasted_sequence = ingest.blast_sequence(seq[0], seq[1])
                 ingest.add_blast_uc_table(seq[0], blasted_sequence)
