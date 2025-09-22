@@ -68,7 +68,7 @@ def main():
         st.download_button(label="Download EffectorP results",
                            on_click="ignore", 
                            type="secondary", 
-                           icon = ":material/download:"
+                           icon = ":material/download:",
                            data=results_effectorp,
                            file_name="results_effectorp.xlsx",
                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
