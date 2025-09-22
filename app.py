@@ -29,28 +29,28 @@ def main():
         status_text = st.empty()
 
         # get sequences to BLAST
-        fasta_sequences = ingest.get_seq_to_blast()
-        st.write(fasta_sequences)
+        seq_to_blast = ingest.get_seq_to_blast()
+        seq_to_blast_count = len(seq_to_blast)
 
-        # for i, seq in enumerate(fasta_sequences):
-        #     try:
-        #         status_text.text(f"Processing {i+1}/{fasta_sequences}: {acc}")
-        #         blasted_sequence = ingest.blast_sequence(acc, fasta_sequence)
-        #         ingest.add_blast_uc_table(acc, blasted_sequence)
-        #     except Exception as e:
-        #         st.error(f"Error processing {acc}: {e}")
+        for i, seq in enumerate(seq_to_blast):
+            try:
+                status_text.text(f"Processing {i+1}/{seq_to_blast_count}: {seq[0]}")
+                blasted_sequence = ingest.blast_sequence(seq[0], seq[1])
+                ingest.add_blast_uc_table(seq[0], blasted_sequence)
+            except Exception as e:
+                st.error(f"Error processing {acc}: {e}")
             
-        #     # update progress bar
-        #     progress_percent = int(((i+1) / new_accesions_count) * 100)
-        #     progress_bar.progress(progress_percent)
-        #     time.sleep(0.1)
+            # update progress bar
+            progress_percent = int(((i+1) / new_accesions_count) * 100)
+            progress_bar.progress(progress_percent)
+            time.sleep(0.1)
         
-        # time.sleep(1)
-        # ingest.predict_effectorp()
-        # time.sleep(1)
-        # ingest.pfam_domain_search()
-        # time.sleep(1)
-        # ingest.calculate_molecular_weight_kda()
+        time.sleep(1)
+        ingest.predict_effectorp()
+        time.sleep(1)
+        ingest.pfam_domain_search()
+        time.sleep(1)
+        ingest.calculate_molecular_weight_kda()
         progress_bar.progress(100)
     
     elif st.button(label="Perform EffectorP alone", type="primary"):
