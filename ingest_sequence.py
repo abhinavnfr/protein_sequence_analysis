@@ -419,6 +419,7 @@ def calculate_molecular_weight_kda():
 
         if len(blasted_sequence) == 0:
             st.success(f"Calculated Molecular Weights, Isoelectric Points and Lengths for all sequences")
+            return
 
         for seq in blasted_sequence:
             trimmed_seq = ''.join([line.strip() for line in seq.splitlines() if not line.startswith('>')])
@@ -440,9 +441,9 @@ def calculate_molecular_weight_kda():
         cursor.close()
         conn.close()
 
-        st.success(f"Calculated Molecular Weights, Isoelectric Points and Lengths for all identified sequences")
+        st.success(f"Calculated Molecular Weights, Isoelectric Points and Lengths for all sequences")
     
     except Exception as e:
-        st.error(f"Error calculating Molecular Weights, Isoelectric Points and Lengths for identified sequences: {e}")
+        st.error(f"Error calculating Molecular Weights, Isoelectric Points and Lengths for sequences: {e}")
 
 
