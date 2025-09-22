@@ -63,7 +63,7 @@ def main():
         df_effectorp = gv.generate_view_effectorp(accessions)
         results_effectorp = BytesIO()
         with pd.ExcelWriter(results_effectorp, engine='xlsxwriter') as writer:
-            df.to_excel(writer, index=False, sheet_name='results_effectorp')
+            df_effectorp.to_excel(writer, index=False, sheet_name='results_effectorp')
         results_effectorp.seek(0)
         st.download_button(label="Download EffectorP results", 
                            type="primary", 
