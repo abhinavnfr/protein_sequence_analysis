@@ -32,7 +32,7 @@ def filter_new_sequences(accessions: list) -> list:
         cursor.execute(f"SELECT id FROM {uc_table}")
         existing_ids = set(row[0] for row in cursor.fetchall())
         new_accessions = [acc for acc in accessions if acc not in existing_ids]
-        st.success(f"New accessions found: {len(new_accessions)}")
+        st.success(f"New accessions to add into UC table {uc_table}: {len(new_accessions)}")
         cursor.close()
         conn.close()
         return new_accessions
@@ -125,7 +125,7 @@ def get_seq_to_blast():
     uc_table = "workspace.raw.protein"
     
     try:
-        with st.spinner(f"Getting sequences to BLAST from UC table {uc_table}"):
+        with st.spinner(f"Identifying sequences to BLAST from UC table {uc_table}"):
             conn = dbh.get_databricks_connection()
             cursor = conn.cursor()
             cursor.execute(f"SELECT id, fasta_sequence FROM {uc_table} WHERE id NOT IN (SELECT DISTINCT blast_of_id FROM {uc_table} WHERE blast_of_id IS NOT NULL)")
@@ -200,7 +200,7 @@ def blast_sequence(accession, fasta_sequence, num_hits=5):
 # add BLAST sequences to UC table raw.protein
 def add_blast_uc_table(accession: str, blasted_sequence: list) -> None:
     uc_table = "workspace.raw.protein"
-    with st.spinner(f"Inserting BLAST sequences to UC table {uc_table} for accession: {accession}", show_time=True):
+    with st.spinner(f"Adding BLAST sequences into UC table {uc_table} for accession: {accession}", show_time=True):
         try:
             conn = dbh.get_databricks_connection()
             cursor = conn.cursor()
@@ -228,13 +228,13 @@ def add_blast_uc_table(accession: str, blasted_sequence: list) -> None:
             st.success(f"BLAST sequences added into UC table {uc_table} for accession: {accession}")
 
         except Exception as e:
-            st.error(f"Error inserting BLAST sequences for accession {accession} into UC table {uc_table}: {e}")
+            st.error(f"Error adding BLAST sequences for accession {accession} into UC table {uc_table}: {e}")
   
 
 # perform Effector P of protein sequence
 def predict_effectorp():
     uc_table = "workspace.raw.protein"
-    with st.spinner(f"Predicting EffectorP for new sequences", show_time=True):
+    with st.spinner(f"Predicting EffectorP for sequences", show_time=True):
         try:
             conn = dbh.get_databricks_connection()
             cursor = conn.cursor()
@@ -244,7 +244,7 @@ def predict_effectorp():
             blasted_sequence = [seq for seq in sequences]
 
             if len(blasted_sequence) == 0:
-                st.success(f"EffectorP predicted for all new sequences")
+                st.success(f"EffectorP predicted for all sequences")
                 return
 
             # Submit sequence to the form endpoint. The HTML shows the textarea name is 'seq'
@@ -298,10 +298,10 @@ def predict_effectorp():
             cursor.close()
             conn.close()
             
-            st.success(f"EffectorP predicted for all new sequences")
+            st.success(f"EffectorP predicted for all sequences")
 
         except Exception as e:
-            st.error(f"Error predicting EffectorP for new sequences: {e}")
+            st.error(f"Error predicting EffectorP for sequences: {e}")
 
 
 # submit protein sequences to the InterProScan REST API.
@@ -344,8 +344,9 @@ def retrieve_results(job_id):
 # perform Interpro Scan PFAM Domain
 def pfam_domain_search():
     uc_table = "workspace.raw.protein"
+
     try:
-        with st.spinner(f"Performing Interpro Scan PFAM Domain search for new sequences", show_time=True):
+        with st.spinner(f"Performing Interpro Scan PFAM Domain search for sequences", show_time=True):
             conn = dbh.get_databricks_connection()
             cursor = conn.cursor()
 
@@ -354,7 +355,7 @@ def pfam_domain_search():
             blasted_sequence = [seq for seq in sequences]
 
             if len(blasted_sequence) == 0:
-                st.success(f"Completed Interpro Scan PFAM Domain search for all new sequences")
+                st.success(f"Completed Interpro Scan PFAM Domain search for all sequences")
                 return
 
             for seq in blasted_sequence:
@@ -398,16 +399,16 @@ def pfam_domain_search():
             cursor.close()
             conn.close()
 
-            st.success(f"Completed Interpro Scan PFAM Domain search for all new sequences")
+            st.success(f"Completed Interpro Scan PFAM Domain search for all sequences")
     
     except Exception as e:
-        st.error(f"Error performing PFAM Domain search for new sequences: {e}")
+        st.error(f"Error performing PFAM Domain search for sequences: {e}")
 
 
 # calculate molecular weights of protein sequences
 def calculate_molecular_weight_kda():
     uc_table = "workspace.raw.protein"
-    st.spinner(f"Calculating molecular weights for new sequences", show_time=True)
+    st.spinner(f"Calculating molecular weights for sequences", show_time=True)
     try:
         conn = dbh.get_databricks_connection()
         cursor = conn.cursor()
@@ -417,7 +418,7 @@ def calculate_molecular_weight_kda():
         blasted_sequence = [seq for seq in sequences]
 
         if len(blasted_sequence) == 0:
-            st.success(f"Calculated Molecular Weights, Isoelectric Points and Lengths for all new sequences")
+            st.success(f"Calculated Molecular Weights, Isoelectric Points and Lengths for all sequences")
 
         for seq in blasted_sequence:
             trimmed_seq = ''.join([line.strip() for line in seq.splitlines() if not line.startswith('>')])
@@ -439,9 +440,9 @@ def calculate_molecular_weight_kda():
         cursor.close()
         conn.close()
 
-        st.success(f"Calculated Molecular Weights, Isoelectric Points and Lengths for all new sequences")
+        st.success(f"Calculated Molecular Weights, Isoelectric Points and Lengths for all identified sequences")
     
     except Exception as e:
-        st.error(f"Error calculating Molecular Weights, Isoelectric Points and Lengths for new sequences: {e}")
+        st.error(f"Error calculating Molecular Weights, Isoelectric Points and Lengths for identified sequences: {e}")
 
 

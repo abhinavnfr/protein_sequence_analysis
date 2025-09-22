@@ -23,25 +23,17 @@ def main():
         ingest.add_new_accession_uc_table(new_accessions)
         ingest.add_fasta_uc_table()
     
-    if st.button(label="Perform BLAST, InterProScan, EffectorP, and Molecular Weight Calculation end-to-end", type="primary"):
-        # initiate progress bar
-        progress_bar = st.progress(0)
-        status_text = st.empty()
-
+    if st.button(label="Perform BLAST, EffectorP, InterProScan, and Molecular Weight Calculation end-to-end", type="primary"):
         # get sequences to BLAST
         seq_to_blast = ingest.get_seq_to_blast()
         seq_to_blast_count = len(seq_to_blast)
 
-        for i, seq in enumerate(seq_to_blast):
+        for seq in enumerate(seq_to_blast):
             try:
                 blasted_sequence = ingest.blast_sequence(seq[0], seq[1])
                 ingest.add_blast_uc_table(seq[0], blasted_sequence)
             except Exception as e:
                 st.error(f"Error processing {acc}: {e}")
-            
-            # update progress bar
-            progress_percent = int(((i+1) / seq_to_blast_count) * 100)
-            progress_bar.progress(progress_percent)
             time.sleep(0.1)
         
         time.sleep(1)
@@ -50,27 +42,8 @@ def main():
         ingest.pfam_domain_search()
         time.sleep(1)
         ingest.calculate_molecular_weight_kda()
-        progress_bar.progress(100)
     
     elif st.button(label="Perform EffectorP alone", type="primary"):
-        # initiate progress bar
-        progress_bar = st.progress(0)
-        status_text = st.empty()
-
-        for i, acc in enumerate(new_accessions):
-            try:
-                status_text.text(f"Processing {i+1}/{new_accesions_count}: {acc}")
-                fasta_sequence = ingest.fetch_fasta_sequence(acc, acc)
-                blasted_sequence = ingest.blast_sequence(acc, fasta_sequence)
-                ingest.add_blast_uc_table(acc, blasted_sequence)
-            except Exception as e:
-                st.error(f"Error processing {acc}: {e}")
-            
-            # update progress bar
-            progress_percent = int(((i+1) / new_accesions_count) * 100)
-            progress_bar.progress(progress_percent)
-            time.sleep(0.1)
-        
         time.sleep(1)
         ingest.predict_effectorp()
 
