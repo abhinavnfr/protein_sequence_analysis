@@ -20,31 +20,56 @@ def main():
         accessions = [line.strip() for line in input_file.read().decode("utf-8").splitlines()]
         new_accessions = ingest.filter_new_sequences(accessions)
         new_accesions_count = len(new_accessions)
-        
-        # initiate progress bar
-        progress_bar = st.progress(0)
-        status_text = st.empty()
-        
-        for i, acc in enumerate(new_accessions):
-            try:
-                status_text.text(f"Processing {i+1}/{new_accesions_count}: {acc}")
-                fasta_sequence = ingest.fetch_fasta_sequence(acc, acc)
-                blasted_sequence = ingest.blast_sequence(acc, fasta_sequence)
-                ingest.add_blast_uc_table(acc, blasted_sequence)
-            except Exception as e:
-                st.error(f"Error processing {acc}: {e}")
+
+        if st.button(label="Process sequence end-to-end, i.e., perform BLAST, InterProScan, EffectorP", type="primary"):
+            # initiate progress bar
+            progress_bar = st.progress(0)
+            status_text = st.empty()
             
-            # update progress bar
-            progress_percent = int(((i+1) / new_accesions_count) * 100)
-            progress_bar.progress(progress_percent)
-            time.sleep(0.1)
-        
-        time.sleep(1)
-        ingest.predict_effectorp()
-        time.sleep(1)
-        ingest.pfam_domain_search()
-        progress_bar.progress(100)
+            for i, acc in enumerate(new_accessions):
+                try:
+                    status_text.text(f"Processing {i+1}/{new_accesions_count}: {acc}")
+                    fasta_sequence = ingest.fetch_fasta_sequence(acc, acc)
+                    blasted_sequence = ingest.blast_sequence(acc, fasta_sequence)
+                    ingest.add_blast_uc_table(acc, blasted_sequence)
+                except Exception as e:
+                    st.error(f"Error processing {acc}: {e}")
+                
+                # update progress bar
+                progress_percent = int(((i+1) / new_accesions_count) * 100)
+                progress_bar.progress(progress_percent)
+                time.sleep(0.1)
+            
+            time.sleep(1)
+            ingest.predict_effectorp()
+            time.sleep(1)
+            ingest.pfam_domain_search()
+            time.sleep(1)
+            ingest.calculate_molecular_weight_kda()
+            progress_bar.progress(100)
     
+        elif st.button(label="Perform EffectorP alone", type="primary"):
+            # initiate progress bar
+            progress_bar = st.progress(0)
+            status_text = st.empty()
+
+            for i, acc in enumerate(new_accessions):
+                try:
+                    status_text.text(f"Processing {i+1}/{new_accesions_count}: {acc}")
+                    fasta_sequence = ingest.fetch_fasta_sequence(acc, acc)
+                    blasted_sequence = ingest.blast_sequence(acc, fasta_sequence)
+                    ingest.add_blast_uc_table(acc, blasted_sequence)
+                except Exception as e:
+                    st.error(f"Error processing {acc}: {e}")
+                
+                # update progress bar
+                progress_percent = int(((i+1) / new_accesions_count) * 100)
+                progress_bar.progress(progress_percent)
+                time.sleep(0.1)
+            
+            time.sleep(1)
+            ingest.predict_effectorp()
+
     
     # Step 2: Generate optional FASTA file
     st.markdown("<br><p style='font-size: 24px;'>Following files are now available for download:</p>", unsafe_allow_html=True)
