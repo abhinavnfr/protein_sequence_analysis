@@ -65,8 +65,10 @@ def main():
         with pd.ExcelWriter(results_effectorp, engine='xlsxwriter') as writer:
             df_effectorp.to_excel(writer, index=False, sheet_name='results_effectorp')
         results_effectorp.seek(0)
-        st.download_button(label="Download EffectorP results", 
+        st.download_button(label="Download EffectorP results",
+                           on_click="ignore", 
                            type="secondary", 
+                           icon = ":material/download:"
                            data=results_effectorp,
                            file_name="results_effectorp.xlsx",
                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
