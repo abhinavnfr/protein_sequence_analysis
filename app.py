@@ -22,8 +22,6 @@ def main():
         new_accesions_count = len(new_accessions)
         ingest.add_new_accession_uc_table(new_accessions)
         ingest.add_fasta_uc_table()
-    else:
-        st.error("Empty input file received")
     
     if st.button(label="Perform BLAST, InterProScan, EffectorP, and Molecular Weight Calculation end-to-end", type="primary"):
         # initiate progress bar
