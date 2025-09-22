@@ -199,14 +199,14 @@ def add_blast_uc_table(accession: str, blasted_sequence: list) -> None:
                 placeholders = ", ".join(["?"] * len(seq) + ["current_timestamp()", "current_timestamp()"])
                 col_names = ", ".join(insert_columns)
 
-                query = f"INSERT INTO {uc_table} ({col_names}) VALUES ({placeholders})"
-                cursor.execute(query, seq)
+                insert_query = f"INSERT INTO {uc_table} ({col_names}) VALUES ({placeholders})"
+                cursor.execute(insert_query, seq)
 
             conn.commit()
             cursor.close()
             conn.close()
 
-            st.success(f"BLAST sequences inserted into UC table {uc_table} for accession: {accession}")
+            st.success(f"BLAST sequences added into UC table {uc_table} for accession: {accession}")
 
         except Exception as e:
             st.error(f"Error inserting BLAST sequences for accession {accession} into UC table {uc_table}: {e}")
