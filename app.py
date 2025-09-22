@@ -20,8 +20,10 @@ def main():
         accessions = [line.strip() for line in input_file.read().decode("utf-8").splitlines()]
         new_accessions = ingest.filter_new_sequences(accessions)
         new_accesions_count = len(new_accessions)
+        ingest.add_new_accession_uc_table(new_accessions)
 
-        if st.button(label="Process sequence end-to-end, i.e., perform BLAST, InterProScan, EffectorP", type="primary"):
+
+        if st.button(label="Perform BLAST, InterProScan, EffectorP, and Molecular Weight Calculation end-to-end", type="primary"):
             # initiate progress bar
             progress_bar = st.progress(0)
             status_text = st.empty()
