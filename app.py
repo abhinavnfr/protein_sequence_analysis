@@ -24,7 +24,7 @@ def main():
         ingest.add_new_accession_uc_table(new_accessions)
         ingest.add_fasta_uc_table()
     
-        if st.button(label="Perform BLAST, EffectorP, InterproScan PFAM Domain Search, Molecular Weight Calculation end-to-end", type="primary"):
+        if st.button(label="Perform BLAST, EffectorP, PFAM Domain Search, and Molecular Weight Calculation end-to-end", type="primary"):
             # get sequences to BLAST
             seq_to_blast = ingest.get_seq_to_blast()
             seq_to_blast_count = len(seq_to_blast)
