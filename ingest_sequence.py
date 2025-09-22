@@ -158,7 +158,7 @@ def predict_effectorp():
             blasted_sequence = [seq for seq in sequences]
 
             if len(blasted_sequence) == 0:
-                st.success(f"Completed Interpro Scan PFAM Domain search for all new sequences")
+                st.success(f"EffectorP predicted for all new sequences")
                 return
 
             # Submit sequence to the form endpoint. The HTML shows the textarea name is 'seq'
