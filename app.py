@@ -56,7 +56,18 @@ def main():
             except Exception as e:
                 st.error(f"Error processing {acc}: {e}")
             time.sleep(0.1)
-    
+        df_blast = gv.generate_view("workspace.curated.blast_sequence", accessions)
+        results_blast = BytesIO()
+        with pd.ExcelWriter(results_blast, engine='xlsxwriter') as writer:
+            df_blast.to_excel(writer, index=False, sheet_name='results_blast')
+        results_blast.seek(0)
+        st.download_button(label="Download BLAST results", 
+                           type="secondary", 
+                           icon=":material/download:",
+                           data=results_blast,
+                           file_name="results_blast.xlsx",
+                           mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+        
     elif st.button(label="Perform only EffectorP", type="primary"):
         time.sleep(1)
         ingest.predict_effectorp()
@@ -93,7 +104,7 @@ def main():
         df_mw = gv.generate_view("workspace.curated.molecularweight", accessions)
         results_mw = BytesIO()
         with pd.ExcelWriter(results_mw, engine='xlsxwriter') as writer:
-            df_mw.to_excel(writer, index=False, sheet_name='results_pfam')
+            df_mw.to_excel(writer, index=False, sheet_name='results_molecularweight')
         results_mw.seek(0)
         st.download_button(label="Download Molecular Weight results", 
                            type="secondary", 
