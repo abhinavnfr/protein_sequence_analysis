@@ -85,7 +85,7 @@ def main():
                            on_click="ignore", 
                            type="secondary", 
                            icon=":material/download:",
-                           data=results_effectorp,
+                           data=results_pfam,
                            file_name="results_pfam.xlsx",
                            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
     
