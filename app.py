@@ -35,7 +35,7 @@ def main():
         unsafe_allow_html=True
     )
     with st.container():
-        st_lottie(lottie_animation, height=None, width=None, key="lottie_bg", speed=1, loop=True, quality="high", container_width=True)
+        st_lottie(lottie_animation, height=None, width=None, key="lottie_bg", speed=1, loop=True, quality="high")
 
     st.markdown("<h1>Protein Sequence Analysis App</h1><br>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: right; color: #FF4B4B;'>by Abhinav Rana</p>", unsafe_allow_html=True)
