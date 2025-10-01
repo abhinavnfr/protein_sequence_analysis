@@ -11,32 +11,6 @@ import json
 
 
 def main():
-    @st.cache_data
-    def load_lottiefile(filepath: str):
-        with open(filepath, "r") as f:
-            return json.load(f)
-
-    # Assuming your Lottie JSON is in a file named 'animation.json'
-    lottie_animation = load_lottiefile("DNA_loop_animation.json") 
-    st.markdown(
-        """
-        <style>
-        .lottie-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1; /* Ensures it's behind other content */
-            pointer-events: none; /* Allows interaction with content above */
-        }
-        </style>
-        """,
-        unsafe_allow_html=True
-    )
-    with st.container():
-        st_lottie(lottie_animation, height=None, width=None, key="lottie_bg", speed=1, loop=True, quality="high")
-
     st.markdown("<h1>Protein Sequence Analysis App</h1><br>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: right; color: #FF4B4B;'>by Abhinav Rana</p>", unsafe_allow_html=True)
 
