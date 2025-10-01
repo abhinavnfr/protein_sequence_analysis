@@ -13,7 +13,7 @@ def main():
 
     # URL or local path to MP4 video for background
     # Replace this with your own video URL or path if needed
-    video_url = "https://dbc-00de72a4-752e.cloud.databricks.com/editor/files/1528278230647318?o=2955503952007702"  # Example MP4 video
+    video_url = "https://go.screenpal.com/watch/cT6VjhnDg8U"  # Example MP4 video
 
     video_html = f"""
                     <style>
