@@ -71,24 +71,28 @@ def main():
                             icon=":material/download:",
                             data=results_blast,
                             file_name="results_blast.xlsx",
+                            on_click="ignore",
                             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
             st.download_button(label="Download EffectorP results", 
                             type="secondary", 
                             icon=":material/download:",
                             data=results_effectorp,
                             file_name="results_effectorp.xlsx",
+                            on_click="ignore",
                             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
             st.download_button(label="Download InterProScan PFAM Domain Search results", 
                             type="secondary", 
                             icon=":material/download:",
                             data=results_pfam,
                             file_name="results_pfam.xlsx",
+                            on_click="ignore",
                             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
             st.download_button(label="Download Molecular Weight results", 
                             type="secondary", 
                             icon=":material/download:",
                             data=results_mw,
                             file_name="results_molecularweight.xlsx",
+                            on_click="ignore",
                             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
         elif st.button(label="Perform only BLAST", type="primary"):
