@@ -9,7 +9,12 @@ import databricks_handler as dbh
 
 
 def main():
-    st.set_page_config(layout="wide")
+    st.set_page_config(
+                        page_title="PSA",
+                        page_icon="🧬",
+                        layout="centered",
+                        initial_sidebar_state="expanded"
+                    )
 
     # URL or local path to MP4 video for background
     # Replace this with your own video URL or path if needed
