@@ -11,6 +11,41 @@ import json
 
 
 def main():
+    # YouTube video ID
+    youtube_id = "DdltkRcoTV0"
+
+    video_html = f"""
+                    <style>
+                    .video-background {{
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100vw;
+                    height: 100vh;
+                    z-index: -1;
+                    overflow: hidden;
+                    pointer-events: none;
+                    }}
+
+                    .video-background iframe {{
+                    width: 100vw;
+                    height: 100vh;
+                    pointer-events: none;
+                    }}
+                    </style>
+                    <div class="video-background">
+                    <iframe
+                        src="https://www.youtube.com/embed/{youtube_id}?autoplay=1&mute=1&controls=0&loop=1&playlist={youtube_id}&showinfo=0&rel=0"
+                        frameborder="0"
+                        allow="autoplay; encrypted-media"
+                        allowfullscreen
+                        title="YouTube Video Background">
+                    </iframe>
+                    </div>
+                """
+
+    st.markdown(video_html, unsafe_allow_html=True)
+    
     st.markdown("<h1>Protein Sequence Analysis App</h1><br>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: right; color: #FF4B4B;'>by Abhinav Rana</p>", unsafe_allow_html=True)
 
