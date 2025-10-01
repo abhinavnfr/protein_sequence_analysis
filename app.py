@@ -11,6 +11,8 @@ import json
 
 
 def main():
+    st.set_page_config(layout="wide")
+
     # YouTube video ID
     youtube_id = "DdltkRcoTV0"
 
@@ -31,6 +33,8 @@ def main():
                     width: 100vw;
                     height: 100vh;
                     pointer-events: none;
+                    transform: translateZ(0); 
+                    will-change: transform;
                     }}
                     </style>
                     <div class="video-background">
