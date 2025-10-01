@@ -17,8 +17,7 @@ def main():
                     )
 
     # URL or local path to MP4 video for background
-    # Replace this with your own video URL or path if needed
-    video_url = "ui_elements/dna_loop_animation.mp4"  # Example MP4 video
+    video_url = "https://github.com/abhinavnfr/protein_sequence_analysis/blob/0b085042639cb0c2122bf495b58ad73740381264/ui_elements/dna_loop_animation.mp4"
 
     video_html = f"""
                     <style>
