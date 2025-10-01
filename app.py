@@ -18,7 +18,7 @@ def main():
 
     # URL or local path to MP4 video for background
     # Replace this with your own video URL or path if needed
-    video_url = "https://go.screenpal.com/watch/cT6VjhnDg8U"  # Example MP4 video
+    video_url = "ui_elements/dna_loop_animation.mp4"  # Example MP4 video
 
     video_html = f"""
                     <style>
