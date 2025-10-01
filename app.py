@@ -6,48 +6,34 @@ import time
 import ingest_sequence as ingest
 import generate_views as gv
 import databricks_handler as dbh
-from streamlit_lottie import st_lottie
-import json
 
 
 def main():
     st.set_page_config(layout="wide")
 
-    # YouTube video ID
-    youtube_id = "DdltkRcoTV0"
+    # URL or local path to MP4 video for background
+    # Replace this with your own video URL or path if needed
+    video_url = "https://dbc-00de72a4-752e.cloud.databricks.com/editor/files/1528278230647318?o=2955503952007702"  # Example MP4 video
 
     video_html = f"""
                     <style>
                     .video-background {{
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100vw;
-                    height: 100vh;
-                    z-index: -1;
-                    overflow: hidden;
-                    pointer-events: none;
-                    }}
-
-                    .video-background iframe {{
-                    width: 100vw;
-                    height: 100vh;
-                    pointer-events: none;
-                    transform: translateZ(0); 
-                    will-change: transform;
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100vw;
+                        height: 100vh;
+                        object-fit: cover;
+                        z-index: -1;
+                        pointer-events: none;
+                        filter: brightness(0.7); /* optional to darken background */
                     }}
                     </style>
-                    <div class="video-background">
-                    <iframe
-                        src="https://www.youtube.com/embed/{youtube_id}?autoplay=1&mute=1&controls=0&loop=1&playlist={youtube_id}&showinfo=0&rel=0"
-                        frameborder="0"
-                        allow="autoplay; encrypted-media"
-                        allowfullscreen
-                        title="YouTube Video Background">
-                    </iframe>
-                    </div>
+                    <video autoplay muted loop playsinline class="video-background">
+                        <source src="{video_url}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
                 """
-
     st.markdown(video_html, unsafe_allow_html=True)
     
     st.markdown("<h1>Protein Sequence Analysis App</h1><br>", unsafe_allow_html=True)

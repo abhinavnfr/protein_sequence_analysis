@@ -6,4 +6,3 @@ pandas
 numpy<2.0
 databricks-sql-connector
 beautifulsoup4
-streamlit-lottie
