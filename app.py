@@ -73,7 +73,14 @@ def main():
                 unsafe_allow_html=True
                 )
 
-    st.markdown("<h1 style='color: white;'>Protezard</h1>", unsafe_allow_html=True)
+    st.markdown("""
+                    <h1 style='color: white; display: flex; align-items: center;'>
+                        <img src='path/to/your_icon.png' style='height: 32px; margin-right: 10px;'/>
+                        Protezard
+                    </h1>
+                """,
+                unsafe_allow_html=True
+                )
     st.markdown("<h2 style='color: white;'>A one-stop shop app for all your protein sequence analysis needs</h2><br>", unsafe_allow_html=True)
 
     # Step 1: Process input accession numbers file
