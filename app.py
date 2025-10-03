@@ -191,7 +191,7 @@ def main():
                 df_blast.to_excel(writer, index=False, sheet_name='results_blast')
             results_blast.seek(0)
             st.download_button(label="Download BLAST results", 
-                            type="secondary", 
+                            type="primary", 
                             icon=":material/download:",
                             data=results_blast,
                             file_name="results_blast.xlsx",
