@@ -6,6 +6,7 @@ import time
 import ingest_sequence as ingest
 import generate_views as gv
 import databricks_handler as dbh
+import base64
 
 
 def main():
@@ -16,30 +17,29 @@ def main():
                         initial_sidebar_state="expanded"
                     )
     
-    video_html = """
+    with open("static/dna_loop_animation.mp4", "rb") as video_file:
+        encoded_string = base64.b64encode(video_file.read()).decode('utf-8')
+    
+    video_html = f"""
                     <style>
-
-                    #myVideo {
-                    position: fixed;
-                    right: 0;
-                    bottom: 0;
-                    min-width: 100%; 
-                    min-height: 100%;
-                    }
-
-                    .content {
-                    position: fixed;
-                    bottom: 0;
-                    background: rgba(0, 0, 0, 0.5);
-                    color: #f1f1f1;
-                    width: 100%;
-                    padding: 20px;
-                    }
-
-                    </style>	
-                    <video autoplay muted loop id="myVideo">
-                    <source src="https://drive.google.com/uc?export=download&id=1ZtEfe4Jy75xTH6piNpTVVFVbKvBPOAnW")>
-                    Your browser does not support HTML5 video.
+                    #myVideo {{
+                        position: fixed;
+                        right: 0;
+                        bottom: 0;
+                        min-width: 100%; 
+                        min-height: 100%;
+                    }}
+                    .content {{
+                        position: fixed;
+                        bottom: 0;
+                        background: rgba(0, 0, 0, 0.5);
+                        color: #f1f1f1;
+                        width: 100%;
+                        padding: 20px;
+                    }}
+                    </style>
+                    <video autoplay loop muted playsinline id="myVideo">
+                        <source type="video/mp4" src="data:video/mp4;base64,{encoded_string}">
                     </video>
                 """
     
