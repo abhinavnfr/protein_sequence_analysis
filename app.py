@@ -12,7 +12,7 @@ import base64
 def main():
     st.set_page_config(
                         page_title="Protezard",
-                        page_icon="🧬"
+                        page_icon="ui_elements/logo.png"
                     )
     
     with open("ui_elements/dna_loop_animation.mp4", "rb") as video_file:
