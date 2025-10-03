@@ -74,16 +74,15 @@ def main():
                 )
     st.markdown("""
                     <style>
-                    /* Make download button background white */
+                    /* Style for secondary download buttons */
                     button[kind="secondary"] {
-                        background-color: #FFFFFF !important;
-                        color: #000000 !important;  /* Dark text color */
-                        border: 1px solid #CCCCCC !important; /* Optional: add border for visibility */
+                        background-color: #FFFFFF !important;  /* White background */
+                        color: #000000 !important;  /* Dark text */
+                        border: 1px solid #CCCCCC !important;  /* Optional border for visibility */
                     }
-                    /* On hover, optionally keep text dark */
                     button[kind="secondary"]:hover {
-                        color: #000000 !important;
-                        background-color: #EEEEEE !important;
+                        background-color: #EEEEEE !important;  /* Slightly gray on hover */
+                        color: #000000 !important;  /* Keep text dark on hover */
                     }
                     </style>
                 """,
