@@ -75,7 +75,7 @@ def main():
 
     st.markdown("""
                     <h1 style='color: white; display: flex; align-items: center;'>
-                        <img src='path/to/your_icon.png' style='height: 32px; margin-right: 10px;'/>
+                        <img src='ui_elements/logo.png' style='height: 32px; margin-right: 10px;'/>
                         Protezard
                     </h1>
                 """,
