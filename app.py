@@ -17,7 +17,7 @@ def main():
                         initial_sidebar_state="expanded"
                     )
     
-    with open("static/dna_loop_animation.mp4", "rb") as video_file:
+    with open("ui_elements/dna_loop_animation.mp4", "rb") as video_file:
         encoded_string = base64.b64encode(video_file.read()).decode('utf-8')
     
     video_html = f"""
