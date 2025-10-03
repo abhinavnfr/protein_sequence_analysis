@@ -12,7 +12,7 @@ def main():
     st.set_page_config(
                         page_title="Protezard",
                         page_icon="🧬",
-                        layout="wide",
+                        layout="centered",
                         initial_sidebar_state="expanded"
                     )
     
@@ -38,7 +38,7 @@ def main():
 
                     </style>	
                     <video autoplay muted loop id="myVideo">
-                    <source src="https://static.streamlit.io/examples/star.mp4")>
+                    <source src="https://drive.google.com/uc?export=download&id=1ZtEfe4Jy75xTH6piNpTVVFVbKvBPOAnW")>
                     Your browser does not support HTML5 video.
                     </video>
                 """
