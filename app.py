@@ -45,35 +45,11 @@ def main():
     
     st.markdown(video_html, unsafe_allow_html=True)
 
-    # # Direct link to your mp4 file (hosted online or in "static" folder if running locally)
-    # video_url = "https://drive.google.com/uc?export=download&id=1ZtEfe4Jy75xTH6piNpTVVFVbKvBPOAnW"  # Replace with your .mp4 URL
-
-    # # Inject HTML for fullscreen, muted, looping video background
-    # st.markdown(f"""
-    #                 <style>
-    #                 .video-bg {{
-    #                     position: fixed;
-    #                     top: 0; left: 0;
-    #                     width: 100vw; height: 100vh;
-    #                     object-fit: cover;
-    #                     z-index: -1;
-    #                 }}
-    #                 .stApp {{
-    #                     background: transparent !important;
-    #                 }}
-    #                 </style>
-    #                 <video autoplay loop muted playsinline class="video-bg">
-    #                     <source src="{video_url}" type="video/mp4">
-    #                 </video>
-    #             """,
-    #             unsafe_allow_html=True,
-    #             )
-    
     st.markdown("<h1 style='color: white;'>Protezard</h1>", unsafe_allow_html=True)
     st.markdown("<h2 style='color: white;'>A one-stop shop app for all your protein sequence analysis needs</h2><br>", unsafe_allow_html=True)
 
     # Step 1: Process input accession numbers file
-    st.markdown("<br><p style='font-size: 24px;'>To get started, choose a text file containing accession numbers</p><br>", unsafe_allow_html=True)
+    st.markdown("<br><p style='font-size: 24px; color: white;'>To get started, choose a text file containing accession numbers</p><br>", unsafe_allow_html=True)
     input_file = st.file_uploader(label="Upload file", type=["txt"])
     if input_file is not None:
         accessions = [line.strip() for line in input_file.read().decode("utf-8").splitlines()]
