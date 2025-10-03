@@ -7,7 +7,7 @@ It allows users to perform different types of analyses of protein sequences with
 3. Perform EffectorP search to predict fungal and oomycete effector proteins using https://effectorp.csiro.au/
 4. Perform InterPro Scan PFAM domain search of protein sequences using https://www.ebi.ac.uk/interpro/search/sequence/
 
-### Mediallion Data Architecture and Databricks Unity Catalog Tables are used to store this high volume of data obtained from multiple different Bioinformatics tools in an organized manner.
+### Medallion Data Architecture and Databricks Unity Catalog Tables are used to store this high volume of data obtained from multiple different Bioinformatics tools in an organized manner.
 1. Raw layer - holds raw data ingested from these different Bioinformatics web application.
 2. Curated layer - holds cleaned, transformed and standardized data, curated from raw data.
 3. Analytical layer - holds customized views created based on user requirements from curated data.
