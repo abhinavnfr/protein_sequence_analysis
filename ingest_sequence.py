@@ -90,7 +90,7 @@ def add_fasta_uc_table():
     uc_table = "workspace.raw.protein"
 
     try:
-        with st.spinner(f"Adding FASTA sequences for new accessions into UC table {uc_table}", show_time=True):
+        with st.spinner(f"Fetching and adding FASTA sequences for new accessions into UC table {uc_table}", show_time=True):
             conn = dbh.get_databricks_connection()
             cursor = conn.cursor()
             cursor.execute(f"SELECT id FROM {uc_table} WHERE fasta_sequence IS NULL")
