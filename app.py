@@ -47,7 +47,7 @@ def main():
                     <style>
                     /* Make all labels and texts white */
                     /* Target labels with class 'css-1avcm0e' or similar */
-                    label, p, .css-1cpxqw2 { 
+                    label, p, .css-1cpxqw2, .css-1l2v3p3 { 
                         color: #FFFFFF !important;
                     }
                     /* Specific for Streamlit labels and other texts */
