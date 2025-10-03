@@ -79,8 +79,6 @@ def fetch_fasta_sequence(accession, blast_accession):
         with st.spinner(f"Fetching FASTA sequence for accession: {accession}", show_time=True):
             with Entrez.efetch(db="protein", id=accession, rettype="fasta", retmode="text") as handle:
                 record = handle.read()
-            if accession == blast_accession:
-                st.success(f"Successfully fetched FASTA sequence for accession: {accession}")
             return record
     
     except Exception as e:
@@ -114,7 +112,7 @@ def add_fasta_uc_table():
             conn.commit()
             cursor.close()
             conn.close()
-            st.success(f"Successfully added FASTA sequences for new accessions into UC table {uc_table}")
+            st.success(f"Successfully fetched and added FASTA sequences for new accessions into UC table {uc_table}")
     
     except Exception as e:
         st.error(f"Failed to add FASTA sequences for new accessions into UC table {uc_table}: {str(e)}")
