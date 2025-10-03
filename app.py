@@ -10,35 +10,35 @@ import databricks_handler as dbh
 
 def main():
     st.set_page_config(
-                        page_title="PSA",
+                        page_title="Protezard",
                         page_icon="🧬",
                         layout="centered",
                         initial_sidebar_state="expanded"
                     )
 
-    # URL or local path to MP4 video for background
-    video_url = "https://github.com/abhinavnfr/protein_sequence_analysis/blob/main/ui_elements/dna_loop_animation.mp4" # ui_elements/dna_loop_animation.mp4
+    # Direct link to your mp4 file (hosted online or in "static" folder if running locally)
+    video_url = "https://drive.google.com/uc?export=download&id=1ZtEfe4Jy75xTH6piNpTVVFVbKvBPOAnW"  # Replace with your .mp4 URL
 
-    video_html = f"""
+    # Inject HTML for fullscreen, muted, looping video background
+    st.markdown(f"""
                     <style>
-                    .video-background {{
+                    .video-bg {{
                         position: fixed;
-                        top: 0;
-                        left: 0;
-                        width: 100vw;
-                        height: 100vh;
+                        top: 0; left: 0;
+                        width: 100vw; height: 100vh;
                         object-fit: cover;
                         z-index: -1;
-                        pointer-events: none;
-                        filter: brightness(0.7); /* optional to darken background */
+                    }}
+                    .stApp {{
+                        background: transparent !important;
                     }}
                     </style>
-                    <video autoplay muted loop playsinline class="video-background">
+                    <video autoplay loop muted playsinline class="video-bg">
                         <source src="{video_url}" type="video/mp4">
-                        Your browser does not support the video tag.
                     </video>
-                """
-    st.markdown(video_html, unsafe_allow_html=True)
+                """,
+                unsafe_allow_html=True,
+                )
     
     st.markdown("<h1>Protein Sequence Analysis App</h1><br>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: right; color: #FF4B4B;'>by Abhinav Rana</p>", unsafe_allow_html=True)
