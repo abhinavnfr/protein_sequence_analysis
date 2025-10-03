@@ -47,7 +47,7 @@ def main():
                     <style>
                     /* Make all labels and texts white */
                     /* Target labels with class 'css-1avcm0e' or similar */
-                    label, p, .css-1cpxqw2, .css-1l2v3p3 { 
+                    label, p, .css-1cpxqw2, stFileUploaderFileName { 
                         color: #FFFFFF !important;
                     }
                     /* Specific for Streamlit labels and other texts */
@@ -55,8 +55,39 @@ def main():
                         color: #FFFFFF !important;
                     }
                     </style>
-                    """,
-                    unsafe_allow_html=True
+                """,
+                unsafe_allow_html=True
+                )
+    st.markdown("""
+                    <style>
+                    /* Change the spinner circle color to white */
+                    .stSpinner > div > div {
+                        border-top-color: #FFFFFF !important;
+                    }
+                    /* Change the spinner text color (including elapsed time) to white */
+                    .stSpinner > div > span {
+                        color: #FFFFFF !important;
+                    }
+                    </style>
+                """,
+                unsafe_allow_html=True
+                )
+    st.markdown("""
+                    <style>
+                    /* Make download button background white */
+                    button[kind="primary"] {
+                        background-color: #FFFFFF !important;
+                        color: #000000 !important;  /* Dark text color */
+                        border: 1px solid #CCCCCC !important; /* Optional: add border for visibility */
+                    }
+                    /* On hover, optionally keep text dark */
+                    button[kind="primary"]:hover {
+                        color: #000000 !important;
+                        background-color: #EEEEEE !important;
+                    }
+                    </style>
+                """,
+                unsafe_allow_html=True
                 )
 
     st.markdown("<h1 style='color: white;'>Protezard</h1>", unsafe_allow_html=True)
