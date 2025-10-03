@@ -69,9 +69,8 @@ def main():
     #             unsafe_allow_html=True,
     #             )
     
-    st.markdown("<h1>Protezard</h1>", unsafe_allow_html=True)
-    st.markdown("<h2>A one-stop shop app for all your protein sequence analysis needs</h2><br>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: right; color: #FF4B4B;'>by Abhinav Rana</p>", unsafe_allow_html=True)
+    st.markdown("<h1 style='color: white;'>Protezard</h1>", unsafe_allow_html=True)
+    st.markdown("<h2 style='color: white;'>A one-stop shop app for all your protein sequence analysis needs</h2><br>", unsafe_allow_html=True)
 
     # Step 1: Process input accession numbers file
     st.markdown("<br><p style='font-size: 24px;'>To get started, choose a text file containing accession numbers</p><br>", unsafe_allow_html=True)
