@@ -43,6 +43,22 @@ def main():
     
     st.markdown(video_html, unsafe_allow_html=True)
 
+    st.markdown("""
+                    <style>
+                    /* Make all labels and texts white */
+                    /* Target labels with class 'css-1avcm0e' or similar */
+                    label, p, span, .css-1cpxqw2 { 
+                        color: #FFFFFF !important;
+                    }
+                    /* Specific for Streamlit labels and other texts */
+                    .stText, .stMarkdown, .stButton, .stSuccess, .stWarning, .stError {
+                        color: #FFFFFF !important;
+                    }
+                    </style>
+                    """,
+                    unsafe_allow_html=True
+                )
+
     st.markdown("<h1 style='color: white;'>Protezard</h1>", unsafe_allow_html=True)
     st.markdown("<h2 style='color: white;'>A one-stop shop app for all your protein sequence analysis needs</h2><br>", unsafe_allow_html=True)
 
