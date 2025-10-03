@@ -72,22 +72,6 @@ def main():
                 """,
                 unsafe_allow_html=True
                 )
-    st.markdown("""
-                    <style>
-                    /* Style for secondary download buttons */
-                    button[kind="secondary"] {
-                        background-color: #FFFFFF !important;  /* White background */
-                        color: #000000 !important;  /* Dark text */
-                        border: 1px solid #CCCCCC !important;  /* Optional border for visibility */
-                    }
-                    button[kind="secondary"]:hover {
-                        background-color: #EEEEEE !important;  /* Slightly gray on hover */
-                        color: #000000 !important;  /* Keep text dark on hover */
-                    }
-                    </style>
-                """,
-                unsafe_allow_html=True
-                )
 
     st.markdown("<h1 style='color: white;'>Protezard</h1>", unsafe_allow_html=True)
     st.markdown("<h2 style='color: white;'>A one-stop shop app for all your protein sequence analysis needs</h2><br>", unsafe_allow_html=True)
