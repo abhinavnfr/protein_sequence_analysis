@@ -13,8 +13,7 @@ def main():
     st.set_page_config(
                         page_title="Protezard",
                         page_icon="🧬",
-                        layout="centered",
-                        initial_sidebar_state="expanded"
+                        layout="wide"
                     )
     
     with open("ui_elements/dna_loop_animation.mp4", "rb") as video_file:
