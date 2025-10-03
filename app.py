@@ -12,35 +12,65 @@ def main():
     st.set_page_config(
                         page_title="Protezard",
                         page_icon="🧬",
-                        layout="centered",
+                        layout="wide",
                         initial_sidebar_state="expanded"
                     )
-
-    # Direct link to your mp4 file (hosted online or in "static" folder if running locally)
-    video_url = "https://drive.google.com/uc?export=download&id=1ZtEfe4Jy75xTH6piNpTVVFVbKvBPOAnW"  # Replace with your .mp4 URL
-
-    # Inject HTML for fullscreen, muted, looping video background
-    st.markdown(f"""
-                    <style>
-                    .video-bg {{
-                        position: fixed;
-                        top: 0; left: 0;
-                        width: 100vw; height: 100vh;
-                        object-fit: cover;
-                        z-index: -1;
-                    }}
-                    .stApp {{
-                        background: transparent !important;
-                    }}
-                    </style>
-                    <video autoplay loop muted playsinline class="video-bg">
-                        <source src="{video_url}" type="video/mp4">
-                    </video>
-                """,
-                unsafe_allow_html=True,
-                )
     
-    st.markdown("<h1>Protein Sequence Analysis App</h1><br>", unsafe_allow_html=True)
+    video_html = """
+                    <style>
+
+                    #myVideo {
+                    position: fixed;
+                    right: 0;
+                    bottom: 0;
+                    min-width: 100%; 
+                    min-height: 100%;
+                    }
+
+                    .content {
+                    position: fixed;
+                    bottom: 0;
+                    background: rgba(0, 0, 0, 0.5);
+                    color: #f1f1f1;
+                    width: 100%;
+                    padding: 20px;
+                    }
+
+                    </style>	
+                    <video autoplay muted loop id="myVideo">
+                    <source src="https://static.streamlit.io/examples/star.mp4")>
+                    Your browser does not support HTML5 video.
+                    </video>
+                """
+    
+    st.markdown(video_html, unsafe_allow_html=True)
+
+    # # Direct link to your mp4 file (hosted online or in "static" folder if running locally)
+    # video_url = "https://drive.google.com/uc?export=download&id=1ZtEfe4Jy75xTH6piNpTVVFVbKvBPOAnW"  # Replace with your .mp4 URL
+
+    # # Inject HTML for fullscreen, muted, looping video background
+    # st.markdown(f"""
+    #                 <style>
+    #                 .video-bg {{
+    #                     position: fixed;
+    #                     top: 0; left: 0;
+    #                     width: 100vw; height: 100vh;
+    #                     object-fit: cover;
+    #                     z-index: -1;
+    #                 }}
+    #                 .stApp {{
+    #                     background: transparent !important;
+    #                 }}
+    #                 </style>
+    #                 <video autoplay loop muted playsinline class="video-bg">
+    #                     <source src="{video_url}" type="video/mp4">
+    #                 </video>
+    #             """,
+    #             unsafe_allow_html=True,
+    #             )
+    
+    st.markdown("<h1>Protezard</h1><br>", unsafe_allow_html=True)
+    st.markdown("<h2>A one-stop shop app for all your protein sequence analysis needs</h2><br>", unsafe_allow_html=True)
     st.markdown("<p style='text-align: right; color: #FF4B4B;'>by Abhinav Rana</p>", unsafe_allow_html=True)
 
     # Step 1: Process input accession numbers file
