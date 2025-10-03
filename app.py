@@ -129,28 +129,28 @@ def main():
             results_mw.seek(0)
             
             st.download_button(label="Download BLAST results", 
-                            type="secondary", 
+                            type="primary", 
                             icon=":material/download:",
                             data=results_blast,
                             file_name="results_blast.xlsx",
                             on_click="ignore",
                             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
             st.download_button(label="Download EffectorP results", 
-                            type="secondary", 
+                            type="primary", 
                             icon=":material/download:",
                             data=results_effectorp,
                             file_name="results_effectorp.xlsx",
                             on_click="ignore",
                             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
             st.download_button(label="Download InterProScan PFAM Domain Search results", 
-                            type="secondary", 
+                            type="primary", 
                             icon=":material/download:",
                             data=results_pfam,
                             file_name="results_pfam.xlsx",
                             on_click="ignore",
                             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
             st.download_button(label="Download Molecular Weight results", 
-                            type="secondary", 
+                            type="primary", 
                             icon=":material/download:",
                             data=results_mw,
                             file_name="results_molecularweight.xlsx",
@@ -179,6 +179,7 @@ def main():
                             icon=":material/download:",
                             data=results_blast,
                             file_name="results_blast.xlsx",
+                            on_click="ignore",
                             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
             
         elif st.button(label="Perform only EffectorP", type="primary"):
@@ -190,10 +191,11 @@ def main():
                 df_effectorp.to_excel(writer, index=False, sheet_name='results_effectorp')
             results_effectorp.seek(0)
             st.download_button(label="Download EffectorP results", 
-                            type="secondary", 
+                            type="primary", 
                             icon=":material/download:",
                             data=results_effectorp,
                             file_name="results_effectorp.xlsx",
+                            on_click="ignore",
                             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
         
         elif st.button(label="Perform only InterproScan PFAM Domain Search", type="primary"):
@@ -205,10 +207,11 @@ def main():
                 df_pfam.to_excel(writer, index=False, sheet_name='results_pfam')
             results_pfam.seek(0)
             st.download_button(label="Download InterProScan PFAM Domain Search results", 
-                            type="secondary", 
+                            type="primary", 
                             icon=":material/download:",
                             data=results_pfam,
                             file_name="results_pfam.xlsx",
+                            on_click="ignore",
                             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
         
         elif st.button(label="Perform only Molecular Weight Calculation", type="primary"):
@@ -220,10 +223,11 @@ def main():
                 df_mw.to_excel(writer, index=False, sheet_name='results_molecularweight')
             results_mw.seek(0)
             st.download_button(label="Download Molecular Weight results", 
-                            type="secondary", 
+                            type="primary", 
                             icon=":material/download:",
                             data=results_mw,
                             file_name="results_molecularweight.xlsx",
+                            on_click="ignore",
                             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
         
