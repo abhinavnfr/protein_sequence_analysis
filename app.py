@@ -49,7 +49,7 @@ def main():
     st.markdown("<h2 style='color: white;'>A one-stop shop app for all your protein sequence analysis needs</h2><br>", unsafe_allow_html=True)
 
     # Step 1: Process input accession numbers file
-    st.markdown("<br><p style='font-size: 24px; color: white;'>To get started, choose a text file containing accession numbers</p><br>", unsafe_allow_html=True)
+    st.markdown("<p style='font-size: 24px; color: white;'>To get started, choose a text file containing accession numbers</p>", unsafe_allow_html=True)
     input_file = st.file_uploader(label="Upload file", type=["txt"])
     if input_file is not None:
         accessions = [line.strip() for line in input_file.read().decode("utf-8").splitlines()]
