@@ -424,6 +424,7 @@ def calculate_molecular_weight_kda():
 
         for seq in blasted_sequence:
             trimmed_seq = ''.join([line.strip() for line in seq.splitlines() if not line.startswith('>')])
+            st.write(trimmed_seq)
             analysis = ProteinAnalysis(trimmed_seq)
             mw_kda = round(analysis.molecular_weight() / 1000, 2)  # Convert Da to kDa
             pi = round(analysis.isoelectric_point(), 2)
