@@ -10,4 +10,4 @@ It allows users to perform different types of analyses of protein sequences with
 ### Medallion Data Architecture and Databricks Unity Catalog Tables are used to store this high volume of data obtained from multiple different Bioinformatics tools in an organized manner.
 1. Raw layer - holds raw data ingested from these different Bioinformatics web application.
 2. Curated layer - holds cleaned, transformed and standardized data, curated from raw data.
-3. Analytical layer - holds customized views created based on user requirements from curated data.
+3. Analytical layer - can hold customized views created based on user requirements from curated data, as and when required.

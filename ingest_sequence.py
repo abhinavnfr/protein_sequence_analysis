@@ -242,6 +242,7 @@ def predict_effectorp():
             cursor.execute(f"SELECT fasta_sequence FROM {uc_table} WHERE prediction IS NULL")
             sequences = set(row[0] for row in cursor.fetchall())
             blasted_sequence = [seq for seq in sequences]
+            st.write(blasted_sequence)
 
             if len(blasted_sequence) == 0:
                 st.success(f"EffectorP predicted for all sequences")
@@ -251,6 +252,7 @@ def predict_effectorp():
             submit_url = st.secrets["effectorp"]["submit_url"]
             
             for seq in blasted_sequence:
+                st.write(seq)
                 data = {
                     'seq': seq,
                     'submit': 'Run EffectorP'
@@ -284,6 +286,7 @@ def predict_effectorp():
                     row = [td.get_text(strip=True) for td in tr.find_all(["td", "th"])]
                     if row:
                         results.append(row)
+                st.write(seq)
                 update_sql = f"""UPDATE {uc_table} 
                                     SET cytoplasmic_effector = '{results[1][1]}', 
                                         apoplastic_effector = '{results[1][2]}', 
