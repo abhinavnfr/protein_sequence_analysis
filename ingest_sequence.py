@@ -291,9 +291,8 @@ def predict_effectorp():
                                         non_effector = '{results[1][3]}',
                                         prediction = '{results[1][4]}',
                                         record_update_ts = current_timestamp()
-                                    WHERE fasta_sequence = '{seq}'
+                                    WHERE fasta_sequence = "{seq}"
                             """
-                st.write(update_sql)
                 cursor.execute(update_sql)
             
             conn.commit()
@@ -392,7 +391,7 @@ def pfam_domain_search():
                                             SET pfam_domain_acc_{domain_num} = '{domain_acc}',
                                                 pfam_domain_name_{domain_num} = '{domain_name}',
                                                 record_update_ts = current_timestamp()
-                                            WHERE fasta_sequence = '{seq}'
+                                            WHERE fasta_sequence = "{seq}"
                                         """
                         cursor.execute(update_query)
                         domain_num += 1
@@ -435,7 +434,7 @@ def calculate_molecular_weight_kda():
                                         isoelectric_point_pi = {pi}, 
                                         sequence_length = {aa_length},
                                         record_update_ts = current_timestamp()
-                                    WHERE fasta_sequence = '{seq}'
+                                    WHERE fasta_sequence = "{seq}"
                             """
             cursor.execute(update_sql)
 
