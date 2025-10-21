@@ -92,12 +92,14 @@ def main():
         elif filename.endswith(".fasta"):
             fasta_records = re.split(r'(^>.*$)', content, flags=re.MULTILINE)
             seq_list = []
+            accessions = []
             for i in range(1, len(fasta_records), 2):
                 header = fasta_records[i].strip()
                 sequence = fasta_records[i+1] if (i+1) < len(fasta_records) else ""
                 fasta_seq = header + sequence
                 accession_id = header[1:].split()[0]  # accession = first word after '>'
                 seq_list.append((accession_id, fasta_seq.strip()))
+                accessions.append(accession_id)
             ingest.add_fasta_batch_uc_table(seq_list)
     
         if st.button(label="Perform BLAST, EffectorP, PFAM Domain Search, and Molecular Weight Calculation end-to-end", type="primary"):
