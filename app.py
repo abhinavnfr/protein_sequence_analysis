@@ -77,14 +77,28 @@ def main():
     st.markdown("<h2 style='color: white;'>A one-stop shop app for all your protein sequence analysis needs</h2><br>", unsafe_allow_html=True)
 
     # Step 1: Process input accession numbers file
-    st.markdown("<p style='font-size: 24px; color: white;'>To get started, choose a text file containing accession numbers</p>", unsafe_allow_html=True)
-    input_file = st.file_uploader(label="Upload file", type=["txt"])
+    st.markdown("<p style='font-size: 24px; color: white;'>To get started, choose a text file containing accession numbers or a fasta file containing sequences</p>", unsafe_allow_html=True)
+    input_file = st.file_uploader(label="Upload file", type=["txt", "fasta"])
     if input_file is not None:
-        accessions = [line.strip() for line in input_file.read().decode("utf-8").splitlines()]
-        new_accessions = ingest.filter_new_sequences(accessions)
-        new_accesions_count = len(new_accessions)
-        ingest.add_new_accession_uc_table(new_accessions)
-        ingest.add_fasta_uc_table()
+        filename = input_file.name
+        content = input_file.read().decode("utf-8")
+        if filename.endswith(".txt"):
+            accessions = [line.strip() for line in content.splitlines() if line.strip()]
+            new_accessions = ingest.filter_new_sequences(accessions)
+            new_accesions_count = len(new_accessions)
+            ingest.add_new_accession_uc_table(new_accessions)
+            ingest.add_fasta_uc_table()
+        elif filename.endswith(".fasta"):
+            fasta_records = re.split(r'(^>.*$)', content, flags=re.MULTILINE)
+            seq_list = []
+            for i in range(1, len(fasta_records), 2):
+                header = fasta_records[i].strip()
+                sequence = fasta_records[i+1] if (i+1) < len(fasta_records) else ""
+                fasta_seq = header + sequence
+                accession_id = header[1:].split()[0]  # accession = first word after '>'
+                seq_list.append((accession_id, fasta_seq.strip()))
+            st.write(seq_list)
+            # ingest.add_fasta_uc_table_batch(seq_list)
     
         if st.button(label="Perform BLAST, EffectorP, PFAM Domain Search, and Molecular Weight Calculation end-to-end", type="primary"):
             # get sequences to BLAST
