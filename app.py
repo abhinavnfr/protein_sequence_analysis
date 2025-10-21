@@ -7,6 +7,7 @@ import ingest_sequence as ingest
 import generate_views as gv
 import databricks_handler as dbh
 import base64
+import re
 
 
 def main():
