@@ -98,8 +98,7 @@ def main():
                 fasta_seq = header + sequence
                 accession_id = header[1:].split()[0]  # accession = first word after '>'
                 seq_list.append((accession_id, fasta_seq.strip()))
-            st.write(seq_list)
-            # ingest.add_fasta_uc_table_batch(seq_list)
+            ingest.add_fasta_batch_uc_table(seq_list)
     
         if st.button(label="Perform BLAST, EffectorP, PFAM Domain Search, and Molecular Weight Calculation end-to-end", type="primary"):
             # get sequences to BLAST

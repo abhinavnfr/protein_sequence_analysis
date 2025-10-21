@@ -54,9 +54,6 @@ def add_new_accession_uc_table(accessions: list):
             conn = dbh.get_databricks_connection()
             cursor = conn.cursor()
             # Fetch column names for the table
-            cursor.execute(f"DESCRIBE TABLE {uc_table}")
-            columns_info = cursor.fetchall()
-            table_columns = [row[0] for row in columns_info if row != ""]
 
             for acc in accessions:
                 query = f"INSERT INTO {uc_table} (id, record_create_ts, record_update_ts) VALUES (?, current_timestamp(), current_timestamp())"
@@ -110,6 +107,26 @@ def add_fasta_uc_table():
                                     WHERE id = '{acc}'
                                 """
                 cursor.execute(update_query)
+            
+            conn.commit()
+            cursor.close()
+            conn.close()
+            st.success(f"Successfully added FASTA sequences for new accessions into UC table {uc_table}")
+    
+    except Exception as e:
+        st.error(f"Failed to add FASTA sequences for new accessions into UC table {uc_table}: {str(e)}")
+
+
+# Add fasta batch into UC table raw.protein
+def add_fasta_batch_uc_table(seq_list):
+    uc_table = "workspace.raw.protein"
+    try:
+        with st.spinner(f"Adding FASTA sequences for new accessions into UC table {uc_table}", show_time=True):
+            conn = dbh.get_databricks_connection()
+            cursor = conn.cursor()
+            for seq in seq_list:
+                query = f"INSERT INTO {uc_table} (id, fasta_sequence, record_create_ts, record_update_ts) VALUES (?, ?, current_timestamp(), current_timestamp())"
+                cursor.execute(query, (seq[0],seq[1],))
             
             conn.commit()
             cursor.close()
