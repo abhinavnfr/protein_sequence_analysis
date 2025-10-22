@@ -434,45 +434,45 @@ def pfam_domain_search():
 # calculate molecular weights of protein sequences
 def calculate_molecular_weight_kda():
     uc_table = "workspace.raw.protein"
-    st.spinner(f"Calculating molecular weights for sequences", show_time=True)
     try:
-        conn = dbh.get_databricks_connection()
-        cursor = conn.cursor()
+        with st.spinner(f"Calculating molecular weights for sequences", show_time=True):
+            conn = dbh.get_databricks_connection()
+            cursor = conn.cursor()
 
-        cursor.execute(f"SELECT fasta_sequence FROM {uc_table} WHERE molecular_weight_kda IS NULL")
-        sequences = set(row[0] for row in cursor.fetchall())
-        blasted_sequence = [seq for seq in sequences]
+            cursor.execute(f"SELECT fasta_sequence FROM {uc_table} WHERE molecular_weight_kda IS NULL")
+            sequences = set(row[0] for row in cursor.fetchall())
+            blasted_sequence = [seq for seq in sequences]
 
-        if len(blasted_sequence) == 0:
+            if len(blasted_sequence) == 0:
+                st.success(f"Calculated Molecular Weights, Isoelectric Points and Lengths for all sequences")
+                return
+
+            for seq in blasted_sequence:
+                trimmed_seq = ''.join([line.strip() for line in seq.splitlines() if not line.startswith('>')])
+                if "X" in trimmed_seq:
+                    mw_kda = round(0, 2)
+                    pi = round(0, 2)
+                else:  
+                    analysis = ProteinAnalysis(trimmed_seq)
+                    mw_kda = round(analysis.molecular_weight() / 1000, 2)  # Convert Da to kDa
+                    pi = round(analysis.isoelectric_point(), 2)
+                
+                aa_length = len(trimmed_seq)
+
+                update_sql = f"""UPDATE {uc_table} 
+                                        SET molecular_weight_kda = {mw_kda}, 
+                                            isoelectric_point_pi = {pi}, 
+                                            sequence_length = {aa_length},
+                                            record_update_ts = current_timestamp()
+                                        WHERE fasta_sequence = "{seq}"
+                                """
+                cursor.execute(update_sql)
+
+            conn.commit()
+            cursor.close()
+            conn.close()
+
             st.success(f"Calculated Molecular Weights, Isoelectric Points and Lengths for all sequences")
-            return
-
-        for seq in blasted_sequence:
-            trimmed_seq = ''.join([line.strip() for line in seq.splitlines() if not line.startswith('>')])
-            if "X" in trimmed_seq:
-                mw_kda = round(0, 2)
-                pi = round(0, 2)
-            else:  
-                analysis = ProteinAnalysis(trimmed_seq)
-                mw_kda = round(analysis.molecular_weight() / 1000, 2)  # Convert Da to kDa
-                pi = round(analysis.isoelectric_point(), 2)
-            
-            aa_length = len(trimmed_seq)
-
-            update_sql = f"""UPDATE {uc_table} 
-                                    SET molecular_weight_kda = {mw_kda}, 
-                                        isoelectric_point_pi = {pi}, 
-                                        sequence_length = {aa_length},
-                                        record_update_ts = current_timestamp()
-                                    WHERE fasta_sequence = "{seq}"
-                            """
-            cursor.execute(update_sql)
-
-        conn.commit()
-        cursor.close()
-        conn.close()
-
-        st.success(f"Calculated Molecular Weights, Isoelectric Points and Lengths for all sequences")
     
     except Exception as e:
         st.error(f"Error calculating Molecular Weights, Isoelectric Points and Lengths for sequences: {e}")
