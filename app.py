@@ -100,6 +100,7 @@ def main():
                 accession_id = header[1:].split()[0]  # accession = first word after '>'
                 seq_list.append((accession_id, fasta_seq.strip()))
                 accessions.append(accession_id)
+            st.write(accessions[0])
             ingest.add_fasta_batch_uc_table(seq_list)
     
         if st.button(label="Perform BLAST, EffectorP, PFAM Domain Search, and Molecular Weight Calculation end-to-end", type="primary"):
