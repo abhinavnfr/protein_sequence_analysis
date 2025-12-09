@@ -435,7 +435,7 @@ def pfam_domain_search():
 def calculate_molecular_weight_kda():
     uc_table = "workspace.raw.protein"
     try:
-        st.spinner(f"Calculating molecular weights for sequences", show_time=True)
+        with st.spinner(f"Calculating molecular weights for sequences", show_time=True):
             conn = dbh.get_databricks_connection()
             cursor = conn.cursor()
 
