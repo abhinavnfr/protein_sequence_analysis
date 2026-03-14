@@ -401,14 +401,18 @@ def pfam_domain_search():
     
                 # Step 3: Retrieve and process results
                 results = retrieve_results(job_id)
+                st.write(results)
                 domain_num = 1
                 for line in results.strip().split("\n"):
                     if line.startswith("#"):  # Ignore comment lines
                         continue
                     parts = line.split("\t")
+                    st.write(parts)
                     database = parts[3]
                     domain_acc = parts[4]  # Domain accession number (e.g., PF00931)
+                    st.write(domain_acc)
                     domain_name = parts[5]  # Domain name (e.g., NB-ARC)
+                    st.write(domain_name)
 
                     # Filter only PFAM domains
                     if database == "Pfam":
