@@ -387,7 +387,7 @@ def pfam_domain_search():
             for seq in blasted_sequence:
                 # Step 1: Submit sequence to InterPro
                 job_id = submit_to_interpro(seq)
-                # st.write(f"Submitted Job ID for accession: {accession}: {job_id}") # optional print statement
+                st.write(f"Submitted Job ID for accession: {accession}: {job_id}") # optional print statement
     
                 # Step 2: Check job status
                 while True:
