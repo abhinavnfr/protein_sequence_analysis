@@ -401,21 +401,19 @@ def pfam_domain_search():
     
                 # Step 3: Retrieve and process results
                 results = retrieve_results(job_id)
-                st.write(results)
                 domain_num = 1
+                pfam_db_count = 0
                 for line in results.strip().split("\n"):
                     if line.startswith("#"):  # Ignore comment lines
                         continue
                     parts = line.split("\t")
-                    st.write(parts)
                     database = parts[3]
                     domain_acc = parts[4]  # Domain accession number (e.g., PF00931)
-                    st.write(domain_acc)
                     domain_name = parts[5]  # Domain name (e.g., NB-ARC)
-                    st.write(domain_name)
 
                     # Filter only PFAM domains
                     if database == "Pfam":
+                        pfam_db_count += 1
                         update_query = f"""UPDATE {uc_table}
                                             SET pfam_domain_acc_{domain_num} = '{domain_acc}',
                                                 pfam_domain_name_{domain_num} = '{domain_name}',
@@ -424,6 +422,15 @@ def pfam_domain_search():
                                         """
                         cursor.execute(update_query)
                         domain_num += 1
+                
+                if pfam_db_count == 0:
+                    update_query = f"""UPDATE {uc_table}
+                                        SET pfam_domain_acc_1 = 'Not Available',
+                                            pfam_domain_name_1 = 'Not Available',
+                                            record_update_ts = current_timestamp()
+                                        WHERE fasta_sequence = "{seq}"
+                                    """
+                    cursor.execute(update_query)
             
             conn.commit()
             cursor.close()
