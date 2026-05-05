@@ -56,8 +56,8 @@ def add_new_accession_uc_table(accessions: list):
             # Fetch column names for the table
 
             for acc in accessions:
-                query = f"INSERT INTO {uc_table} (id, record_create_ts, record_update_ts) VALUES (%s, current_timestamp(), current_timestamp())"
-                cursor.execute(query, (acc,))
+                query = f"INSERT INTO {uc_table} (id, record_create_ts, record_update_ts) VALUES ('{acc}', current_timestamp(), current_timestamp())"
+                cursor.execute(query)
 
             conn.commit()
             cursor.close()
