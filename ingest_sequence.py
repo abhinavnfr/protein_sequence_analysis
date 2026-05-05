@@ -236,16 +236,17 @@ def add_blast_uc_table(accession: str, blasted_sequence: list) -> None:
             table_columns = [row[0] for row in columns_info if row != ""]
  
             for seq in blasted_sequence:
+                st.write(seq)
                 # Trim to only number of provided values
-                # insert_columns = table_columns[2:len(seq)+2] + ["record_create_ts", "record_update_ts"]
+                insert_columns = table_columns[2:len(seq)+2] + ["record_create_ts", "record_update_ts"]
 
                 # Prepare parameter placeholders (use ? for Databricks SQL)
-                # placeholders = ", ".join(["?"] * len(seq) + ["current_timestamp()", "current_timestamp()"])
-                # col_names = ", ".join(insert_columns)
+                placeholders = ", ".join(["?"] * len(seq) + ["current_timestamp()", "current_timestamp()"])
+                col_names = ", ".join(insert_columns)
 
-                insert_query = f"INSERT INTO {uc_table} (id, fasta_sequence, blast_of_id, blast_top_hit_number, blast_percent_identity, record_create_ts, record_update_ts) VALUES (?, ?, ?, ?, ?, current_timestamp(), current_timestamp())"
+                insert_query = f"INSERT INTO {uc_table} ({col_names}, record_create_ts, record_update_ts) VALUES ({placeholders})"
                 # cursor.execute(insert_query, seq)
-                cursor.execute(insert_query, (seq[0],seq[1],seq[2],seq[3],seq[4],))
+                cursor.execute(insert_query, (tuple(seq[:5]),))
 
             conn.commit()
             cursor.close()
