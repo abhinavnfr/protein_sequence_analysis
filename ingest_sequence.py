@@ -246,7 +246,7 @@ def add_blast_uc_table(accession: str, blasted_sequence: list) -> None:
 
                 insert_query = f"INSERT INTO {uc_table} ({col_names}, record_create_ts, record_update_ts) VALUES ({placeholders})"
                 # cursor.execute(insert_query, seq)
-                cursor.execute(insert_query, (tuple(seq[:5]),))
+                cursor.execute(insert_query, seq)
 
             conn.commit()
             cursor.close()
