@@ -241,12 +241,10 @@ def add_blast_uc_table(accession: str, blasted_sequence: list) -> None:
                 insert_columns = table_columns[2:len(seq)+2] + ["record_create_ts", "record_update_ts"]
                 st.write(insert_columns)
 
-                # Prepare parameter placeholders (use ? for Databricks SQL)
-                placeholders = ", ".join(["?"] * len(seq) + ["current_timestamp()", "current_timestamp()"])
                 st.write(placeholders)
                 col_names = ", ".join(insert_columns)
 
-                insert_query = f"INSERT INTO {uc_table} ({col_names}) VALUES ({placeholders})"
+                insert_query = f"INSERT INTO {uc_table} ({col_names}) VALUES ('{seq[0]}', '{seq[1]}', '{seq[2]}', '{seq[3]}', '{seq[4]}', current_timestamp(), current_timestamp()"
                 st.write(insert_query)
                 cursor.execute(insert_query, seq)
 
