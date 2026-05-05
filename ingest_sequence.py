@@ -225,27 +225,35 @@ def blast_sequence(accession, fasta_sequence, num_hits=5):
 # add BLAST sequences to UC table raw.protein
 def add_blast_uc_table(accession: str, blasted_sequence: list) -> None:
     uc_table = "workspace.raw.protein"
-    with st.spinner(f"Adding BLAST sequences into UC table {uc_table} for accession: {accession}", show_time=True):
+    conn = None # Initialize for the finally block
+    
+    with st.spinner(f"Inserting {len(blasted_sequence)} hits for {accession}..."):
         try:
             conn = dbh.get_databricks_connection()
             cursor = conn.cursor()
- 
-            for seq in blasted_sequence:
-                st.write(seq)
 
-                insert_query = f"INSERT INTO {uc_table} (id, blast_of_id, blast_percent_identity, record_create_ts, record_update_ts) VALUES ('{seq[0]}', '{seq[2]}', {seq[3]}, '{seq[4]}', current_timestamp(), current_timestamp())"
-                st.write(insert_query)
-                # cursor.execute(insert_query, seq)
-                cursor.execute(insert_query)
+            # Values mapping: 
+            # 0:id, 1:fasta, 2:blast_of_id, 3:top_hit_num, 4:percent_str
+            insert_query = f"""
+                INSERT INTO {uc_table} 
+                (id, fasta_sequence, blast_of_id, blast_top_hit_number, blast_percent_identity, record_create_ts, record_update_ts) 
+                VALUES (?, ?, ?, ?, ?, current_timestamp(), current_timestamp())
+            """
+
+            for seq in blasted_sequence:
+                # seq = [hit_acc, fasta, original_acc, hit_rank, percent_string]
+                params = (seq[0], seq[1], seq[2], seq[3], seq[4])
+                cursor.execute(insert_query, params)
 
             conn.commit()
-            cursor.close()
-            conn.close()
-
             st.success(f"BLAST sequences added into UC table {uc_table} for accession: {accession}")
 
         except Exception as e:
             st.error(f"Error adding BLAST sequences for accession {accession} into UC table {uc_table}: {e}")
+        finally:
+            if conn:
+                cursor.close()
+                conn.close()
   
 
 # perform Effector P of protein sequence
