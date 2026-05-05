@@ -233,10 +233,10 @@ def add_blast_uc_table(accession: str, blasted_sequence: list) -> None:
             for seq in blasted_sequence:
                 st.write(seq)
 
-                insert_query = f"INSERT INTO {uc_table} (id, blast_of_id, blast_top_hit_number,	blast_percent_identity, record_create_ts, record_update_ts) VALUES (?, ?, ?, ?, current_timestamp(), current_timestamp())"
-
+                insert_query = f"INSERT INTO {uc_table} (id, blast_of_id, blast_percent_identity, record_create_ts, record_update_ts) VALUES ('{seq[0]}', '{seq[2]}', {seq[3]}, '{seq[4]}', current_timestamp(), current_timestamp())"
+                st.write(insert_query)
                 # cursor.execute(insert_query, seq)
-                cursor.execute(insert_query, (seq[0],seq[2],seq[3],seq[4]))
+                cursor.execute(insert_query)
 
             conn.commit()
             cursor.close()
