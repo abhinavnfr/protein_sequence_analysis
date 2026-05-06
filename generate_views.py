@@ -9,7 +9,7 @@ def generate_view(curated_view, accessions: list):
         cursor = conn.cursor()
         placeholders = ','.join(["?"] * len(accessions))
         sql_query = f"""SELECT * FROM {curated_view}
-                        WHERE accession_number IN ({placeholders})
+                        WHERE TRIM(accession_number) IN ({placeholders})
                     """
         cursor.execute(sql_query, accessions)
         rows = cursor.fetchall()
