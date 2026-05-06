@@ -251,8 +251,8 @@ def add_blast_uc_table(accession: str, blasted_sequence: list) -> None:
                 insert_query = f"""INSERT INTO {uc_table} (id, fasta_sequence, blast_of_id, blast_top_hit_number, blast_percent_identity, record_create_ts, record_update_ts)
                 VALUES ({placeholders}, current_timestamp(), current_timestamp())
                 """
-                st.write(insert_query)
-                # cursor.execute(insert_query)
+                                
+                cursor.execute(insert_query)
 
             conn.commit()
             st.success(f"BLAST sequences added into UC table {uc_table} for accession: {accession}")
