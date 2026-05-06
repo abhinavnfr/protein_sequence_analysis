@@ -1,5 +1,6 @@
 import databricks_handler as dbh
 import pandas as pd
+import streamlit as st
 
 
 # Generate view
@@ -22,5 +23,5 @@ def generate_view(curated_view, accessions: list):
         return df
         
     except Exception as e:
-        print(f"Failed to generate view {curated_view.split('.')[-1]}: {e}")
-        return pd.DataFrame()  # Return empty DataFrame on error
+        st.write(f"Failed to generate view {curated_view.split('.')[-1]}: {e}")
+        # return pd.DataFrame()  # Return empty DataFrame on error
