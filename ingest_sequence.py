@@ -496,7 +496,7 @@ def calculate_molecular_weight_kda():
                                             record_update_ts = current_timestamp()
                                         WHERE fasta_sequence = "{seq}"
                                 """
-                st.write(update_query)
+                st.write(update_sql)
                 # cursor.execute(update_sql)
 
             conn.commit()
