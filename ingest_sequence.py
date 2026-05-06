@@ -461,7 +461,9 @@ def calculate_molecular_weight_kda():
 
             cursor.execute(f"SELECT fasta_sequence FROM {uc_table} WHERE molecular_weight_kda IS NULL")
             sequences = set(row[0] for row in cursor.fetchall())
+            st.write(sequences)
             blasted_sequence = [seq for seq in sequences]
+            st.write(blasted_sequence)
 
             if len(blasted_sequence) == 0:
                 st.success(f"Calculated Molecular Weights, Isoelectric Points and Lengths for all sequences")
