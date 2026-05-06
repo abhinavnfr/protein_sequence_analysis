@@ -461,18 +461,14 @@ def calculate_molecular_weight_kda():
 
             cursor.execute(f"SELECT fasta_sequence FROM {uc_table} WHERE molecular_weight_kda IS NULL")
             sequences = set(row[0] for row in cursor.fetchall())
-            st.write(sequences)
             blasted_sequence = [seq for seq in sequences]
-            st.write(blasted_sequence)
 
             if len(blasted_sequence) == 0:
                 st.success(f"Calculated Molecular Weights, Isoelectric Points and Lengths for all sequences")
                 return
 
             for seq in blasted_sequence:
-                st.write(seq)
                 trimmed_seq = ''.join([line.strip() for line in seq.splitlines() if not line.startswith('>')])
-                st.write(f"trimmed seq: {trimmed_seq}")
                 if not trimmed_seq:
                     mw_kda = 0.0
                     pi = 0.0
@@ -486,8 +482,6 @@ def calculate_molecular_weight_kda():
                     mw_kda = round(analysis.molecular_weight() / 1000, 2)  # Convert Da to kDa
                     pi = round(analysis.isoelectric_point(), 2)
                     aa_length = len(trimmed_seq)
-                
-                # aa_length = len(trimmed_seq)
 
                 update_sql = f"""UPDATE {uc_table} 
                                         SET molecular_weight_kda = {mw_kda}, 
@@ -496,8 +490,8 @@ def calculate_molecular_weight_kda():
                                             record_update_ts = current_timestamp()
                                         WHERE fasta_sequence = "{seq}"
                                 """
-                st.write(update_sql)
-                # cursor.execute(update_sql)
+
+                cursor.execute(update_sql)
 
             conn.commit()
             cursor.close()
