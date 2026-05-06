@@ -251,7 +251,7 @@ def add_blast_uc_table(accession: str, blasted_sequence: list) -> None:
                 insert_query = f"""INSERT INTO {uc_table} (id, fasta_sequence, blast_of_id, blast_top_hit_number, blast_percent_identity, record_create_ts, record_update_ts)
                 VALUES ({placeholders}, current_timestamp(), current_timestamp())
                 """
-                                
+
                 cursor.execute(insert_query)
 
             conn.commit()
@@ -468,16 +468,24 @@ def calculate_molecular_weight_kda():
                 return
 
             for seq in blasted_sequence:
+                st.write(seq)
                 trimmed_seq = ''.join([line.strip() for line in seq.splitlines() if not line.startswith('>')])
-                if "X" in trimmed_seq:
+                st.write(trimmed_seq)
+                if not trimmed_seq:
+                    mw_kda = 0.0
+                    pi = 0.0
+                    aa_length = 0
+                elif "X" in trimmed_seq:
                     mw_kda = round(0, 2)
                     pi = round(0, 2)
+                    aa_length = len(trimmed_seq)
                 else:  
                     analysis = ProteinAnalysis(trimmed_seq)
                     mw_kda = round(analysis.molecular_weight() / 1000, 2)  # Convert Da to kDa
                     pi = round(analysis.isoelectric_point(), 2)
+                    aa_length = len(trimmed_seq)
                 
-                aa_length = len(trimmed_seq)
+                # aa_length = len(trimmed_seq)
 
                 update_sql = f"""UPDATE {uc_table} 
                                         SET molecular_weight_kda = {mw_kda}, 
@@ -486,7 +494,8 @@ def calculate_molecular_weight_kda():
                                             record_update_ts = current_timestamp()
                                         WHERE fasta_sequence = "{seq}"
                                 """
-                cursor.execute(update_sql)
+                st.write(update_query)
+                # cursor.execute(update_sql)
 
             conn.commit()
             cursor.close()
