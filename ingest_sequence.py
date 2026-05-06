@@ -472,7 +472,7 @@ def calculate_molecular_weight_kda():
             for seq in blasted_sequence:
                 st.write(seq)
                 trimmed_seq = ''.join([line.strip() for line in seq.splitlines() if not line.startswith('>')])
-                st.write(trimmed_seq)
+                st.write(f"trimmed seq: {trimmed_seq}")
                 if not trimmed_seq:
                     mw_kda = 0.0
                     pi = 0.0
