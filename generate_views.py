@@ -8,18 +8,15 @@ def generate_view(curated_view, accessions: list):
     try:
         conn = dbh.get_databricks_connection()
         cursor = conn.cursor()
-        # placeholders = ','.join(["?"] * len(accessions))
+
         placeholders = ""
         for acc in accessions:
             placeholders += f"'{acc}',"
         placeholders = placeholders[:-1]
 
-        st.write(placeholders)
-
         sql_query = f"""SELECT * FROM {curated_view}
                         WHERE TRIM(accession_number) IN ({placeholders})
                     """
-        st.write(sql_query)
         cursor.execute(sql_query)
         rows = cursor.fetchall()
         columns = [desc[0] for desc in cursor.description] # Extract column names from cursor description
