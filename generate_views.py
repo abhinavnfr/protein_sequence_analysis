@@ -20,7 +20,7 @@ def generate_view(curated_view, accessions: list):
                         """
         else:
             sql_query = f"""SELECT * FROM {curated_view}
-                            WHERE TRIM(accession_number) IN ({placeholders} OR TRIM(blast_of_id) IN ({placeholders}))
+                            WHERE TRIM(accession_number) IN ({placeholders}) OR TRIM(blast_of_id) IN ({placeholders})
                         """
         
         cursor.execute(sql_query)
