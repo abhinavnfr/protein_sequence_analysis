@@ -14,9 +14,15 @@ def generate_view(curated_view, accessions: list):
             placeholders += f"'{acc}',"
         placeholders = placeholders[:-1]
 
-        sql_query = f"""SELECT * FROM {curated_view}
-                        WHERE TRIM(accession_number) IN ({placeholders})
-                    """
+        if curated_view == "workspace.curated.blast_sequence":
+            sql_query = f"""SELECT * FROM {curated_view}
+                            WHERE TRIM(accession_number) IN ({placeholders})
+                        """
+        else:
+            sql_query = f"""SELECT * FROM {curated_view}
+                            WHERE TRIM(accession_number) IN ({placeholders} OR TRIM(blast_of_id) IN ({placeholders}))
+                        """
+        
         cursor.execute(sql_query)
         rows = cursor.fetchall()
         columns = [desc[0] for desc in cursor.description] # Extract column names from cursor description
