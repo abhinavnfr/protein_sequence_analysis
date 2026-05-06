@@ -8,7 +8,12 @@ def generate_view(curated_view, accessions: list):
     try:
         conn = dbh.get_databricks_connection()
         cursor = conn.cursor()
-        placeholders = ','.join(["?"] * len(accessions))
+        # placeholders = ','.join(["?"] * len(accessions))
+        placeholders = ""
+        for acc in accessions:
+            placeholders += f"'{acc}',"
+        placeholders = placeholders[:-1]
+        
         sql_query = f"""SELECT * FROM {curated_view}
                         WHERE TRIM(accession_number) IN ({placeholders})
                     """
@@ -24,4 +29,4 @@ def generate_view(curated_view, accessions: list):
         
     except Exception as e:
         st.write(f"Failed to generate view {curated_view.split('.')[-1]}: {e}")
-        # return pd.DataFrame()  # Return empty DataFrame on error
+        return pd.DataFrame()  # Return empty DataFrame on error
