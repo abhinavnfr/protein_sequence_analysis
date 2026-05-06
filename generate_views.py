@@ -15,11 +15,11 @@ def generate_view(curated_view, accessions: list):
         placeholders = placeholders[:-1]
 
         if curated_view == "workspace.curated.blast_sequence":
-            sql_query = f"""SELECT * FROM {curated_view}
+            sql_query = f"""SELECT DISTINCT * FROM {curated_view}
                             WHERE TRIM(accession_number) IN ({placeholders})
                         """
         else:
-            sql_query = f"""SELECT * FROM {curated_view}
+            sql_query = f"""SELECT DISTINCT * FROM {curated_view}
                             WHERE TRIM(accession_number) IN ({placeholders}) OR TRIM(blast_of_id) IN ({placeholders})
                         """
         
