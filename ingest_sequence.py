@@ -135,7 +135,6 @@ def add_fasta_batch_uc_table(seq_list):
                 for seq in new_seq_list:
                     placeholders = f"'{seq[0]}', '{seq[1]}'"
                     query = f"INSERT INTO {uc_table} (id, fasta_sequence, record_create_ts, record_update_ts) VALUES ({placeholders}, current_timestamp(), current_timestamp())"
-                    st.write(query)
                     cursor.execute(query)
             
             conn.commit()
@@ -236,16 +235,24 @@ def add_blast_uc_table(accession: str, blasted_sequence: list) -> None:
 
             # Values mapping: 
             # 0:id, 1:fasta, 2:blast_of_id, 3:top_hit_num, 4:percent_str
-            insert_query = f"""
-                INSERT INTO {uc_table} 
-                (id, fasta_sequence, blast_of_id, blast_top_hit_number, blast_percent_identity, record_create_ts, record_update_ts) 
-                VALUES (?, ?, ?, ?, ?, current_timestamp(), current_timestamp())
-            """
+            # insert_query = f"""
+            #     INSERT INTO {uc_table} 
+            #     (id, fasta_sequence, blast_of_id, blast_top_hit_number, blast_percent_identity, record_create_ts, record_update_ts) 
+            #     VALUES (?, ?, ?, ?, ?, current_timestamp(), current_timestamp())
+            # """
 
+            # for seq in blasted_sequence:
+            #     # seq = [hit_acc, fasta, original_acc, hit_rank, percent_string]
+            #     params = (seq[0], seq[1], seq[2], seq[3], seq[4])
+            #     cursor.execute(insert_query, params)
+            
             for seq in blasted_sequence:
-                # seq = [hit_acc, fasta, original_acc, hit_rank, percent_string]
-                params = (seq[0], seq[1], seq[2], seq[3], seq[4])
-                cursor.execute(insert_query, params)
+                placeholders = f"'{seq[0]}', '{seq[1]}', '{seq[2]}', {seq[3]}, '{seq[4]}'"
+                insert_query = f"""INSERT INTO {uc_table} (id, fasta_sequence, blast_of_id, blast_top_hit_number, blast_percent_identity, record_create_ts, record_update_ts)
+                VALUES ({placeholders}, current_timestamp(), current_timestamp())
+                """
+                st.write(insert_query)
+                # cursor.execute(insert_query)
 
             conn.commit()
             st.success(f"BLAST sequences added into UC table {uc_table} for accession: {accession}")
