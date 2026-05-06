@@ -133,8 +133,10 @@ def add_fasta_batch_uc_table(seq_list):
                 return None
             else:
                 for seq in new_seq_list:
-                    query = f"INSERT INTO {uc_table} (id, fasta_sequence, record_create_ts, record_update_ts) VALUES (?, ?, current_timestamp(), current_timestamp())"
-                    cursor.execute(query, (seq[0],seq[1],))
+                    placeholders = f"'{seq[0]}', '{seq[1]}'"
+                    query = f"INSERT INTO {uc_table} (id, fasta_sequence, record_create_ts, record_update_ts) VALUES ({placeholders}, current_timestamp(), current_timestamp())"
+                    st.write(query)
+                    cursor.execute(query)
             
             conn.commit()
             cursor.close()
