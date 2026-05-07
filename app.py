@@ -75,7 +75,7 @@ def main():
                 )
 
     st.markdown("<h1 style='color: white;'>Protezard</h1>", unsafe_allow_html=True)
-    st.markdown("<h2 style='color: white;'>A one-stop shop app for fungal effector predictions</h2><br>", unsafe_allow_html=True)
+    st.markdown("<h2 style='color: white;'>A one-stop shop app for comprehensive fungal effector predictions</h2><br>", unsafe_allow_html=True)
 
     # Step 1: Process input accession numbers file
     st.markdown("<p style='font-size: 24px; color: white;'>To get started, choose a text file containing accession numbers or a fasta file containing sequences</p>", unsafe_allow_html=True)
